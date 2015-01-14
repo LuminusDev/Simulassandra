@@ -1,0 +1,42 @@
+Visualisation
+-------------
+
+http://www.datastax.com/what-we-offer/products-services/datastax-opscenter
+[URL][Logiciel de management et de contrôle pour Apache Cassandra, possédant des métriques visuelles.]
+
+Base de données distribuées
+---------------------------
+
+http://books.google.fr/books?hl=fr&lr=&id=TOBaLQMuNV4C&oi=fnd&pg=PR7&dq=distributed+database&ots=LqzhcE_NYd&sig=a5Ngq5fs2Ui_rrVnvNYVaF7OM3Y#v=onepage&q=distributed%20database&f=false
+[LIVRE][Principes sur les base de données distribuées, allant de l'architecture aux requêtes, en passant par l'optimisation, les transactions ou encore la concurrence.]
+@book{özsu2011principles,
+  title={Principles of Distributed Database Systems},
+  author={{\"O}zsu, T. and Valduriez, P.},
+  isbn={9781441988348},
+  lccn={2011922491},
+  series={Computer science},
+  url={http://books.google.fr/books?id=TOBaLQMuNV4C},
+  year={2011},
+  publisher={Springer}
+}
+
+
+Cassandra
+---------
+
+http://cassandra.apache.org
+[URL][Site officiel de Apache Cassandra]
+
+http://www.datastax.com/documentation/cassandra/2.1/cassandra/gettingStartedCassandraIntro.html
+[URL][Documentation sur le fonctionnement de Cassandra par DataStax]
+
+http://books.google.fr/books?id=MKGSbCbEdg0C
+[LIVRE][Guide de découverte de Cassandra]
+@book{hewitt2010cassandra,
+  title={Cassandra: The Definitive Guide},
+  author={Hewitt, E.},
+  isbn={9781449396640},
+  url={http://books.google.fr/books?id=MKGSbCbEdg0C},
+  year={2010},
+  publisher={O'Reilly Media}
+}
