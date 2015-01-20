@@ -5,46 +5,73 @@
 
 \bibliographystyle{alpha}
 
-\title{Éléments bibliographiques}
+\title{
+ \begin{minipage}\linewidth
+        \centering
+        Simulation d'algorithmes d'équilibrage de charge dans un environnement distribué 
+        \vskip3pt
+        \large Élements bibliographiques
+    \end{minipage}
+    }
 \author{Kévin Barreau \and Mounir Hamdane \and Guillaume Marques \and Corentin Salingue}
 \begin{document}
 
 \maketitle
+\section*{Rappel du contexte}
+
+Nous devons développer une solution logicielle permettant de tester des algorithmes d’équilibrage de charges dont le principe est indiqué par nos clients. Nous devons donc les implémenter.
+
+L’environnement de simulation voulu est un système distribué constitué de n noeuds de stockage dans lequel on souhaite stocker m objets. Un générateur de requêtes, que nous devrons implémenter, enverra des messages au système pour consulter un certain nombre d’objets.
+
+Le but est de déterminer quel algorithme distribue le plus efficacement les requêtes, afin d’obtenir le délai le moins long entre l’arrivée d’une requête dans le système et son traitement.
+
+Le client souhaite aussi avoir à sa disposition un outil pour visualiser l’état du système en temps réel. Par exemple, la charge (nombre de requêtes en attente) de chaque noeud.
+  
+
+
+
 \section{Système distribué}
 
 \begin{itemize}
-\item Le livre \cite{Ozsu2011} apporte les principes sur les bases de données distribuées, allant de l'architecture aux requêtes, en passant par l'optimisation, les transactions ou encore la concurrence, qui sont nécessaires afin de comprendre l'environnement dans lequel prend place le projet.
+\item Le livre \cite{Ozsu2011} apporte les principes sur les bases de données distribuée.
+
 \end{itemize}
 
 \section{Algorithmes d'équilibrage de charges}
 
+
+
 \begin{itemize}
-\item L'article \cite{BalancedAlloc99} met en exergue des algorithmes d'équilibrage, sources d'inspiration pour les clients dans l'élaboration de leurs algorithmes. Leur connaissance permet de s'assurer que leur implémentation sera réussie et conforme aux attentes.
+\item L'article \cite{BalancedAlloc99} met en exergue des algorithmes d'équilibrage, sources d'inspiration pour les clients dans l'élaboration de leurs algorithmes.
 
 \item Le papier \cite{RandomChoices05}, de là même manière que le précédent, s'intéresse de plus près à des algorithmes d'allocation aléatoire.
 
-\item L'article \cite{LoadBalancingPeertoPeer14} est aussi important car il traite des algorithmes d'équilibrage des charges dans un réseau pair à pair. Le projet prenant place dans un environnement distribué, la liaison entre l'algorithmique et le pair à pair peut être utile. 
+\item L'article \cite{LoadBalancingPeertoPeer14} est aussi important car il traite des algorithmes d'équilibrage des charges dans un réseau pair à pair.
+
 \end{itemize}
 
 \section{Cassandra}
 
 \begin{itemize}
-\item Le livre \cite{Hewitt2010} renseigne sur la compréhension du fonctionnement de Cassandra, ainsi que les structures particulières de ce système de base de données. Le projet demande une connaissance poussée de Cassandra afin de pouvoir le modifier en son coeur.
+\item Le livre \cite{Hewitt2010} renseigne sur la compréhension du fonctionnement de Cassandra, ainsi que les structures particulières de ce système de base de données.
 
-\item Le lien \cite{ApacheCassandra09} permet d'accéder à l'ensemble de la documentation technique et au dépôt des sources de la base de données Cassandra, indispensable pour modifier Cassandra. La visualisations des commits de la communauté open-source est un plus non négligeable si on souhaite modifier le code.
+\item Le lien \cite{ApacheCassandra09} permet d'accéder à l'ensemble de la documentation technique et au dépôt des sources de la base de données Cassandra.
 
-\item Le papier \cite{FacebookCassandra09} apporte les explications des créateurs de Cassandra, les plus à même de comprendre leur création. La compréhension globale de Cassandra est primordiale pour le projet.
+\item Le papier \cite{FacebookCassandra09} apporte les explications des créateurs de Cassandra.
 
-\item Le lien \cite{DSDocCassandra15} possède la documentation la plus complète sur la dernière version de Cassandra, et sur les manières de l'utiliser. Les nombreux exemples et les approfondissements sont des points d'appuis importants pour le projet.
+\item Le lien \cite{DSDocCassandra15} possède la documentation la plus complète sur la dernière version de Cassandra, et sur les manières de l'utiliser.
+Les nombreux exemples et les approfondissements sont des points d'appuis importants pour le projet.
 
 \end{itemize}
 
 \section{Visualisation}
 
 \begin{itemize}
-\item Le lien \cite{DSOpsCenter14} est intéressant pour le projet car il apporte un logiciel capable de montrer graphiquement des statistiques sur une base de données Cassandra opérationnelle. Il peut être utilisé dans le projet, ou apporté des pistes pour la visualisation des données.
+\item Le lien \cite{DSOpsCenter14} est intéressant pour le projet car il apporte un logiciel capable de montrer graphiquement des statistiques sur une base de données Cassandra opérationnelle
+Il peut être utilisé dans le projet, ou apporté des pistes pour la visualisation des données.
 
-\item L'article \cite{Tulip12} s'intéresse à un logiciel de représentation de graphe développé au Labri. La proximité des créateurs et la puissance du logiciel peuvent apporter une solution viable dans le projet en ce qui concerne la visualisation des données.
+\item L'article \cite{Tulip12} s'intéresse à un logiciel de représentation de graphe développé au Labri.
+La proximité des créateurs peut apporter une solution viable.
 \end{itemize} 
 
 \bibliography{bibliography}
