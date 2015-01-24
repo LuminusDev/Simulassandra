@@ -1,0 +1,77 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+\title{
+ \begin{minipage}\linewidth
+        \centering
+        Simulation d'algorithmes d'équilibrage de charge dans un environnement distribué 
+        \vskip3pt
+        \large Identifications des besoins
+    \end{minipage}
+ }
+    
+\author{Kevin Barreau \and Guillaume Marques \and Corentin Salingue}
+
+\begin{document}
+
+\maketitle
+
+\abstract
+Ce document dégage une première identification des besoins.
+Il s'agit d'un document support pour l'élaboration du cahier des charges
+
+\vspace{0.5cm}
+
+Nous devons développer une solution logicielle permettant de tester des algorithmes d'équilibrage.
+
+
+\section{Besoins fonctionnels}
+
+L'environnement de simulation voulu est un système distribué constitué de $n$ noeuds de stockage dans lequel on souhaite stocker $m$ objets.
+
+\subsection{Gestion des noeuds}
+
+
+\begin{itemize}
+ \item Creer un noeud
+ \item Supprimer un noeud
+ \item Sauvegarder un ensemble de noeuds avec leurs objets
+ \item Importer un ensemble de noeuds avec leurs objets afin de simuler sur un environemment précedemment crée.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Question } Quelle format pour le stockage d'un ensemble de noeuds ? \newline
+
+
+\subsection{Gestion des objets}
+
+\textbf{Question } Sur quel type d'objet allons-nous travailler ? \newline
+
+\begin{itemize}
+ \item Creer un objet
+ \item Supprimer un objet
+ \item Gérer la popularité d'un objet
+ \begin{itemize}
+  \item Implémenter l'algorithme d'approximation Space-Saving Algorithm
+  \item Ajouter un vecteur de taille $n$ à chaque objet dans le lequel on stockera les objets les plus populaires
+  \item Protocole de communication pour le calcul des objets les plus populaires \textbf{(Modifier gossip? Nouveau ?)}
+ \end{itemize}
+\end{itemize}
+
+\textbf{Question } Gestion de la popularité : quelle période (fixe ou fenêtre glissante) ? \newline
+
+\subsection{Gestion des requêtes}
+
+\begin{itemize}
+ \item Creer une requête
+ \item Envoyer une requête sur le réseau
+ \item Sauvegarder un jeu de requête
+ \item Importer un jeu de requête
+\end{itemize}
+
+\textbf{Question } Quelle format pour le stockage d'un jeu de requêtes ? \newline
+
+
+\end{document}
