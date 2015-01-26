@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
+\usepackage[tikz]{bclogo}
 
 \title{
  \begin{minipage}\linewidth
@@ -21,14 +22,21 @@
 Ce document dégage une première identification des besoins.
 Il s'agit d'un document support pour l'élaboration du cahier des charges
 
-\vspace{0.5cm}
+\newpage
 
-Nous devons développer une solution logicielle permettant de tester des algorithmes d'équilibrage.
-
+Nous devons développer une solution logicielle permettant de tester des algorithmes d'équilibrage de charge et de réplication des objets.
 
 \section{Besoins fonctionnels}
 
 L'environnement de simulation voulu est un système distribué constitué de $n$ noeuds de stockage dans lequel on souhaite stocker $m$ objets.
+
+\subsection{Environnement distribué}
+
+\begin{bclogo}[ombre = true, epOmbre = 0.25, couleurOmbre = black!30, logo = \bcinfo, arrondi = 0.1]{Environnement distribué}
+	Un environnement distribué est constitué de plusieurs machines appelées $noeuds$ sur lesquelles sont stockées les données et sont distribuées les tâches à effectuer, appelées aussi $requetes$.%
+\end{bclogo}
+
+	Le client souhaite l'utilisation de l'environnement distribué Cassandra car il pense que tous les aspects qu'il souhaite tester sont facilement implémentables ici.
 
 \subsection{Gestion des noeuds}
 
@@ -43,6 +51,8 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 \vspace{0.5cm}
 
 \textbf{Question } Quelle format pour le stockage d'un ensemble de noeuds ? \newline
+\textbf{Question } Combien de noeuds maximum ? \newline
+\textbf{Question } Position des noeuds sur le ring ? \newline
 
 
 \subsection{Gestion des objets}
@@ -55,12 +65,16 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
  \item Gérer la popularité d'un objet
  \begin{itemize}
   \item Implémenter l'algorithme d'approximation Space-Saving Algorithm
-  \item Ajouter un vecteur de taille $n$ à chaque objet dans le lequel on stockera les objets les plus populaires
+  \item Ajouter un vecteur de taille $n$ à chaque noeud dans le lequel on stockera les objets les plus populaires
   \item Protocole de communication pour le calcul des objets les plus populaires \textbf{(Modifier gossip? Nouveau ?)}
  \end{itemize}
 \end{itemize}
 
+\vspace{0.5cm}
+
 \textbf{Question } Gestion de la popularité : quelle période (fixe ou fenêtre glissante) ? \newline
+\textbf{Question } Position de l'objet sur le noeud ? \newline
+\textbf{Note } Bien définir l'algorithme. \newline
 
 \subsection{Gestion des requêtes}
 
@@ -71,7 +85,19 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
  \item Importer un jeu de requête
 \end{itemize}
 
+\vspace{0.5cm}
+
 \textbf{Question } Quelle format pour le stockage d'un jeu de requêtes ? \newline
 
+\subsection{Visualisation des données}
 
+\begin{itemize}
+ \item Temps de réponse moyen sur les requêtes passées.
+ \item Charge d'un noeud
+ \item Popularité des objets
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Note } Bien définir ces items. \newline
 \end{document}
