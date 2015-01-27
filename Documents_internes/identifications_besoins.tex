@@ -2,6 +2,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
 \usepackage[tikz]{bclogo}
+\usepackage{geometry}
+\geometry{hmargin=2.5cm,vmargin=1.5cm}
 
 \title{
  \begin{minipage}\linewidth
@@ -32,18 +34,25 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 
 \subsection{Environnement distribué}
 
-\begin{bclogo}[ombre = true, epOmbre = 0.25, couleurOmbre = black!30, logo = \bcinfo, arrondi = 0.1]{Environnement distribué}
-	Un environnement distribué est constitué de plusieurs machines appelées $noeuds$ sur lesquelles sont stockées les données et sont distribuées les tâches à effectuer, appelées aussi $requetes$.%
-\end{bclogo}
+Un environnement distribué est constitué de plusieurs machines, appelées \textit{noeuds}, sur lesquelles sont stockées les données et sont distribuées les tâches à effectuer, appelées \textit{requêtes}.
+	
+\vspace{0.5cm}
+%Le client souhaite l'utilisation de l'environnement distribué Cassandra car il pense que tous les aspects qu'il souhaite tester sont facilement implémentables ici.
+% Faux - Cassandra car c'est la BDD qu'ils connaissent le mieux.
+Utilisation de Cassandra. Pourquoi ? \newline
+\begin{itemize}
+ \item Le client est plus à l'aise avec cette solution (il a quelques connaissances sur le logiciel)
+ \item Pourquoi pas une autre BDD ? (développer)
+\end{itemize}
 
-	Le client souhaite l'utilisation de l'environnement distribué Cassandra car il pense que tous les aspects qu'il souhaite tester sont facilement implémentables ici.
+
 
 \subsection{Gestion des noeuds}
 
 
 \begin{itemize}
  \item Creer un noeud
- \item Supprimer un noeud
+ \item Supprimer un noeud (inutile d'après Kévin)s
  \item Sauvegarder un ensemble de noeuds avec leurs objets
  \item Importer un ensemble de noeuds avec leurs objets afin de simuler sur un environemment précedemment crée.
 \end{itemize}
