@@ -28,31 +28,47 @@ Il s'agit d'un document support pour l'élaboration du cahier des charges
 
 \newpage
 
+\renewcommand{\contentsname}{Sommaire} 
+
+\tableofcontents
+
+\newpage
+
 \section{Définition du projet}
 
-\subsection{Définitions}
+\subsection{Contexte}
 
 \paragraph{}
 L'expansion, au cours des deux dernières décennies, des réseaux et notamment d'Internet a engendré une importante création de données, massives par leur nombre et leur taille.
 Stocker cette information sur un seul point de stockage (ordinateur par exemple) n'est bien sûr plus envisageable, que ce soit pour des raisons  techniques ou pour des raisons de sécurité (pannes potentielles par exemple).
-Pour cela des systèmes de stockages dit distribués sont utilisés en pratique afin des les répartir sur dfférentes unités de stockages.
+Pour cela des systèmes de stockages dit distribués sont utilisés en pratique afin des les répartir sur différentes unités de stockages.
 
 \paragraph{Définition} Un environnement distribué est constitué de plusieurs machines (ordinateurs), appelées \textit{noeuds}, sur lesquelles sont stockées des données.
 
 \paragraph{Définition} Une donnée est une suite binaire de $0$ et de $1$ dont le contenu n'est pas important pour l'application.
 
-\paragraph{} Le client souhaite répartir toutes ces données de manières équitable entre les noeuds. De plus, il souhaite que ces données soient accessible afin de pouvoir les requêter et récuperer de l'information.
+\paragraph{} Le client souhaite répartir toutes ces données de manière équitable entre les noeuds. De plus, il souhaite que ces données soient accessibles afin de pouvoir les requêter et récuperer de l'information.
 
 \paragraph{Définition} Une requête est un message envoyé à une machine (ou plusieurs machines) afin de récuperer de l'information sur des données.
 Nous noterons que la nature de l'information est inutile pour le bon fonctionnement de l'application.
 
 
-\paragraph{} Pour répartir toutes ces données, notre client a développer de nouveaux algorithmes d'équilibrage de charges et de réplication qu'il souhaite tester dans un environnement distribué.
+\paragraph{} Pour répartir toutes ces données, notre client a développé de nouveaux algorithmes d'équilibrage de charge et de réplication qu'il souhaite tester dans un environnement distribué.
 
 \subsection{Finalité}
 
 \paragraph{} Nous devons développer une solution logicielle permettant de tester ces nouveaux algorithmes d'équilibrage de charge et de réplication.
 
+\paragraph{Définition} Un réseau...
+
+\paragraph{Définition} L'état du réseau...
+
+\paragraph{}Cette solution permet le paramétrage d'un réseau, c'est-à-dire le nombre de noeuds souhaité et la topologie du réseau.
+Le client pourra simuler différents jeux de données et jeux de requêtes sur ce réseau.
+Il pourra tester les algorithmes implémentés.
+Enfin, il pourra visualiser la topologie et l'état du réseau à tout moment.
+
+\newpage
 
 \section{Besoins fonctionnels}
 
@@ -60,69 +76,98 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 
 \subsection{Environnement distribué}
 
-Un environnement distribué est constitué de plusieurs machines, appelées \textit{noeuds}, sur lesquelles sont stockées les données et sont distribuées les tâches à effectuer, appelées \textit{requêtes}.
+%Un environnement distribué est constitué de plusieurs machines, appelées \textit{noeuds}, sur lesquelles sont stockées les données et sont distribuées les tâches à effectuer, appelées \textit{requêtes}.
 	
-\vspace{0.5cm}
+%\vspace{0.5cm}
 %Le client souhaite l'utilisation de l'environnement distribué Cassandra car il pense que tous les aspects qu'il souhaite tester sont facilement implémentables ici.
 % Faux - Cassandra car c'est la BDD qu'ils connaissent le mieux.
-Utilisation de Cassandra. Pourquoi ? \newline
-\begin{itemize}
- \item Le client est plus à l'aise avec cette solution (il a quelques connaissances sur le logiciel)
- \item Pourquoi pas une autre BDD ? (développer)
-\end{itemize}
+%Utilisation de Cassandra. Pourquoi ? \newline
+%\begin{itemize}
+% \item Le client est plus à l'aise avec cette solution (il a quelques connaissances sur le logiciel)
+% \item Pourquoi pas une autre BDD ? (développer)
+%\end{itemize}
 
 
 
 \subsection{Gestion des noeuds}
 
+\paragraph{} Un noeud est ...
 
-\begin{itemize}
- \item Creer un noeud
- \item Supprimer un noeud (inutile d'après Kévin)s
- \item Sauvegarder un ensemble de noeuds avec leurs objets
- \item Importer un ensemble de noeuds avec leurs objets afin de simuler sur un environemment précedemment crée.
-\end{itemize}
+\subsubsection{Creation d'un noeud}
+Lorem ipsum
 
-\vspace{0.5cm}
 
-\textbf{Question } Quelle format pour le stockage d'un ensemble de noeuds ? \newline
-\textbf{Question } Combien de noeuds maximum ? \newline
-\textbf{Question } Position des noeuds sur le ring ? \newline
+\subsubsection{Suppression d'un noeud}
+Lorem ipsum
 
 
 \subsection{Gestion des objets}
 
-\textbf{Question } Sur quel type d'objet allons-nous travailler ? \newline
+\paragraph{} Un objet est...
 
-\begin{itemize}
- \item Creer un objet
- \item Supprimer un objet
- \item Gérer la popularité d'un objet
- \begin{itemize}
-  \item Implémenter l'algorithme d'approximation Space-Saving Algorithm
-  \item Ajouter un vecteur de taille $n$ à chaque noeud dans le lequel on stockera les objets les plus populaires
-  \item Protocole de communication pour le calcul des objets les plus populaires \textbf{(Modifier gossip? Nouveau ?)}
- \end{itemize}
-\end{itemize}
+\subsubsection{Création d'un objet}
+Lorem ipsum
 
-\vspace{0.5cm}
+\subsubsection{Suppression d'un objet}
+Lorem ipsum
 
-\textbf{Question } Gestion de la popularité : quelle période (fixe ou fenêtre glissante) ? \newline
-\textbf{Question } Position de l'objet sur le noeud ? \newline
-\textbf{Note } Bien définir l'algorithme. \newline
+\subsubsection{Popularité d'un objet}
+Lorem ipsum
+
+%\textbf{Question } Sur quel type d'objet allons-nous travailler ? \newline
+
+%\begin{itemize}
+ %\item Creer un objet
+ %\item Supprimer un objet
+ %\item Gérer la popularité d'un objet
+ %\begin{itemize}
+  %\item Implémenter l'algorithme d'approximation Space-Saving Algorithm
+  %\item Ajouter un vecteur de taille $n$ à chaque noeud dans le lequel on stockera les objets les plus populaires
+  %\item Protocole de communication pour le calcul des objets les plus populaires \textbf{(Modifier gossip? Nouveau ?)}
+ %\end{itemize}
+%\end{itemize}
+
+%\vspace{0.5cm}
+
+%\textbf{Question } Gestion de la popularité : quelle période (fixe ou fenêtre glissante) ? \newline
+%\textbf{Question } Position de l'objet sur le noeud ? \newline
+%\textbf{Note } Bien définir l'algorithme. \newline
+
+\subsection{Gestion d'un réseau}
+
+\paragraph{} Comme défini précedemment, un réseau est ...
+
+\subsubsection{Sauvegarde d'un réseau}
+Lorem ipsum
+
+\subsubsection{Importation d'un réseau}
+Lorem ipsum
+
+\subsubsection{Topologie du réseau}
+Lorem ipsum
+
 
 \subsection{Gestion des requêtes}
 
-\begin{itemize}
- \item Creer une requête
- \item Envoyer une requête sur le réseau
- \item Sauvegarder un jeu de requête
- \item Importer un jeu de requête
-\end{itemize}
+\paragraph{} Une requête est ...
 
-\vspace{0.5cm}
+\subsubsection{Création d'une requête}
+Lorem ipsum
 
-\textbf{Question } Quelle format pour le stockage d'un jeu de requêtes ? \newline
+\subsubsection{Envoi d'une requête}
+Lorem ipsum
+
+\subsubsection{Création d'un jeu de requête}
+Lorem ipsum
+
+\subsubsection{Sauvegarde d'un jeu de requête}
+Lorem ipsum
+
+\subsubsection{Importation d'un jeu de requête}
+Lorem ipsum
+
+
+%\textbf{Question } Quelle format pour le stockage d'un jeu de requêtes ? \newline
 
 \subsection{Visualisation des données}
 
@@ -132,7 +177,23 @@ Utilisation de Cassandra. Pourquoi ? \newline
  \item Popularité des objets
 \end{itemize}
 
-\vspace{0.5cm}
 
 \textbf{Note } Bien définir ces items. \newline
+
+
+\newpage
+
+\section{Besoins non fonctionnels}
+
+
+
+
+\newpage
+
+\section{Livrables}
+
+
+
+
+
 \end{document}
