@@ -5,6 +5,8 @@
 \usepackage{geometry}
 \geometry{hmargin=2.5cm,vmargin=1.5cm}
 
+\setlength{\parskip}{1ex plus 2ex minus 1ex}
+
 \title{
  \begin{minipage}\linewidth
         \centering
@@ -26,7 +28,31 @@ Il s'agit d'un document support pour l'élaboration du cahier des charges
 
 \newpage
 
-Nous devons développer une solution logicielle permettant de tester des algorithmes d'équilibrage de charge et de réplication des objets.
+\section{Définition du projet}
+
+\subsection{Définitions}
+
+\paragraph{}
+L'expansion, au cours des deux dernières décennies, des réseaux et notamment d'Internet a engendré une importante création de données, massives par leur nombre et leur taille.
+Stocker cette information sur un seul point de stockage (ordinateur par exemple) n'est bien sûr plus envisageable, que ce soit pour des raisons  techniques ou pour des raisons de sécurité (pannes potentielles par exemple).
+Pour cela des systèmes de stockages dit distribués sont utilisés en pratique afin des les répartir sur dfférentes unités de stockages.
+
+\paragraph{Définition} Un environnement distribué est constitué de plusieurs machines (ordinateurs), appelées \textit{noeuds}, sur lesquelles sont stockées des données.
+
+\paragraph{Définition} Une donnée est une suite binaire de $0$ et de $1$ dont le contenu n'est pas important pour l'application.
+
+\paragraph{} Le client souhaite répartir toutes ces données de manières équitable entre les noeuds. De plus, il souhaite que ces données soient accessible afin de pouvoir les requêter et récuperer de l'information.
+
+\paragraph{Définition} Une requête est un message envoyé à une machine (ou plusieurs machines) afin de récuperer de l'information sur des données.
+Nous noterons que la nature de l'information est inutile pour le bon fonctionnement de l'application.
+
+
+\paragraph{} Pour répartir toutes ces données, notre client a développer de nouveaux algorithmes d'équilibrage de charges et de réplication qu'il souhaite tester dans un environnement distribué.
+
+\subsection{Finalité}
+
+\paragraph{} Nous devons développer une solution logicielle permettant de tester ces nouveaux algorithmes d'équilibrage de charge et de réplication.
+
 
 \section{Besoins fonctionnels}
 
