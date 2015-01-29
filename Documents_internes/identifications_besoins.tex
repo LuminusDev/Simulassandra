@@ -60,9 +60,9 @@ Nous noterons que la nature de l'information est inutile pour le bon fonctionnem
 
 \paragraph{} Nous devons développer une solution logicielle permettant de tester ces nouveaux algorithmes d'équilibrage de charge et de réplication dans un environnement distribué.
 
-\paragraph{Définition} Un réseau est un ensemble de noeuds qui sont reliés entre eux (en général par Internet) et qui comuniquent ensemble afin de traiter toutes les requêtes reçues.
+\paragraph{Définition} Un réseau est un ensemble de noeuds qui sont reliés entre eux (en général par Internet) et qui communiquent ensemble afin de traiter toutes les requêtes reçues.
 
-\paragraph{Définition} La topologie d'un réseau représente l'architecture physique ou logicielle des liens entre les noeuds. Elle comporte aussi des informations sur 
+\paragraph{Définition} La topologie d'un réseau représente l'architecture physique ou logicielle des liens entre les noeuds. Elle comporte aussi des informations sur la
  hiérarchie des noeuds, le placement spatial et les divers équipements reliant les noeuds.
 
 \paragraph{Définition} L'état d'un réseau est l'ensemble des informations caractérisant un réseau (topologie par exemple) ainsi que des informations sur les noeuds (comme leur charge actuelle).
@@ -93,32 +93,36 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 % \item Pourquoi pas une autre BDD ? (développer)
 %\end{itemize}
 
+\subsection{Gestion d'un réseau}
 
+\paragraph{} Comme défini précedemment, un réseau est un ensemble de noeuds qui sont reliés entre eux (en général par Internet) et qui communiquent ensemble afin de traiter toutes les requêtes reçues.
 
-\subsection{Gestion des noeuds}
+\subsubsection{Gestion des noeuds}
 
-\paragraph{} Un noeud est ...
+\paragraph{} Un noeud est une machine (ordinateur généralement) pouvant stocker des données et traiter des requêtes.
 
-\subsubsection{Creation d'un noeud}
-Lorem ipsum
+\paragraph{} Le client souhaite pouvoir :
+\begin{itemize}
+ \item Créer un noeud
+ \item Supprimer un noeud
+\end{itemize}
 
-
-\subsubsection{Suppression d'un noeud}
-Lorem ipsum
-
-
-\subsection{Gestion des objets}
+\subsubsection{Gestion des objets}
 
 \paragraph{} Un objet est...
 
-\subsubsection{Création d'un objet}
-Lorem ipsum
-
-\subsubsection{Suppression d'un objet}
-Lorem ipsum
+\paragraph{} Le client souhaite pouvoir :
+\begin{itemize}
+ \item Créer un objet
+ \item Supprimer un objet
+\end{itemize}
 
 \subsubsection{Popularité d'un objet}
-Lorem ipsum
+
+\paragraph{} Les algorithmes du client nécessitent de connaître la popularité d'un objet dans le réseau.
+La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plus ce nombre de requête est grand, plus l'objet est populaire.
+
+
 
 %\textbf{Question } Sur quel type d'objet allons-nous travailler ? \newline
 
@@ -139,9 +143,8 @@ Lorem ipsum
 %\textbf{Question } Position de l'objet sur le noeud ? \newline
 %\textbf{Note } Bien définir l'algorithme. \newline
 
-\subsection{Gestion d'un réseau}
-
-\paragraph{} Comme défini précedemment, un réseau est ...
+\subsubsection{Topologie du réseau}
+Lorem ipsum
 
 \subsubsection{Sauvegarde d'un réseau}
 Lorem ipsum
@@ -149,16 +152,22 @@ Lorem ipsum
 \subsubsection{Importation d'un réseau}
 Lorem ipsum
 
-\subsubsection{Topologie du réseau}
-Lorem ipsum
 
 
-\subsection{Gestion des requêtes}
+\subsection{Test des algorithmes}
 
-\paragraph{} Une requête est ...
 
-\subsubsection{Création d'une requête}
-Lorem ipsum
+\subsection{Simulation de requêtes}
+
+\paragraph{} Une requête est un message envoyé à une machine (ou plusieurs machines) afin de récupérer ou de modifier de l'information sur des données.
+
+\subsubsection{Gestion des requêtes}
+
+\paragraph{} Le client souhaite pouvoir :
+\begin{itemize}
+ \item Créer une requête
+ \item Supprimer une requête
+\end{itemize}
 
 \subsubsection{Envoi d'une requête}
 Lorem ipsum
@@ -191,12 +200,15 @@ Lorem ipsum
 
 \section{Besoins non fonctionnels}
 
+\subsection{Cassandra}
 
+\paragraph{} Cassandra est une base de données distribué. 
 
 
 \newpage
 
 \section{Livrables}
+
 
 
 
