@@ -3,12 +3,16 @@
 \usepackage[french]{babel}
 \usepackage[tikz]{bclogo}
 \usepackage{geometry}
+\usepackage{array}
 \geometry{hmargin=2.5cm,vmargin=1.5cm}
 
 \setlength{\parskip}{1ex plus 2ex minus 1ex}
+\newcolumntype{M}[1]{
+    >{\raggedright}m{#1}
+}
 
 \newcommand{\besoin}[2] {
-  ($Priorit\acute{e} : #1, criticit\acute{e} : #2$)
+  (\textit{Priorité} : #1, \textit{criticité} : #2)
 }
 
 \title{
@@ -58,7 +62,7 @@ Nous noterons que la nature de l'information est inutile pour le bon fonctionnem
 
 \paragraph{} Pour répartir toutes ces données, notre client a développé de nouveaux algorithmes d'équilibrage de charge et de réplication qu'il souhaite tester dans un environnement distribué.
 
-\paragraph{Définition} Une $charge$ est associée à un noeud et désigne le nombre de requêtes que le noeud doit traiter. La réplication d'une donnée consiste à faire des copies de cette donnée sur d'autres noeuds.
+\paragraph{Définition} Une \textit{charge} est associée à un noeud et désigne le nombre de requêtes que le noeud doit traiter. La réplication d'une donnée consiste à faire des copies de cette donnée sur d'autres noeuds.
 
 \subsection{Finalité}
 
@@ -79,7 +83,51 @@ Il pourra tester ses algorithmes implémentés.
 Enfin, il pourra visualiser la topologie et l'état du réseau à tout moment.
 
 \newpage
+\section{Hiérarchisation des besoins}
 
+\paragraph{} Nous avons dégagé des précédentes réunions, une liste de besoins fonctionnels et non-fonctionnels. 
+Pour mieux les comparer, nous les avons hiérarchisé en fonction de leur priorité et de leur criticité.
+
+\subsection{Priorité}
+
+\paragraph{} La priorité est un indicateur de l'ordre dans lequel nous devrons implémenter les besoins afin de satisfaire au mieux les exigences du client.
+
+
+\paragraph{}
+\begin{tabular}{| l | M{3cm} | M{9cm} |}
+    \hline
+    Valeur & Signification & Description \tabularnewline
+    \hline
+    1 & Priorité haute & A implémenter dans les premiers temps \tabularnewline
+    \hline
+    2 & Priorité moyenne & A implémenter  \tabularnewline
+    \hline
+    3 & Priorité faible & A implémenter (en fonction du temps restant)  \tabularnewline
+    \hline
+ \end{tabular}
+ 
+
+\subsection{Criticité}
+
+\paragraph{} Le niveau de criticité d'un besoin est un indicateur de l'impact qu'aura la non-implémentation de ce besoin sur le bon fonctionnement de l'application.
+
+
+\paragraph{}
+\begin{tabular}{| l | M{3cm} | M{9cm} |}
+    \hline
+    Valeur & Signification & Description \tabularnewline
+    \hline
+    1 & Criticité extrême & L'application ne fonctionnera pas  \tabularnewline
+    \hline
+    2 & Criticité haute & Certaines fonctionnalités de l'application ne fonctionneront pas  \tabularnewline
+    \hline
+    3 & Criticité moyenne & Certaines fonctionnalités seront perturbées  \tabularnewline
+    \hline
+    4 & Criticité faible & L'application fonctionnera correctement  \tabularnewline
+    \hline
+ \end{tabular}
+
+\newpage
 \section{Besoins fonctionnels}
 
 L'environnement de simulation voulu est un système distribué constitué de $n$ noeuds de stockage dans lequel on souhaite stocker $m$ objets.
