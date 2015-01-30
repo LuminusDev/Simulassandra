@@ -7,6 +7,10 @@
 
 \setlength{\parskip}{1ex plus 2ex minus 1ex}
 
+\newcommand{\besoin}[2] {
+  ($Priorit\acute{e} : #1, criticit\acute{e} : #2$)
+}
+
 \title{
  \begin{minipage}\linewidth
         \centering
@@ -95,16 +99,22 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 
 \subsection{Gestion d'un réseau}
 
-\paragraph{} Comme défini précedemment, un réseau est un ensemble de noeuds qui sont reliés entre eux (en général par Internet) et qui communiquent ensemble afin de traiter toutes les requêtes reçues.
+\paragraph{} Comme défini précédemment, un réseau est un ensemble de noeuds qui sont reliés entre eux (en général par Internet) et qui communiquent ensemble afin de traiter toutes les requêtes reçues.
 
 \subsubsection{Gestion des noeuds}
 
-\paragraph{} Un noeud est une machine (ordinateur généralement) pouvant stocker des données et traiter des requêtes.
+\paragraph{} Un noeud est une machine (ordinateur généralement) pouvant stocker des données et traiter des requêtes. Un noeud possède des données internes. Ces données sont propres au fonctionnement du noeud (comme la charge par exemple).
 
-\paragraph{} Le client souhaite pouvoir :
+\paragraph{} Le projet nécessite de :
 \begin{itemize}
- \item Créer un noeud
- \item Supprimer un noeud
+ \item Créer un noeud \besoin{1}{1}
+ \paragraph{} La création d'un noeud se fait au moment où le réseau n'existe pas encore. Le projet ne prend en compte ni la création dynamique de noeud (création et ajout d'un noeud après que le réseau soit créé), ni la suppression de noeud. Il est possible de séparer ce besoin en plusieurs sous-besoins :
+ \begin{itemize}
+ 	\item Créer un noeud dans l'environnement de simulation
+ 	\item Initialiser les données internes d'un noeud
+ \end{itemize}
+ \item Récupérer les données internes d'un noeud \besoin{1}{1}
+ \item Mettre à jour les données internes d'un noeud \besoin{1}{1}
 \end{itemize}
 
 \subsubsection{Gestion des objets}
@@ -144,7 +154,14 @@ La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plu
 %\textbf{Note } Bien définir l'algorithme. \newline
 
 \subsubsection{Topologie du réseau}
-Lorem ipsum
+
+\paragraph{} Un noeud maître est un noeud connu de tous les autres noeuds dans le réseau. Un noeud communique à un intervalle de temps régulier avec les autres noeuds du réseau. Tous les noeuds du réseau possèdent des informations sur les autres noeuds du réseau.
+
+\begin{itemize}
+	\item Communiquer les données internes à un noeud maître \besoin{1}{1}
+	\item Paramétrer l'intervalle de temps de communication \besoin{2}{3}
+	\item Stocker les informations des autres noeuds \besoin{1}{2}
+\end{itemize}
 
 \subsubsection{Sauvegarde d'un réseau}
 Lorem ipsum
@@ -156,6 +173,17 @@ Lorem ipsum
 
 \subsection{Test des algorithmes}
 
+\paragraph{} La conformité des algorithmes implémentés est assuré par des jeux de tests qui suivent la démarche :
+\begin{itemize}
+	\item Créer un jeu de test à la main, comprenant les paramètres de création et l'ensemble des requêtes à traiter
+	\item Faire fonctionner l'algorithme à la main
+	\item Stocker l'état final du fonctionnement de l'algorithme
+	\item Faire valider le processus à la main par le client
+	\item Lancer la simulation de l'algorithme avec le jeu de test créé à la main
+	\item Vérifier les résultats constatés avec les résultats attendus
+	
+\paragraph{} Si une différence est visible lors de la vérification, une vérification par le client peut être envisagée dans le cas de résultats $presque$ similaires. La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
+\end{itemize}
 
 \subsection{Simulation de requêtes}
 

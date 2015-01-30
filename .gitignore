@@ -13,6 +13,7 @@ hs_err_pid*
 
 
 #Latex
-.aux
-.log
-
+*.aux
+*.log
+*.gz
+*.toc
