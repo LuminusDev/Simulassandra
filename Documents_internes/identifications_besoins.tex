@@ -4,6 +4,8 @@
 \usepackage[tikz]{bclogo}
 \usepackage{geometry}
 \usepackage{array}
+\usepackage{pgfgantt}
+\usepackage[counterclockwise]{rotating}
 \geometry{hmargin=2.5cm,vmargin=1.5cm}
 
 \setlength{\parskip}{1ex plus 2ex minus 1ex}
@@ -346,6 +348,49 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 
 \subsubsection{Actualisation des vues}
 \paragraph{} Lorem ipsum
+
+
+\newpage
+
+\section{Répartitions des tâches}
+\subsection{Diagramme de Gantt}
+\rotatebox{270}{
+\begin{ganttchart}[
+hgrid,
+vgrid,
+inline = true,
+x unit=4.5mm,
+time slot format=isodate,
+milestone inline label node/.append style={left=3mm}
+]{2015-02-16}{2015-04-08}
+\gantttitlecalendar{month=name, week, day} \\
+
+\ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-01} \\
+\ganttbar{A1}{2015-02-16}{2015-02-22} \\
+
+
+\ganttmilestone{Livrable final}{2015-04-08}
+
+\end{ganttchart}
+}
+
+
+\newpage
+\subsection{Affectation des tâches}
+\paragraph{}
+\begin{tabular}{| l | M{5cm} | M{3cm} | M{5.5cm} |}
+    \hline
+    Fct & Description & Développeur(s) & Commentaire \tabularnewline
+    \hline
+    A1 & Création d'un noeud & Guillaume & blabla  \tabularnewline
+    \hline
+    A2 & Création d'un noeud & Guillaume \and Kévin & blabla  \tabularnewline
+    \hline
+    A3 & Création d'un noeud & Mounir \and Corentin \and Kévin & blabla  \tabularnewline
+    \hline
+    A4 & Création d'un noeud & Corentin \and Guillaume & blabla  \tabularnewline
+    \hline
+ \end{tabular}
 
 \newpage
 
