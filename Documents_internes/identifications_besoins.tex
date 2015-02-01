@@ -134,6 +134,9 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 
 \subsection{Environnement distribué}
 
+\paragraph{} Nous évoluerons dans un environnement distribué \besoin{1}{1}.
+En effet, le client souhaite tester des algorithmes d'équilibrage de charges et de gestion de copies qui ne peuvent fonctionner uniquement dans un environnement distribué.
+
 %Un environnement distribué est constitué de plusieurs machines, appelées \textit{noeuds}, sur lesquelles sont stockées les données et sont distribuées les tâches à effectuer, appelées \textit{requêtes}.
 	
 %\vspace{0.5cm}
@@ -153,14 +156,16 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 
 \paragraph{} Un noeud est une machine (ordinateur généralement) pouvant stocker des données et traiter des requêtes. Un noeud possède des données internes. Ces données sont propres au fonctionnement du noeud (comme la charge par exemple).
 
-\paragraph{} Le projet nécessite de :
-\begin{itemize}
- \item Créer un noeud \besoin{1}{1}
- \paragraph{} La création d'un noeud se fait au moment où le réseau n'existe pas encore. Le projet ne prend en compte ni la création dynamique de noeud (création et ajout d'un noeud après que le réseau soit créé), ni la suppression de noeud. Il est possible de séparer ce besoin en plusieurs sous-besoins :
+\paragraph{Création d'un noeud} La création d'un noeud \besoin{1}{1} se fait au moment où le réseau n'existe pas encore. 
+Le projet ne prend en compte ni la création dynamique de noeud (création et ajout d'un noeud après que le réseau soit créé), ni la suppression de noeud. 
+Il est possible de séparer ce besoin en plusieurs sous-besoins :
  \begin{itemize}
  	\item Créer un noeud dans l'environnement de simulation
- 	\item Initialiser les données internes d'un noeud
+ 	\item Initialiser les données internes d'un noeud \vspace{0.2cm}
  \end{itemize}
+ 
+\paragraph{Données d'un noeud} De plus, l'application doit permettre :
+\begin{itemize}
  \item Récupérer les données internes d'un noeud \besoin{1}{1}
  \item Mettre à jour les données internes d'un noeud \besoin{1}{1}
 \end{itemize}
@@ -205,6 +210,7 @@ La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plu
 
 \paragraph{} Un noeud maître est un noeud connu de tous les autres noeuds dans le réseau. Un noeud communique à un intervalle de temps régulier avec les autres noeuds du réseau. Tous les noeuds du réseau possèdent des informations sur les autres noeuds du réseau.
 
+\paragraph{} L'application doit permettre :
 \begin{itemize}
 	\item Communiquer les données internes à un noeud maître \besoin{1}{1}
 	\item Paramétrer l'intervalle de temps de communication \besoin{2}{3}
@@ -212,16 +218,44 @@ La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plu
 \end{itemize}
 
 \subsubsection{Sauvegarde d'un réseau}
-Lorem ipsum
+\paragraph{}  Objet de la prochaine réunion
 
 \subsubsection{Importation d'un réseau}
-Lorem ipsum
+\paragraph{} Objet de la prochaine réunion
 
 
+\subsection{Algorithmes}
 
-\subsection{Test des algorithmes}
+\subsubsection{Algorithmes à implémenter}
 
-\paragraph{} La conformité des algorithmes implémentés est assuré par des jeux de tests qui suivent la démarche :
+\paragraph{Définitions} La charge minimum est ...
+
+\paragraph{} La charge moyenne est ...
+
+\paragraph{} Les algorithmes d'équilibrage de charge à implémenter sont (extrait du modèle du client) :
+
+\begin{itemize}
+ \item \textbf{SLVO} \besoin{1}{1} 
+ \begin{itemize}
+  \item Déterminer la charge minimum courante.
+  \item Si la charge du noeud est inférieure ou égale à la charge minimum, il s'affecte toutes les requêtes en attente et en avertit les autres noeuds. \vspace{0.2cm}
+ \end{itemize}
+ 
+ \item \textbf{AverageDegree} \besoin{1}{1} 
+ \begin{itemize}
+  \item Déterminer la charge moyenne courante
+  \item Si la charge du noeud est inférieure ou égale à la charge moyenne, il s'affecte toutes les requêtes en attente et en avertit les autres noeuds.
+ \end{itemize}
+
+\end{itemize}
+
+\paragraph{Gestion des copies} Entité à part entière ? (prochaine réunion)
+
+
+\subsubsection{Conformité des implémentations}
+
+\paragraph{} La conformité des algorithmes implémentés est assurée par des jeux de tests suivant la démarche :
+
 \begin{itemize}
 	\item Créer un jeu de test à la main, comprenant les paramètres de création et l'ensemble des requêtes à traiter
 	\item Faire fonctionner l'algorithme à la main
@@ -229,9 +263,17 @@ Lorem ipsum
 	\item Faire valider le processus à la main par le client
 	\item Lancer la simulation de l'algorithme avec le jeu de test créé à la main
 	\item Vérifier les résultats constatés avec les résultats attendus
-	
-\paragraph{} Si une différence est visible lors de la vérification, une vérification par le client peut être envisagée dans le cas de résultats $presque$ similaires. La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
 \end{itemize}
+	
+\paragraph{} Si il y a une différence entre le résultat de l'éxécution de l'algorithme à la main et le résultat de l'éxécution par simulation, une vérification par le client peut être envisagée dans le cas de résultats \textit{presque} similaires. 
+La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
+
+
+\subsubsection{Autres algorithmes}
+
+\paragraph{} Le client souhaite aussi avoir la possibilité de tester d'autres algorithmes. 
+Notre solution doit donc proposer un système permettant d'implémenter ces algorithmes et de les tester. \besoin{3}{3} 
+
 
 \subsection{Simulation de requêtes}
 
@@ -246,16 +288,16 @@ Lorem ipsum
 \end{itemize}
 
 \subsubsection{Envoi d'une requête}
-Lorem ipsum
+\paragraph{} L'envoi d'une requête peut se faire
 
 \subsubsection{Création d'un jeu de requête}
-Lorem ipsum
+\paragraph{} Objet de la prochaine réunion
 
 \subsubsection{Sauvegarde d'un jeu de requête}
-Lorem ipsum
+\paragraph{} Objet de la prochaine réunion
 
 \subsubsection{Importation d'un jeu de requête}
-Lorem ipsum
+\paragraph{} Objet de la prochaine réunion
 
 
 %\textbf{Question } Quelle format pour le stockage d'un jeu de requêtes ? \newline
@@ -278,7 +320,14 @@ Lorem ipsum
 
 \subsection{Cassandra}
 
-\paragraph{} Cassandra est une base de données distribué. 
+\paragraph{} Cassandra est une base de données distribuée. 
+
+
+\subsection{Gestion d'un réseau}
+
+\subsection{Algorithmes}
+
+\subsection{Visualisation des données}
 
 
 \newpage
