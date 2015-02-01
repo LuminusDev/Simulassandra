@@ -48,21 +48,23 @@ Il s'agit d'un document support pour l'élaboration du cahier des charges
 
 \paragraph{}
 L'expansion, au cours des deux dernières décennies, des réseaux et notamment d'Internet a engendré une importante création de données, massives par leur nombre et leur taille.
-Stocker ces informations sur un seul point de stockage (ordinateur par exemple) n'est bien sûr plus envisageable, que ce soit pour des raisons techniques ou pour des raisons de sécurité (pannes potentielles par exemple).
+Stocker ces informations sur un seul point de stockage (ordinateur par exemple) n'est bien sûr plus envisageable, que ce soit pour des raisons techniques ou pour des raisons de sûreté (pannes potentielles par exemple).
 Pour cela des systèmes de stockages dits distribués sont utilisés en pratique afin des les répartir sur différentes unités de stockages.
 
 \paragraph{Définition} Un environnement distribué est constitué de plusieurs machines (ordinateurs), appelées \textit{noeuds}, sur lesquelles sont stockées des données.
 
 \paragraph{Définition} Une donnée est une suite binaire de $0$ et de $1$ dont le contenu n'est pas important pour l'application.
 
-\paragraph{} Le client souhaite répartir toutes ces données de manière équitable entre les noeuds. De plus, il souhaite que ces données soient accessibles afin de pouvoir les requêter et récuperer de l'information.
+\paragraph{} Le client souhaite répartir toutes ces données de manière équitable entre les noeuds. De plus, il souhaite que ces données soient accessibles afin de pouvoir les requêter et récupérer de l'information.
 
 \paragraph{Définition} Une requête est un message envoyé à une machine (ou plusieurs machines) afin de récupérer ou de modifier de l'information sur des données.
 Nous noterons que la nature de l'information est inutile pour le bon fonctionnement de l'application.
 
 \paragraph{} Pour répartir toutes ces données, notre client a développé de nouveaux algorithmes d'équilibrage de charge et de réplication qu'il souhaite tester dans un environnement distribué.
 
-\paragraph{Définition} Une \textit{charge} est associée à un noeud et désigne le nombre de requêtes que le noeud doit traiter. La réplication d'une donnée consiste à faire des copies de cette donnée sur d'autres noeuds.
+\paragraph{Définition} Une \textit{charge} est associée à un noeud et désigne le nombre de requêtes que le noeud doit traiter. 
+
+\paragraph{Définition} La réplication d'une donnée consiste à faire des copies de cette donnée sur d'autres noeuds.
 
 \subsection{Finalité}
 
@@ -75,18 +77,20 @@ Nous noterons que la nature de l'information est inutile pour le bon fonctionnem
 
 \paragraph{Définition} L'état d'un réseau est l'ensemble des informations caractérisant un réseau (topologie par exemple) ainsi que des informations sur les noeuds (comme leur charge actuelle).
 
-%définir jeux de données & jeux de requêtes%
-%définir à tout moment%
+\paragraph{Définition} Un jeu de données est un ensemble de données dont on connait la position sur les noeuds (la donnée numéro X est sur le noeud numéro Y), éventuellement, leur contenu et qu'on est capable d'exporter et de reproduire. L'export pourra se faire sous la forme d'un jeu de requêtes pour placer les données choisies.
+
+\paragraph{Définition} Un jeu de requêtes est un ensemble de requêtes qu'on est capable d'exporter sous forme d'un programme ou d'un fichier qui sera exécuté par la solution et qui peut être reproduit.
+
 \paragraph{}Cette solution doit permettre le paramétrage d'un réseau, c'est-à-dire le nombre de noeuds souhaité et la topologie du réseau.
-Le client pourra simuler différents jeux de données et jeux de requêtes sur ce réseau.
+Le client pourra simuler différents jeux de données et jeux de requêtes sur ce réseau. Cela permettra de comparer l'efficacité de ces algorithmes avec le même environnement (même jeux de données et de requêtes).
 Il pourra tester ses algorithmes implémentés.
-Enfin, il pourra visualiser la topologie et l'état du réseau à tout moment.
+Enfin, il pourra visualiser la topologie et l'état du réseau \textit{à tout moment}.
 
 \newpage
 \section{Hiérarchisation des besoins}
 
 \paragraph{} Nous avons dégagé des précédentes réunions, une liste de besoins fonctionnels et non-fonctionnels. 
-Pour mieux les comparer, nous les avons hiérarchisé en fonction de leur priorité et de leur criticité.
+Pour mieux les comparer, nous les avons hiérarchisés en fonction de leur priorité et de leur criticité.
 
 \subsection{Priorité}
 
@@ -183,7 +187,7 @@ Il est possible de séparer ce besoin en plusieurs sous-besoins :
 \subsubsection{Popularité d'un objet}
 
 \paragraph{} Les algorithmes du client nécessitent de connaître la popularité d'un objet dans le réseau.
-La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plus ce nombre de requête est grand, plus l'objet est populaire.
+La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plus ce nombre de requêtes est grand, plus l'objet est populaire.
 
 
 
