@@ -143,17 +143,6 @@ L'environnement de simulation voulu est un système distribué constitué de $n$
 \paragraph{} Nous évoluerons dans un environnement distribué \besoin{1}{1}.
 En effet, le client souhaite tester des algorithmes d'équilibrage de charges et de gestion de copies qui ne peuvent fonctionner uniquement dans un environnement distribué.
 
-%Un environnement distribué est constitué de plusieurs machines, appelées \textit{noeuds}, sur lesquelles sont stockées les données et sont distribuées les tâches à effectuer, appelées \textit{requêtes}.
-	
-%\vspace{0.5cm}
-%Le client souhaite l'utilisation de l'environnement distribué Cassandra car il pense que tous les aspects qu'il souhaite tester sont facilement implémentables ici.
-% Faux - Cassandra car c'est la BDD qu'ils connaissent le mieux.
-%Utilisation de Cassandra. Pourquoi ? \newline
-%\begin{itemize}
-% \item Le client est plus à l'aise avec cette solution (il a quelques connaissances sur le logiciel)
-% \item Pourquoi pas une autre BDD ? (développer)
-%\end{itemize}
-
 \subsection{Gestion d'un réseau}
 
 \paragraph{} Comme défini précédemment, un réseau est un ensemble de noeuds qui sont reliés entre eux (en général par Internet) et qui communiquent ensemble afin de traiter toutes les requêtes reçues.
@@ -190,8 +179,6 @@ Il est possible de séparer ce besoin en plusieurs sous-besoins :
 
 \paragraph{} Les algorithmes du client nécessitent de connaître la popularité d'un objet dans le réseau.
 La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plus ce nombre de requêtes est grand, plus l'objet est populaire.
-
-
 
 %\textbf{Question } Sur quel type d'objet allons-nous travailler ? \newline
 
@@ -326,8 +313,11 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 
 \subsection{Cassandra}
 
-\paragraph{} Cassandra est une base de données distribuée. 
+\paragraph{} Cassandra est une base de données distribuée.
+Nous créons notre environnement de simulation à partir de cette application.
 
+\paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
+En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
 
 \subsection{Gestion d'un réseau}
 
@@ -336,6 +326,9 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 
 \subsubsection{Méthode de calcul de la popularité}
 \paragraph{} Lorem ipsum
+
+\subsubsection{Taille des données}
+\paragraph{}Lorem ipsum
 
 \subsection{Algorithmes}
 
@@ -347,6 +340,9 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 \paragraph{} Lorem ipsum
 
 \subsubsection{Actualisation des vues}
+\paragraph{} Lorem ipsum
+
+\subsection{Maintenabilité et évolutivité du code}
 \paragraph{} Lorem ipsum
 
 
