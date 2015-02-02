@@ -37,13 +37,16 @@
 
 \abstract
 Ce document dégage une première identification des besoins.
-Il s'agit d'un document support pour l'élaboration du cahier des charges
+
+
 
 \newpage
 
-\renewcommand{\contentsname}{Sommaire} 
 
+\renewcommand{\contentsname}{Sommaire} 
 \tableofcontents
+
+
 
 \newpage
 
@@ -51,8 +54,7 @@ Il s'agit d'un document support pour l'élaboration du cahier des charges
 
 \subsection{Contexte}
 
-\paragraph{}
-L'expansion, au cours des deux dernières décennies, des réseaux et notamment d'Internet a engendré une importante création de données, massives par leur nombre et leur taille.
+\paragraph{} L'expansion, au cours des deux dernières décennies, des réseaux et notamment d'Internet a engendré une importante création de données, massives par leur nombre et leur taille.
 Stocker ces informations sur un seul point de stockage (ordinateur par exemple) n'est bien sûr plus envisageable, que ce soit pour des raisons techniques ou pour des raisons de sûreté (pannes potentielles par exemple).
 Pour cela des systèmes de stockages dits distribués sont utilisés en pratique afin des les répartir sur différentes unités de stockages.
 
@@ -91,16 +93,19 @@ Le client pourra simuler différents jeux de données et jeux de requêtes sur c
 Il pourra tester ses algorithmes implémentés.
 Enfin, il pourra visualiser la topologie et l'état du réseau \textit{à tout moment}.
 
-\newpage
+
+
+
+%\newpage
 \section{Hiérarchisation des besoins}
 
 \paragraph{} Nous avons dégagé des précédentes réunions, une liste de besoins fonctionnels et non-fonctionnels. 
 Pour mieux les comparer, nous les avons hiérarchisés en fonction de leur priorité et de leur criticité.
 
+
 \subsection{Priorité}
 
 \paragraph{} La priorité est un indicateur de l'ordre dans lequel nous devrons implémenter les besoins afin de satisfaire au mieux les exigences du client.
-
 
 \paragraph{}
 \begin{tabular}{| l | M{3cm} | M{9cm} |}
@@ -120,7 +125,6 @@ Pour mieux les comparer, nous les avons hiérarchisés en fonction de leur prior
 
 \paragraph{} Le niveau de criticité d'un besoin est un indicateur de l'impact qu'aura la non-implémentation de ce besoin sur le bon fonctionnement de l'application.
 
-
 \paragraph{}
 \begin{tabular}{| l | M{3cm} | M{9cm} |}
     \hline
@@ -136,34 +140,37 @@ Pour mieux les comparer, nous les avons hiérarchisés en fonction de leur prior
     \hline
  \end{tabular}
 
+
+
 \newpage
+
 \section{Besoins fonctionnels}
 
-L'environnement de simulation voulu est un système distribué constitué de $n$ noeuds de stockage dans lequel on souhaite stocker $m$ objets.
 
 \subsection{Environnement distribué}
 
-\paragraph{} Nous évoluerons dans un environnement distribué \besoin{1}{1}.
+\paragraph{} Nous évoluerons dans un environnement distribué \besoin{1}{1} constitué de $n$ noeuds de stockage dans lequel on souhaite stocker $m$ objets.
 En effet, le client souhaite tester des algorithmes d'équilibrage de charges et de gestion de copies qui ne peuvent fonctionner uniquement dans un environnement distribué.
+
 
 \subsection{Gestion d'un réseau}
 
 \paragraph{} Comme défini précédemment, un réseau est un ensemble de noeuds qui sont reliés entre eux (en général par Internet) et qui communiquent ensemble afin de traiter toutes les requêtes reçues.
 
+
 \subsubsection{Gestion des noeuds}
 
-\paragraph{} Un noeud est une machine (ordinateur généralement) pouvant stocker des données et traiter des requêtes. Un noeud possède des données internes. Ces données sont propres au fonctionnement du noeud (comme la charge par exemple).
+\paragraph{} Un noeud est une machine (ordinateur généralement) pouvant stocker des données et traiter des requêtes. Un noeud possède des données locales propres au fonctionnement du noeud (comme la charge par exemple).
 
 \paragraph{Création d'un noeud} La création d'un noeud \besoin{1}{1} se fait au moment où le réseau n'existe pas encore. 
 Le projet ne prend en compte ni la création dynamique de noeud (création et ajout d'un noeud après que le réseau soit créé), ni la suppression de noeud. 
 Il est possible de séparer ce besoin en plusieurs sous-besoins :
  \begin{itemize}
  	\item Créer un noeud dans l'environnement de simulation
- 	\item Initialiser les données internes d'un noeud \vspace{0.2cm}
+ 	\item Initialiser les données locales d'un noeud
  \end{itemize}
  
- 
-\paragraph{Données d'un noeud} Le client souhaite que chaque noeud contiennent les données \besoin{1}{1} suivantes :
+\paragraph{Données locales d'un noeud} Chaque noeud doit contenir les données locales \besoin{1}{1} suivantes :
 \begin{itemize}
  \item 1 vecteur correspondant à la charge de tous les noeuds
  \item 2 vecteurs  correspondant à la popularité de chaque objet
@@ -171,17 +178,16 @@ Il est possible de séparer ce besoin en plusieurs sous-besoins :
  \item la requête en cours de traitement
 \end{itemize}
 
+\paragraph{Mise à jour des données} Afin de connaître l'état du réseau de manière précise, les données locales doivent être mise à jour à chaque action \besoin{1}{1}.
+Une mise à jour à donc lieu à l'arrivée d'un message dans la file d'attente
 
-\paragraph{Mise à jour des données} Afin de connaître l'état du réseau de manière précise, les données doivent être mise à jour à chaque action \besoin{1}{1}.
-Une mise à jour à donc lieu :
+\paragraph{Récupération de l'état du réseau} L'application doit permettre la description de l'état du réseau \besoin{1}{1}.
+On souhaite connaître : 
 \begin{itemize}
- \item A l'arrivée d'une requête
- \item Lors de l'ajout d'un objet
+ \item la charge des noeuds
+ \item le nombre de requêtes en attente
+ \item la popularité des objets
 \end{itemize}
-
-
-\paragraph{Récupération de l'état du réseau} L'application doit permettre la permettre la description de l'état du réseau \besoin{1}{1}.
-On souhaite connaître la charge des noeuds, le nombre de requêtes en attente, la popularité des objets.
 Une partie de ces données font ensuite l'objet d'un affichage. \footnote{Objet de la partie 3.5 Visualisation des données}
 
  
@@ -189,18 +195,19 @@ Une partie de ces données font ensuite l'objet d'un affichage. \footnote{Objet 
 
 \paragraph{} Un objet est...
 
-\paragraph{} Le client souhaite pouvoir :
-\begin{itemize}
- \item Créer un objet
- \item Supprimer un objet
-\end{itemize}
+\paragraph{} Une fois l'ensemble des noeuds crée, on doit pouvoir affecter à chaque noeud des objets.
+
+\paragraph{Création d'un objet} A détailler
+
+\paragraph{Suppression d'un objet} A détailler
+
 
 \subsubsection{Popularité d'un objet}
 
-\paragraph{} Les algorithmes du client nécessitent de connaître la popularité d'un objet dans le réseau.
+\paragraph{} Les algorithmes du client nécessitent de connaître la popularité d'un objet dans le réseau \besoin{1}{1}.
 La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plus ce nombre de requêtes est grand, plus l'objet est populaire.
 
-\paragraph{} La calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
+\paragraph{Algorithme} La calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
 
 
 \subsubsection{Topologie du réseau}
@@ -210,19 +217,23 @@ Un noeud communique à un intervalle de temps régulier avec les autres noeuds d
 Tous les noeuds du réseau possèdent des informations sur les autres noeuds du réseau.
 
 \paragraph{Communication} Les données locales d'un noeud doivent être communiqué à un noeud maître \besoin{1}{1}.
+Le noeud maître peut centraliser toutes les données locales de chaque noeud et ainsi connaître l'état du réseau.
 
+\paragraph{Paramétrage} Lorsqu'il n'y aucune requête à traiter sur le réseau, l'état du réseau est stable.
+Plus précisément, les données locales de chaque noeud ne changent pas.
+Malheureusement, ils continuent de communiquer entre eux.
+Pour éviter ces échanges de messages inutiles, on souhaite pouvoir paramétrer l'intervalle de temps de communication \besoin{2}{4}.
 
-\paragraph{} L'application doit permettre :
-\begin{itemize}
-	\item Communiquer les données internes à un noeud maître \besoin{1}{1}
-	\item Paramétrer l'intervalle de temps de communication \besoin{2}{3}
-	\item Stocker les informations des autres noeuds \besoin{1}{2}
-\end{itemize}
+\paragraph{Stockage} Stocker les informations des autres noeuds \besoin{1}{2}  (???)
+
 
 \subsubsection{Sauvegarde d'un réseau}
+
 \paragraph{}  Objet de la prochaine réunion
 
+
 \subsubsection{Importation d'un réseau}
+
 \paragraph{} Objet de la prochaine réunion
 
 
@@ -242,13 +253,11 @@ Tous les noeuds du réseau possèdent des informations sur les autres noeuds du 
   \item Déterminer la charge minimum courante.
   \item Si la charge du noeud est inférieure ou égale à la charge minimum, il s'affecte toutes les requêtes en attente et en avertit les autres noeuds. \vspace{0.2cm}
  \end{itemize}
- 
  \item \textbf{AverageDegree} \besoin{1}{1} 
  \begin{itemize}
   \item Déterminer la charge moyenne courante
   \item Si la charge du noeud est inférieure ou égale à la charge moyenne, il s'affecte toutes les requêtes en attente et en avertit les autres noeuds.
  \end{itemize}
-
 \end{itemize}
 
 \paragraph{Gestion des copies} Entité à part entière ? (prochaine réunion)
@@ -281,29 +290,21 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 
 \paragraph{} Une requête est un message envoyé à une machine (ou plusieurs machines) afin de récupérer ou de modifier de l'information sur des données.
 
-\subsubsection{Gestion des requêtes}
 
-\paragraph{} Une fois le réseau crée, l'utilisateur peut créer une 
-\paragraph{} Le client souhaite pouvoir :
-\begin{itemize}
- \item Créer une requête
- \item Supprimer une requête
-\end{itemize}
+\subsubsection{Création d'une requête}
 
-\subsubsection{Envoi d'une requête}
 \paragraph{} Une fois le réseau crée, l'utilisateur peut en
 
-\subsubsection{Création d'un jeu de requête}
-\paragraph{} Objet de la prochaine réunion
 
 \subsubsection{Sauvegarde d'un jeu de requête}
+
 \paragraph{} Objet de la prochaine réunion
+
 
 \subsubsection{Importation d'un jeu de requête}
+
 \paragraph{} Objet de la prochaine réunion
 
-
-%\textbf{Question } Quelle format pour le stockage d'un jeu de requêtes ? \newline
 
 \subsection{Visualisation des données}
 
@@ -313,8 +314,8 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
  \item Popularité des objets
 \end{itemize}
 
-
 \textbf{Note } Bien définir ces items. \newline
+
 
 
 \newpage
@@ -329,39 +330,60 @@ Nous créons notre environnement de simulation à partir de la dernière version
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
 
+
 \subsection{Gestion d'un réseau}
 
 \subsubsection{Communication entre noeuds}
-Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
+
+\paragraph{}Pour connaître l'état du réseau, il faut regrouper les données locales des noeuds.
+Nous cherchons donc a récupérer ces données en un temps raisonnable ($O(log(n))$ pour $n$ noeuds).
+
+\paragraph{}Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
 Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}, noeud en mesure d'avoir une connaissance globale du système \cite{seed}, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
+
+\paragraph{}Ainsi, la connaissance globale du système se fait en $O(log(n))$.
 
 
 \subsubsection{Taille des données}
-\paragraph{}Lorem ipsum
 
-\subsection{Algorithmes}
+\paragraph{}Objet prochaine réunion
 
 
 \subsection{Visualisation des données}
+
 \paragraph{} Une vue correspond à une fenêtre de l'application, c'est à dire ce que voit l'utilisateur.
 
-\subsubsection{Vues}
-\paragraph{} Lorem ipsum
 
-\subsubsection{Actualisation des vues}
-\paragraph{} Lorem ipsum
+\subsubsection{Etat du réseau}
+
+\paragraph{} La vue permet de montrer l'état du réseau.
+
+\paragraph{} Le réseau est représenté par un graphe, les machines par des noeuds. 
+Pour chaque machine, les données affichées sont la charge ainsi que le contenu de la file d'attente.
+
+
+\subsubsection{Actualisation de la vue}
+
+\paragraph{} L'état du réseau doit-être visible en temps réel.
+
+\paragraph{} La vue peut donc être actualisée toutes les $0.5$ secondes. 
+Un délai plus faible risquerai de la rendre invisible (données clignotantes sur l'écran).
+
 
 \subsection{Maintenabilité du code}
+
 \paragraph{} Nous ne pensons pas que le projet sera totalement terminé le 8 Avril 2015, date de rendu du code et du mémoire.
-Pour cela, nous avons défini quelques normes pour que le projet puisse être repris.
+Pour cela, nous avons défini quelques normes pour que le projet puisse être repris. (a détailler)
 
 \paragraph{}
 
 
-\newpage
 
+\newpage
 \section{Répartitions des tâches}
+
 \subsection{Diagramme de Gantt}
+
 \rotatebox{270}{
 \begin{ganttchart}[
 hgrid,
@@ -383,8 +405,11 @@ milestone inline label node/.append style={left=3mm}
 }
 
 
+
 \newpage
+
 \subsection{Affectation des tâches}
+
 \paragraph{}
 \begin{tabular}{| l | M{5cm} | M{3cm} | M{5.5cm} |}
     \hline
@@ -399,6 +424,8 @@ milestone inline label node/.append style={left=3mm}
     A4 & Création d'un noeud & Corentin \and Guillaume & blabla  \tabularnewline
     \hline
  \end{tabular}
+ 
+
 
 \newpage
 
