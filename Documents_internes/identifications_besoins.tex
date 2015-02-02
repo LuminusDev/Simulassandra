@@ -5,6 +5,8 @@
 \usepackage{geometry}
 \usepackage{array}
 \usepackage{pgfgantt}
+\usepackage{url}
+\bibliographystyle{alpha}
 \usepackage[counterclockwise]{rotating}
 \geometry{hmargin=2.5cm,vmargin=1.5cm}
 
@@ -25,7 +27,8 @@
         \large Identifications des besoins
     \end{minipage}
  }
-    
+ 
+\bibliographystyle{alpha}
 \author{Kevin Barreau \and Guillaume Marques \and Corentin Salingue}
 
 \begin{document}
@@ -159,12 +162,29 @@ Il est possible de séparer ce besoin en plusieurs sous-besoins :
  	\item Initialiser les données internes d'un noeud \vspace{0.2cm}
  \end{itemize}
  
-\paragraph{Données d'un noeud} De plus, l'application doit permettre :
+ 
+\paragraph{Données d'un noeud} Le client souhaite que chaque noeud contiennent les données \besoin{1}{1} suivantes :
 \begin{itemize}
- \item Récupérer les données internes d'un noeud \besoin{1}{1}
- \item Mettre à jour les données internes d'un noeud \besoin{1}{1}
+ \item 1 vecteur correspondant à la charge de tous les noeuds
+ \item 2 vecteurs  correspondant à la popularité de chaque objet
+ \item 1 file d'attente de message
+ \item la requête en cours de traitement
 \end{itemize}
 
+
+\paragraph{Mise à jour des données} Afin de connaître l'état du réseau de manière précise, les données doivent être mise à jour à chaque action \besoin{1}{1}.
+Une mise à jour à donc lieu :
+\begin{itemize}
+ \item A l'arrivée d'une requête
+ \item Lors de l'ajout d'un objet
+\end{itemize}
+
+
+\paragraph{Récupération de l'état du réseau} L'application doit permettre la permettre la description de l'état du réseau \besoin{1}{1}.
+On souhaite connaître la charge des noeuds, le nombre de requêtes en attente, la popularité des objets.
+Une partie de ces données font ensuite l'objet d'un affichage. \footnote{Objet de la partie 3.5 Visualisation des données}
+
+ 
 \subsubsection{Gestion des objets}
 
 \paragraph{} Un objet est...
@@ -180,28 +200,17 @@ Il est possible de séparer ce besoin en plusieurs sous-besoins :
 \paragraph{} Les algorithmes du client nécessitent de connaître la popularité d'un objet dans le réseau.
 La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plus ce nombre de requêtes est grand, plus l'objet est populaire.
 
-%\textbf{Question } Sur quel type d'objet allons-nous travailler ? \newline
+\paragraph{} La calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
 
-%\begin{itemize}
- %\item Creer un objet
- %\item Supprimer un objet
- %\item Gérer la popularité d'un objet
- %\begin{itemize}
-  %\item Implémenter l'algorithme d'approximation Space-Saving Algorithm
-  %\item Ajouter un vecteur de taille $n$ à chaque noeud dans le lequel on stockera les objets les plus populaires
-  %\item Protocole de communication pour le calcul des objets les plus populaires \textbf{(Modifier gossip? Nouveau ?)}
- %\end{itemize}
-%\end{itemize}
-
-%\vspace{0.5cm}
-
-%\textbf{Question } Gestion de la popularité : quelle période (fixe ou fenêtre glissante) ? \newline
-%\textbf{Question } Position de l'objet sur le noeud ? \newline
-%\textbf{Note } Bien définir l'algorithme. \newline
 
 \subsubsection{Topologie du réseau}
 
-\paragraph{} Un noeud maître est un noeud connu de tous les autres noeuds dans le réseau. Un noeud communique à un intervalle de temps régulier avec les autres noeuds du réseau. Tous les noeuds du réseau possèdent des informations sur les autres noeuds du réseau.
+\paragraph{} Un noeud maître est un noeud connu de tous les autres noeuds dans le réseau. 
+Un noeud communique à un intervalle de temps régulier avec les autres noeuds du réseau. 
+Tous les noeuds du réseau possèdent des informations sur les autres noeuds du réseau.
+
+\paragraph{Communication} Les données locales d'un noeud doivent être communiqué à un noeud maître \besoin{1}{1}.
+
 
 \paragraph{} L'application doit permettre :
 \begin{itemize}
@@ -274,6 +283,7 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 
 \subsubsection{Gestion des requêtes}
 
+\paragraph{} Une fois le réseau crée, l'utilisateur peut créer une 
 \paragraph{} Le client souhaite pouvoir :
 \begin{itemize}
  \item Créer une requête
@@ -281,7 +291,7 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 \end{itemize}
 
 \subsubsection{Envoi d'une requête}
-\paragraph{} L'envoi d'une requête peut se faire
+\paragraph{} Une fois le réseau crée, l'utilisateur peut en
 
 \subsubsection{Création d'un jeu de requête}
 \paragraph{} Objet de la prochaine réunion
@@ -314,7 +324,7 @@ Notre solution doit donc proposer un système permettant d'implémenter ces algo
 \subsection{Cassandra}
 
 \paragraph{} Cassandra est une base de données distribuée.
-Nous créons notre environnement de simulation à partir de cette application.
+Nous créons notre environnement de simulation à partir de la dernière version stable, \texttt{Cassandra 2.1.2}.
 
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
@@ -322,10 +332,9 @@ En effet, celui-ci dispose de connaissances sur cette application et pourra donc
 \subsection{Gestion d'un réseau}
 
 \subsubsection{Communication entre noeuds}
-\paragraph{} Lorem ipsum
+Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
+Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}, noeud en mesure d'avoir une connaissance globale du système \cite{seed}, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
 
-\subsubsection{Méthode de calcul de la popularité}
-\paragraph{} Lorem ipsum
 
 \subsubsection{Taille des données}
 \paragraph{}Lorem ipsum
@@ -342,8 +351,11 @@ En effet, celui-ci dispose de connaissances sur cette application et pourra donc
 \subsubsection{Actualisation des vues}
 \paragraph{} Lorem ipsum
 
-\subsection{Maintenabilité et évolutivité du code}
-\paragraph{} Lorem ipsum
+\subsection{Maintenabilité du code}
+\paragraph{} Nous ne pensons pas que le projet sera totalement terminé le 8 Avril 2015, date de rendu du code et du mémoire.
+Pour cela, nous avons défini quelques normes pour que le projet puisse être repris.
+
+\paragraph{}
 
 
 \newpage
@@ -394,8 +406,6 @@ milestone inline label node/.append style={left=3mm}
 
 \include{user_scenario}
 
-
-
-
+\bibliography{identifications_besoins}
 
 \end{document}
