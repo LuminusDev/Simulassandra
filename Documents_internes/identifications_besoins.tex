@@ -387,19 +387,47 @@ Pour cela, nous avons défini quelques normes pour que le projet puisse être re
 \rotatebox{270}{
 \begin{ganttchart}[
 hgrid,
-vgrid,
+vgrid={*6{blue,dashed}, *1{red}},
 inline = true,
 x unit=4.5mm,
 time slot format=isodate,
-milestone inline label node/.append style={left=3mm}
+milestone inline label node/.append style={left=3mm},
+y unit chart = 0.65cm,
+bar top shift= 0.1,
+bar height = 0.8
 ]{2015-02-16}{2015-04-08}
-\gantttitlecalendar{month=name, week, day} \\
+\gantttitlecalendar{month=name, day} \\
 
-\ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-01} \\
-\ganttbar{A1}{2015-02-16}{2015-02-22} \\
+\ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-06} \\
+\ganttbar[name=a1]{A1}{2015-02-16}{2015-02-23} \\ %Création noeuds via script ?
+\ganttbar[name=a2]{A2}{2015-02-16}{2015-02-23} \\ %Implémentation et initialisations données noeuds
+\ganttbar[name=a3]{A3}{2015-02-24}{2015-03-02} \\ %Communication entre noeuds
+\ganttbar{AT}{2015-03-03}{2015-03-06} \\ %Tests
+
+\ganttgroup{Simulation de requête (B)}{2015-03-01}{2015-03-08} \\
+\ganttbar{B1}{2015-03-01}{2015-03-06} \\ %Création d'un interpreteur pour lire un fichier jeu de requête
+\ganttbar{BT}{2015-03-07}{2015-03-08} \\ %Tests
+
+\ganttgroup{Gestion de la popularité (C)}{2015-03-07}{2015-03-16} \\
+\ganttbar{C1}{2015-03-07}{2015-03-10} \\ %Calcul de la popularité pour un objet
+\ganttbar{C2}{2015-03-07}{2015-03-10} \\ %Implémentation de SpaceSaving
+\ganttbar{C3}{2015-03-10}{2015-03-14} \\ %Amélioration protocole Gossip
+\ganttbar{CT}{2015-03-15}{2015-03-16} \\ %Tests
 
 
-\ganttmilestone{Livrable final}{2015-04-08}
+\ganttgroup{Equilibrage des charges (D)}{2015-03-15}{2015-03-29} \\
+\ganttbar{D1}{2015-03-15}{2015-03-24} \\ %Algorithme SLVO
+\ganttbar{D2}{2015-03-15}{2015-03-24} \\ %Algorithme AvergeDegree
+\ganttbar{DT}{2015-03-25}{2015-03-29} \\ %Tests 
+
+\ganttgroup{Visualisation de données (E)}{2015-03-29}{2015-04-08} \\
+\ganttbar{E1}{2015-03-29}{2015-04-01} \\ %Prise en main tulip
+\ganttbar{E2}{2015-04-01}{2015-04-04} \\ %Affichage réseau
+\ganttbar{E3}{2015-04-04}{2015-04-06} \\ %AFfichage informations (charges)
+
+\ganttbar{T}{2015-04-06}{2015-04-07} \\
+
+\ganttmilestone{Livrable final}{2015-04-08} 
 
 \end{ganttchart}
 }
@@ -415,13 +443,44 @@ milestone inline label node/.append style={left=3mm}
     \hline
     Fct & Description & Développeur(s) & Commentaire \tabularnewline
     \hline
-    A1 & Création d'un noeud & Guillaume & blabla  \tabularnewline
+    A1 & Création des noeuds &  &   \tabularnewline
     \hline
-    A2 & Création d'un noeud & Guillaume \and Kévin & blabla  \tabularnewline
+    A2 & Données locales des noeuds &  & Initialisation et implémentation \tabularnewline
     \hline
-    A3 & Création d'un noeud & Mounir \and Corentin \and Kévin & blabla  \tabularnewline
+    A3 & Communication entre noeuds &  &  \tabularnewline
     \hline
-    A4 & Création d'un noeud & Corentin \and Guillaume & blabla  \tabularnewline
+    AT & Tests groupe A &  &  Vérification, tests, mémoire \tabularnewline
+    \hline 
+    \hline
+    B1 & Simulateur jeu de requêtes &  & A détailler  \tabularnewline
+    \hline
+    BT & Tests groupe B &  &  Vérification, tests, mémoire \tabularnewline
+    \hline
+    \hline
+    C1 & Popularité objet sur noeud &  &  \tabularnewline
+    \hline
+    C2 & Space-Saving Algorithm &  &  \tabularnewline
+    \hline
+    C3 & Popularité d'un objet &  &  \tabularnewline
+    \hline
+    CT & Tests groupe C &  & Vérification, tests, mémoire \tabularnewline
+    \hline
+    \hline
+    D1 & Implémentation SLVO &  &  \tabularnewline
+    \hline
+    D2 & Implémentation AverageDegree &  &  \tabularnewline
+    \hline
+    DT & Tests groupe D &  &  Avec client \tabularnewline
+    \hline
+    \hline
+    E1 & Prise en main Tulip &  &  \tabularnewline
+    \hline
+    E2 & Représentation réseau &  &  \tabularnewline
+    \hline
+    E3 & Représentation données &  &  \tabularnewline
+    \hline
+    \hline
+    T & Tests finaux &  &  Vérification, tests, mémoire \tabularnewline
     \hline
  \end{tabular}
  
@@ -430,6 +489,10 @@ milestone inline label node/.append style={left=3mm}
 \newpage
 
 \section{Livrables}
+
+\subsection{Livrable ``final''}
+
+\paragraph{} Il devra être remis le 8 Avril 2015.
 
 \include{user_scenario}
 
