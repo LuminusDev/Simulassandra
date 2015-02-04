@@ -36,7 +36,8 @@
 \maketitle
 
 \abstract
-Ce document dégage une première identification des besoins.
+Dans une première partie, nous présentons le projet, le contexte et les hyothèses. Ensuite, nous développons les besoins fonctionnels et les besoins non-fonctionnels.
+De plus, nous dégageons une première version de la plannification du projet (GANTT). Enfin, nous présentons les livrables.
 
 
 
@@ -248,7 +249,9 @@ La notion de similitude est laissée à l'appréciation de l'équipe en charge d
 
 \subsubsection{Importation d'un jeu de requête}
 
-\paragraph{} %A définir
+\paragraph{} Pour comparer l'efficacité des algorithmes, il doit être possible d'envoyer sur le réseau un même suite de requêtes, un jeu de requête.
+
+\paragraph{Importation} \besoin{1}{2} L'application doit pouvoir lire un fichier contenant une suite de requête et envoyer ces requêtes sur le réseau.
 
 
 \subsection{Visualisation des données}
@@ -274,6 +277,16 @@ Nous créons notre environnement de simulation à partir de la dernière version
 
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
+
+
+
+\subsection{Maintenabilité du code}
+
+\paragraph{} Nous ne pensons pas que le projet sera totalement terminé le 8 Avril 2015, date de rendu du code et du mémoire.
+Pour cela, nous avons défini quelques normes pour que le projet puisse être repris. (a détailler)
+
+\paragraph{}
+
 
 
 \subsection{Gestion d'un réseau}
@@ -318,12 +331,6 @@ Pour chaque machine, les données affichées sont la charge ainsi que le contenu
 Un délai plus faible risquerai de la rendre invisible (données clignotantes sur l'écran).
 
 
-\subsection{Maintenabilité du code}
-
-\paragraph{} Nous ne pensons pas que le projet sera totalement terminé le 8 Avril 2015, date de rendu du code et du mémoire.
-Pour cela, nous avons défini quelques normes pour que le projet puisse être repris. (a détailler)
-
-\paragraph{}
 
 
 
@@ -349,7 +356,8 @@ bar height = 0.8
 \ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-06} \\
 \ganttbar[name=a1]{A1}{2015-02-16}{2015-02-23} \\ %Création noeuds via script ?
 \ganttbar[name=a2]{A2}{2015-02-16}{2015-02-23} \\ %Implémentation et initialisations données noeuds
-\ganttbar[name=a3]{A3}{2015-02-24}{2015-03-02} \\ %Communication entre noeuds
+\ganttbar[name=a3]{A3}{2015-02-24}{2015-03-28} \\ %Communication entre noeuds
+\ganttbar[name=a4]{A4}{2015-02-27}{2015-03-02} \\ %Gestion des replicats
 \ganttbar{AT}{2015-03-03}{2015-03-06} \\ %Tests
 
 \ganttgroup{Simulation de requête (B)}{2015-03-01}{2015-03-08} \\
@@ -397,10 +405,12 @@ bar height = 0.8
     \hline
     A3 & Communication entre noeuds &  &  \tabularnewline
     \hline
+    A4 & Gestion des replicats &  &  \tabularnewline
+    \hline
     AT & Tests groupe A &  &  Vérification, tests, mémoire \tabularnewline
     \hline 
     \hline
-    B1 & Simulateur jeu de requêtes &  & A détailler  \tabularnewline
+    B1 & Générateur de requêtes &  & A détailler  \tabularnewline
     \hline
     BT & Tests groupe B &  &  Vérification, tests, mémoire \tabularnewline
     \hline
