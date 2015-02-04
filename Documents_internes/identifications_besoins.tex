@@ -119,6 +119,8 @@ Ainsi que l'algorithme de gestion de copie, permettant d'établir le nombre de r
  \item la requête en cours de traitement
 \end{itemize}
 
+\paragraph{Requêtes} Nous supposerons que les requêtes seront effectuées en un temps fixe.
+
 %\newpage
 \section{Hiérarchisation des besoins}
 
@@ -259,9 +261,6 @@ La notion de similitude est laissée à l'appréciation de l'équipe en charge d
  \item Popularité des objets
 \end{itemize}
 
-\textbf{Note } Bien définir ces items. \newline
-
-
 
 \newpage
 
@@ -281,7 +280,7 @@ En effet, celui-ci dispose de connaissances sur cette application et pourra donc
 \subsubsection{Communication entre noeuds}
 
 
-\paragraph{Algorithme} La calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
+\paragraph{Algorithme} Le calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
 
 \paragraph{}Pour connaître l'état du réseau, il faut regrouper les données locales des noeuds.
 Nous cherchons donc a récupérer ces données en un temps raisonnable ($O(log(n))$ pour $n$ noeuds).
@@ -294,7 +293,7 @@ Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \te
 
 \subsubsection{Taille des données}
 
-\paragraph{}Objet prochaine réunion
+\paragraph{} La taille de chaque donnée est laissée à l'apréciation de l'équipe. Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
 
 
 \subsection{Visualisation des données}
@@ -315,7 +314,7 @@ Pour chaque machine, les données affichées sont la charge ainsi que le contenu
 \paragraph{} L'état du réseau doit-être visible en temps réel.
 
 \paragraph{} La vue peut donc être actualisée toutes les $0.5$ secondes. 
-Un délai plus faible risquerai de la rendre invisible (données clignotantes sur l'écran).
+Un délai plus faible risquerait de la rendre invisible (données clignotantes sur l'écran).
 
 
 \subsection{Maintenabilité du code}
