@@ -206,11 +206,11 @@ On souhaite connaître :
 \paragraph{Définition} Un \textit{token} permet comme une étiquette sur un produit, de désigner une donnée.
 
 \paragraph{} Il s'agit de copier un objet sur un autre noeud. 
-Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. 
+Il est possible de définir le nombre de copies d'un objet au sein d'un ensemble de noeuds, appelé \textit{data center}. 
 Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique).
 On obtient ainsi un \textit{token}.
 
-\paragraph{} Tous les noeuds possèdent un intervalle de token dont ils sont responsables. 
+\paragraph{} Tous les noeuds possèdent un intervalle (ou ensemble) de tokens dont ils sont responsables. 
 On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
 
 \paragraph{} Une stratégie de réplication est la méthode qui permet de placer les copies d'un objet dans un data center.
@@ -226,7 +226,7 @@ Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la foncti
 
 \paragraph{} Les algorithmes à implémenter nécessitent de connaître la popularité d'un objet dans le réseau.
 La popularité d'un objet est défini par le nombre de requêtes sur cet objet.
-Plus Le nombre de requêtes est grand, plus l'objet est populaire.
+Plus le nombre de requêtes est grand, plus l'objet est populaire.
 
 \paragraph{Calcul de la popularité} \besoin{1}{1}
 
@@ -239,14 +239,14 @@ Plus Le nombre de requêtes est grand, plus l'objet est populaire.
 
 \paragraph{} Une \textit{affectation} consiste, pour un noeud, à effectuer le traitement d'une requête. Les requêtes peuvent arriver sur n'importe quel noeud. On dit alors que ce noeud devient le noeud \textit{coordinateur} pour cette requête. Il transmet la requête aux noeuds possédant l'objet de la requête (voir la figure \ref{fig:request}).
 
-\paragraph{} Les noeuds possédant l'objet mettent la requête dans leur file d'attente. Dès qu'un noeud aura a traité cette requête, il communique aux autres noeuds possédant l'objet qu'il se charge de la traiter. Les noeuds suppriment la requête de leur file d'attente. Le noeud qui prend en charge la requête la traite et donne le résultat de la requête au noeud coordinateur, qui peut ainsi renvoyer le résultat.
+\paragraph{} Les noeuds possédant l'objet mettent la requête dans leur file d'attente. Dès qu'un noeud aura à traiter cette requête, il communique aux autres noeuds possédant l'objet qu'il se charge de la traiter. Les noeuds suppriment la requête de leur file d'attente. Le noeud qui prend en charge la requête la traite et donne le résultat de la requête au noeud coordinateur, qui peut ainsi renvoyer le résultat.
 
 \paragraph{Communication d'un message d'ajout d'une requête dans la file d'attente} \besoin{1}{1}
 \paragraph{Communication d'un message de suppression d'une requête de la file d'attente} \besoin{1}{1}
 \paragraph{Ajout d'une requête dans la file d'attente} \besoin{1}{1}
 \paragraph{Suppression d'une requête de la file d'attente} \besoin{1}{1}
 
-\paragraph{} Des protocoles d'affectation plus spécifiques peuvent être implémentés. Ils utilisent les données locales du noeud pour décider de l'affectation des requêtes.
+\paragraph{} Des protocoles (équivalent algorithmes) d'affectation plus spécifiques peuvent être implémentés. Ils utilisent les données locales du noeud pour décider de l'affectation des requêtes.
 
 \paragraph{Implémentation de l'algorithme \textbf{SLVO}} \besoin{1}{1}
 \paragraph{Implémentation de l'algorithme \textbf{AverageDegree}} \besoin{1}{1}  
@@ -256,25 +256,27 @@ Plus Le nombre de requêtes est grand, plus l'objet est populaire.
 \subsubsection{Générations de requêtes}
 
 \paragraph{} Pour tester la validité des algorithmes, l'application devra posséder une fonction de génération de requêtes. 
-Si l'utilisateur ne détient pas de suites de requêtes, il pourra demander à l'application d'en créer pour lui. 
-L'application ne connaissant pas la nature des données ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
-Elle peut par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne peut pas en modifier une.
+Si l'utilisateur ne détient pas de suites de requêtes prêtes, il pourra demander à l'application d'en créer pour lui. 
+L'application, ne connaissant pas la nature des données, ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
+Elle pourra par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne pourra pas en modifier une.
 
 
 \subsubsection{Importation d'un jeu de requête}
 
-\paragraph{} Pour comparer l'efficacité des algorithmes, il doit être possible d'envoyer sur le réseau une même suite de requêtes, un jeu de requête.
+\paragraph{Définition} La notion d'efficacité est laissée à l'appréciation du client. Une brève approche serait de comparer les temps d'exécution.
 
-\paragraph{Importation} \besoin{1}{2} L'application doit pouvoir lire un fichier contenant une suite de requête et envoyer ces requêtes sur le réseau.
+\paragraph{} Pour comparer l'efficacité des algorithmes, il doit être possible d'envoyer sur le réseau une même suite de requêtes : un jeu de requêtes.
+
+\paragraph{Importation} \besoin{1}{2} L'application doit pouvoir lire un fichier contenant une suite de requêtes et envoyer ces requêtes sur le réseau.
 
 
 \subsection{Visualisation des données}
 
-\paragraph{} Afin de suivre l'évolution des charges de chaque noeud lors de l'éxecution des algorithmes, on enregistre les données locales de chaque noeud à chaque modifications de celles-ci.
+\paragraph{} Afin de suivre l'évolution des charges de chaque noeud lors de l'exécution des algorithmes, on enregistre les données locales de chaque noeud à chaque modifications de celles-ci.
 
 \subsubsection{Enregistrement des données}
 
-\paragraph{Ecriture dans un fichier} \besoin{1}{2} Lorsque les données locales d'un noeud sont modifiés, on enregistre dans un fichier ces données.
+\paragraph{Ecriture dans un fichier} \besoin{1}{2} Lorsque les données locales d'un noeud sont modifiées, on les enregistre dans un fichier.
 L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du noeud; charge du noeud;}
 
 \subsubsection{Affichage des données}
@@ -284,10 +286,10 @@ L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du n
 \paragraph{Noeuds} \besoin{3}{2} L'application doit permettre la représentation de chaque noeud par un sommet.
 
 \paragraph{Analyse syntaxique} \besoin{2}{1} Lors de l'éxecution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
-Un analyseur syntaxique découpe chaque ligne du fichier pour récuperer le moment auquel a été enregistré l'information (\texttt{itération de l'algorithme}),
+Un analyseur syntaxique (un programme qui possède des règles et qui agit sur un fichier donné en entrée selon celles-ci) découpe chaque ligne du fichier pour récupérer le moment auquel a été enregistrée l'information (\texttt{itération de l'algorithme}),
 le noeud concerné ( \texttt{ identifiant du noeud} ) et la charge de ce noeud à ce moment ( \texttt{charge du noeud} ).
 
-\paragraph{Charge des noeuds}  \besoin{3}{3} A chaque sommet est associé une valeur correspondant à la charge de ce noeud.
+\paragraph{Charge des noeuds}  \besoin{3}{3} A chaque sommet est associée une valeur correspondant à la charge de ce noeud.
 Ces données sont récupérées grâce à l'analyseur syntaxique.
 
 \paragraph{Film de l'éxecution} \besoin{3}{3} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
@@ -310,9 +312,9 @@ En effet, celui-ci dispose de connaissances sur cette application et pourra donc
 \paragraph{} L'envergure du projet fait qu'il est possible que d'autres personnes travaillent sur la finalité de ce projet, peu importe son état d'avancement.
 Afin de faciliter la compréhension, nous avons défini quelques normes pour que le projet puisse être repris :
 \begin{itemize}
-	\item documentation dans le code source suivant la norme du langage utilisé
-	\item document externe spécifiant les fichiers modifiés par rapport au code source original
-	\item guide d'installation pour utiliser le projet et pour modifier le projet
+	\item documentation dans le code source suivant la norme du langage utilisé;
+	\item document externe spécifiant les fichiers modifiés par rapport au code source original;
+	\item guide d'installation pour utiliser le projet et pour modifier le projet.
 \end{itemize}
 
 \subsection{Gestion d'un réseau}
@@ -322,7 +324,7 @@ Afin de faciliter la compréhension, nous avons défini quelques normes pour que
 \paragraph{Algorithme} Le calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
 
 \paragraph{}Pour connaître l'état du réseau, il faut regrouper les données locales des noeuds.
-Nous cherchons donc a récupérer ces données en un temps raisonnable ($O(log(n))$ pour $n$ noeuds).
+Nous cherchons donc à récupérer ces données en un temps raisonnable ($O(log(n))$ pour $n$ noeuds).
 
 \paragraph{}Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
 Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}\cite{seed}, noeud en mesure d'avoir une connaissance globale du système, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
@@ -395,7 +397,7 @@ bar height = 0.8
 \ganttbar[name=a4]{A4}{2015-02-27}{2015-03-02} \\ %Gestion des replicats
 \ganttbar{AT}{2015-03-03}{2015-03-06} \\ %Tests
 
-\ganttgroup{Simulation de requête (B)}{2015-03-01}{2015-03-08} \\
+\ganttgroup{Simulation de requêtes (B)}{2015-03-01}{2015-03-08} \\
 \ganttbar{B1}{2015-03-01}{2015-03-06} \\ %Génération jeu de requêtes
 \ganttbar{B2}{2015-03-01}{2015-03-06} \\ %Importation jeu de requêtes
 \ganttbar{BT}{2015-03-07}{2015-03-08} \\ %Tests
@@ -440,9 +442,9 @@ bar height = 0.8
     \hline
     A2 & Données locales des noeuds &  & Initialisation et implémentation \tabularnewline
     \hline
-    A3 & Communication des locales entre noeuds &  &  \tabularnewline
+    A3 & Communication des données locales entre noeuds &  &  \tabularnewline
     \hline
-    A4 & Gestion des replicats &  &  \tabularnewline
+    A4 & Gestion des replicas &  &  \tabularnewline
     \hline
     AT & Tests groupe A &  &  Vérification, tests, mémoire \tabularnewline
     \hline 
@@ -494,9 +496,9 @@ bar height = 0.8
 
 \subsection{Livrables intermédiaires}
 
-\paragraph{} Un livrable  intermédiaire est une ébauche de l'application. C'est à dire que seulement quelques fonctionnalités sont implémentées.
+\paragraph{} Un livrable intermédiaire est une ébauche de l'application. C'est à dire que seulement quelques fonctionnalités sont implémentées.
 
-\paragraph{} Il n'a pas encore été décidé de remettre un ou plusieurs livrables intermédiaire au client.
+\paragraph{} Il n'a pas encore été décidé de remettre un ou plusieurs livrables intermédiaires au client.
 
 \subsection{Livrable final}
 
@@ -507,13 +509,13 @@ bar height = 0.8
 \begin{figure}[p]
 	\centering
 		\include{distributed_database}
-	\caption{Visualisation d'une base de données distribuées sous forme de cluster possédant quatre data center\label{fig:distributed_database}}
+	\caption{Visualisation d'une base de données distribuée sous forme de clusters possédant quatre data center\label{fig:distributed_database}}
 \end{figure}
 
 \begin{figure}[p]
 	\centering
 		\include{partitionning}
-	\caption{Exemple de partitionnement des données dans une base de données distribuées\label{fig:partitionning}}
+	\caption{Exemple de partitionnement des données dans une base de données distribuée\label{fig:partitionning}}
 \end{figure}
 
 \begin{figure}[p]
@@ -525,7 +527,7 @@ bar height = 0.8
 \begin{figure}[p]
 	\centering
 		\include{request}
-	\caption{Cheminement d'une requête dans une base de données distribuées avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
+	\caption{Cheminement d'une requête dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
 \end{figure}
 
 \end{document}
