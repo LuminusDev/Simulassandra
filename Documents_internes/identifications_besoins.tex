@@ -244,9 +244,21 @@ La popularité d'un objet est défini par le nombre de requêtes sur cet objet. 
 \paragraph{Communication de la popularité} \besoin{1}{1} Un noeud stockant des copies d'un objet doit communiquer la popularité de ces derniers au noeud possédant l'objet original.
 
 
-\subsection{Protocole de réaffectation}
+\subsection{Protocoles d'affectation}
 
-\paragraph{} \besoin{1}{1} Les algorithmes d'équilibrage de charge à implémenter sont \textbf{SLVO} et \textbf{AverageDegree}.
+\paragraph{} Une \textit{affectation} consiste, pour un noeud, à effectuer le traitement d'une requête. Les requêtes peuvent arriver sur n'importe quel noeud. On dit alors que ce noeud devient le noeud \textit{coordinateur} pour cette requête. Il transmet la requête aux noeuds possédant l'objet de la requête (voir la figure \ref{fig:request}).
+
+\paragraph{} Les noeuds possédant l'objet mettent la requête dans leur file d'attente. Dès qu'un noeud aura a traité cette requête, il communique aux autres noeuds possédant l'objet qu'il se charge de la traiter. Les noeuds suppriment la requête de leur file d'attente. Le noeud qui prend en charge la requête la traite et donne le résultat de la requête au noeud coordinateur, qui peut ainsi renvoyer le résultat.
+
+\paragraph{Communication d'un message d'ajout d'une requête dans la file d'attente} \besoin{1}{1}
+\paragraph{Communication d'un message de suppression d'une requête de la file d'attente} \besoin{1}{1}
+\paragraph{Ajout d'une requête dans la file d'attente} \besoin{1}{1}
+\paragraph{Suppression d'une requête de la file d'attente} \besoin{1}{1}
+
+\paragraph{} Des protocoles d'affectation plus spécifiques peuvent être implémentés. Ils utilisent les données locales du noeud pour décider de l'affectation des requêtes.
+
+\paragraph{Implémentation de l'algorithme \textbf{SLVO}} \besoin{1}{1}
+\paragraph{Implémentation de l'algorithme \textbf{AverageDegree}} \besoin{1}{1}  
 
 
 \subsection{Protocole de test}
@@ -313,7 +325,7 @@ Ces données sont récupérées grâce à l'analyseur syntaxique.
 \subsection{Cassandra}
 
 \paragraph{} Cassandra est une base de données distribuée.
-Nous créons notre environnement de simulation à partir de la dernière version stable de Cassandra.
+Nous créons notre environnement distribué à partir de la dernière version stable de Cassandra.
 
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
