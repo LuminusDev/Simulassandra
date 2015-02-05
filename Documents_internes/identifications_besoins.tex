@@ -201,17 +201,15 @@ On souhaite connaître :
 
 \subsubsection{Réplication d'un objet}
 
-\paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. 
-Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique).
-On obtient ainsi un \textit{token}.
-
 
 \paragraph{Définition} Une \textit{fonction de hachage} est une fonction mathématique déterministe (c'est à dire, si on lui donne la même entrée, elle renvoie la même sortie). Nous définissons ses entrées et sorties dans le paragraphe suivant.
 
 \paragraph{Définition} Un \textit{token} permet comme une étiquette sur un produit, de désigner une donnée.
 
-\paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique). On obtient ainsi un \textit{token}.
-
+\paragraph{} Il s'agit de copier un objet sur un autre noeud. 
+Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. 
+Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique).
+On obtient ainsi un \textit{token}.
 
 \paragraph{} Tous les noeuds possèdent un intervalle de token dont ils sont responsables. 
 On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
@@ -228,11 +226,9 @@ Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la foncti
 \subsubsection{Popularité d'un objet}
 
 \paragraph{} Les algorithmes à implémenter nécessitent de connaître la popularité d'un objet dans le réseau.
-
 La popularité d'un objet est fonction du nombre de requêtes sur cet objet.
 Plus ce nombre de requêtes est grand, plus l'objet est populaire.
 
-La popularité d'un objet est défini par le nombre de requêtes sur cet objet. Plus le nombre de requêtes est grand, plus l'objet est populaire.
 
 
 \paragraph{Calcul de la popularité} \besoin{1}{1}
@@ -281,7 +277,10 @@ La notion de similitude est laissée à l'appréciation de l'équipe en charge d
 
 \subsubsection{Générations de requêtes}
 
-\paragraph{} Pour tester la validité des algorithmes, l'application devra posséder une fonction de génération de requêtes. Si l'utilisateur ne détient pas de suites de requêtes, il pourra demander à l'application d'en créer pour lui. L'application ne connaissant pas la nature des données ne pourra qu'effectuer un nombre restreint de requêtes différentes. Elle peut par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne peut pas en modifier une.
+\paragraph{} Pour tester la validité des algorithmes, l'application devra posséder une fonction de génération de requêtes. 
+Si l'utilisateur ne détient pas de suites de requêtes, il pourra demander à l'application d'en créer pour lui. 
+L'application ne connaissant pas la nature des données ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
+Elle peut par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne peut pas en modifier une.
 
 
 \subsubsection{Importation d'un jeu de requête}
@@ -334,9 +333,6 @@ En effet, celui-ci dispose de connaissances sur cette application et pourra donc
 
 \paragraph{} Nous ne pensons pas que le projet sera totalement terminé le 8 Avril 2015, date de rendu du code et du mémoire.
 Pour cela, nous avons défini quelques normes pour que le projet puisse être repris. (a détailler)
-
-\paragraph{}
-
 
 
 \subsection{Gestion d'un réseau}
@@ -400,7 +396,7 @@ bar height = 0.8
 \ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-06} \\
 \ganttbar[name=a1]{A1}{2015-02-16}{2015-02-23} \\ %Création noeuds
 \ganttbar[name=a2]{A2}{2015-02-16}{2015-02-23} \\ %Implémentation et initialisations données noeuds
-\ganttbar[name=a3]{A3}{2015-02-24}{2015-03-28} \\ %Communication entre noeuds
+\ganttbar[name=a3]{A3}{2015-02-24}{2015-02-28} \\ %Communication entre noeuds
 \ganttbar[name=a4]{A4}{2015-02-27}{2015-03-02} \\ %Gestion des replicats
 \ganttbar{AT}{2015-03-03}{2015-03-06} \\ %Tests
 
@@ -501,13 +497,13 @@ bar height = 0.8
 
 \section{Livrables}
 
-\subsection{Livrables \textless intermédiaires \textgreater}
+\subsection{Livrables intermédiaires}
 
-\paragraph{} Un livrable \textless intermédiaire \textgreater est une ébauche de l'application. C'est à dire que seulement quelques fonctionnalités sont implémentées.
+\paragraph{} Un livrable  intermédiaire est une ébauche de l'application. C'est à dire que seulement quelques fonctionnalités sont implémentées.
 
-\paragraph{} Il n'a pas encore été décidé de remettre un ou plusieurs livrables \textless intermédiaire \textgreater au client.
+\paragraph{} Il n'a pas encore été décidé de remettre un ou plusieurs livrables intermédiaire au client.
 
-\subsection{Livrable \textless final \textgreater}
+\subsection{Livrable final}
 
 \paragraph{} Il devra être remis le 8 Avril 2015. Il comportera les besoins de priorité 1 et 2.
 
