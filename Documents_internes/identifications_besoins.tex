@@ -185,7 +185,6 @@ Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité 
  	\item initialiser les données locales d'un noeud
  \end{itemize}
 
-
 \paragraph{Mise à jour des données locales} \besoin{1}{1} Afin de connaître l'état du réseau de manière précise, les données locales doivent être mise à jour à chaque action,
 c'est à dire lors du traitement d'un message dans la file d'attente.
 
@@ -226,10 +225,8 @@ Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la foncti
 \subsubsection{Popularité d'un objet}
 
 \paragraph{} Les algorithmes à implémenter nécessitent de connaître la popularité d'un objet dans le réseau.
-La popularité d'un objet est fonction du nombre de requêtes sur cet objet.
-Plus ce nombre de requêtes est grand, plus l'objet est populaire.
-
-
+La popularité d'un objet est défini par le nombre de requêtes sur cet objet.
+Plus Le nombre de requêtes est grand, plus l'objet est populaire.
 
 \paragraph{Calcul de la popularité} \besoin{1}{1}
 
@@ -253,25 +250,6 @@ Plus ce nombre de requêtes est grand, plus l'objet est populaire.
 
 \paragraph{Implémentation de l'algorithme \textbf{SLVO}} \besoin{1}{1}
 \paragraph{Implémentation de l'algorithme \textbf{AverageDegree}} \besoin{1}{1}  
-
-
-\subsection{Protocole de test}
-
-\paragraph{} La conformité des algorithmes implémentés est assurée par un protocole de test suivant la démarche :
-
-\begin{itemize}
-	\item Définir un réseau $R$, un ensemble d'objets $O$ et un ensemble de requêtes $Q$
-	\item Faire tourner l'algorithme à la main avec $R$, $O$ et $Q$
-	\item Stocker l'état final du réseau
-	\item Faire valider ce processus par le client
-	\item Exécuter l'algorithme sur ordinateur avec $R$, $O$ et $Q$
-	\item Vérifier les résultats constatés avec les résultats attendus
-\end{itemize}
-	
-\paragraph{} S'il y a une différence entre les deux résultats, une vérification par le client peut être envisagée dans le cas de résultats \textit{presque} similaires. 
-La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
-
-
 
 \subsection{Requêtes}
 
@@ -327,18 +305,19 @@ Nous créons notre environnement distribué à partir de la dernière version st
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
 
+\subsection{Maintenabilité du projet}
 
-
-\subsection{Maintenabilité du code}
-
-\paragraph{} Nous ne pensons pas que le projet sera totalement terminé le 8 Avril 2015, date de rendu du code et du mémoire.
-Pour cela, nous avons défini quelques normes pour que le projet puisse être repris. (a détailler)
-
+\paragraph{} L'envergure du projet fait qu'il est possible que d'autres personnes travaillent sur la finalité de ce projet, peu importe son état d'avancement.
+Afin de faciliter la compréhension, nous avons défini quelques normes pour que le projet puisse être repris :
+\begin{itemize}
+	\item documentation dans le code source suivant la norme du langage utilisé
+	\item document externe spécifiant les fichiers modifiés par rapport au code source original
+	\item guide d'installation pour utiliser le projet et pour modifier le projet
+\end{itemize}
 
 \subsection{Gestion d'un réseau}
 
 \subsubsection{Communication entre noeuds}
-
 
 \paragraph{Algorithme} Le calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
 
@@ -346,7 +325,7 @@ Pour cela, nous avons défini quelques normes pour que le projet puisse être re
 Nous cherchons donc a récupérer ces données en un temps raisonnable ($O(log(n))$ pour $n$ noeuds).
 
 \paragraph{}Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
-Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}, noeud en mesure d'avoir une connaissance globale du système, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
+Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}\cite{seed}, noeud en mesure d'avoir une connaissance globale du système, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
 
 \paragraph{}Ainsi, la connaissance globale du système se fait, dans la théorie, en $O(log(n))$.
 
@@ -356,6 +335,22 @@ Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \te
 \paragraph{} La taille de chaque donnée est laissée à l'appréciation de l'équipe. 
 Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
 
+
+\subsection{Protocole de test}
+
+\paragraph{} La conformité des algorithmes implémentés est assurée par un protocole de test suivant la démarche :
+
+\begin{itemize}
+	\item Définir un réseau $R$, un ensemble d'objets $O$ et un ensemble de requêtes $Q$
+	\item Faire tourner l'algorithme à la main avec $R$, $O$ et $Q$
+	\item Stocker l'état final du réseau
+	\item Faire valider ce processus par le client
+	\item Exécuter l'algorithme sur ordinateur avec $R$, $O$ et $Q$
+	\item Vérifier les résultats constatés avec les résultats attendus
+\end{itemize}
+	
+\paragraph{} S'il y a une différence entre les deux résultats, une vérification par le client peut être envisagée dans le cas de résultats \textit{presque} similaires. 
+La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
 
 \subsection{Visualisation des données}
 
@@ -507,6 +502,7 @@ bar height = 0.8
 
 \paragraph{} Il devra être remis le 8 Avril 2015. Il comportera les besoins de priorité 1 et 2.
 
+\bibliography{identifications_besoins}
 
 \begin{figure}[p]
 	\centering
@@ -531,13 +527,5 @@ bar height = 0.8
 		\include{request}
 	\caption{Cheminement d'une requête dans une base de données distribuées avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
 \end{figure}
-
-\begin{figure}[p]
-	\centering
-		\include{user_scenario}
-	\caption{Scénario d'utilisation du projet par le client\label{fig:user_scenario}}
-\end{figure}
-
-\bibliography{identifications_besoins}
 
 \end{document}
