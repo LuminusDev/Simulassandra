@@ -197,7 +197,7 @@ On souhaite connaître :
 \end{itemize}
 
 \subsubsection{Réplication d'un objet}
-\paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un data center (un ensemble de noeud). Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique). On obtient ainsi un \textit{token}.
+\paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique). On obtient ainsi un \textit{token}.
 
 \paragraph{} Tous les noeuds possèdent un intervalle de token dont ils sont responsables. On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
 
@@ -445,31 +445,31 @@ bar height = 0.8
 \paragraph{} Il devra être remis le 8 Avril 2015.
 
 
-\begin{figure}[h]
+\begin{figure}[p]
 	\centering
 		\include{distributed_database}
 	\caption{Visualisation d'une base de données distribuées sous forme de cluster possédant quatre data center\label{fig:distributed_database}}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[p]
 	\centering
 		\include{partitionning}
 	\caption{Exemple de partitionnement des données dans une base de données distribuées\label{fig:partitionning}}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[p]
 	\centering
 		\include{multi_hash_partitionning}
 	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[p]
 	\centering
 		\include{request}
 	\caption{Cheminement d'une requête dans une base de données distribuées avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[p]
 	\centering
 		\include{user_scenario}
 	\caption{Scénario d'utilisation du projet par le client\label{fig:user_scenario}}
