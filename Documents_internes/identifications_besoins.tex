@@ -61,7 +61,8 @@ De plus, nous dégageons une première version de la plannification du projet (G
 
 \paragraph{Définition} Une \textit{base de données} est une entité permettant de stocker des données afin d'en faciliter l'exploitation (ajout, mise à jour, recherche de données).
 
-\paragraph{Définition} Une \textit{donnée} est un codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
+\paragraph{Définition} Une \textit{donnée} ou un \textit{objet} est un codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
+
 %Assez précis ?%
 
 %\paragraph{} Diff BD et BD distrib et maitre esclave (faire, apparaitre file d'attente & def charge )
@@ -100,9 +101,9 @@ On distingue les algorithmes d'affectation de requête :
 
 \paragraph{Définition} La \textit{popularité} d'un objet est le nombre de requête que va recevoir un objet durant un intervalle de temps $T$ défini par l'utilisateur.
 
-\paragraph{}Ainsi que l'algorithme de gestion de copie, permettant d'établir le nombre de réplicats d'un objet en fonction de sa popularité.
+\paragraph{}Ainsi que l'algorithme de gestion de copie, permettant d'établir le nombre de réplicas d'un objet en fonction de sa popularité.
 
-\paragraph{} Pour comparer l'efficacité de ces algorithmes, on peut visualiser l'état du réseau \textit{à tout moment}.
+\paragraph{} Pour comparer l'efficacité de ces algorithmes, on peut visualiser l'état du réseau \textit{en temps réel}.
 
 
 \subsection{Hypothèses}
@@ -184,8 +185,7 @@ Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité 
  	\item initialiser les données locales d'un noeud
  \end{itemize}
 
-\paragraph{Mise à jour des données locales} \besoin{1}{1} Afin de connaître l'état du réseau de manière précise, les données locales doivent être mise à jour à chaque action 
-Une mise à jour a donc lieu lors du traitement d'un message dans la file d'attente.
+\paragraph{Mise à jour des données locales} \besoin{1}{1} Afin de connaître l'état du réseau de manière précise, les données locales doivent être mise à jour à chaque action. Une mise à jour a donc lieu lors du traitement d'un message dans la file d'attente.
 
 \paragraph{Communication des données locales} \besoin{1}{1} Un noeud doit être capable de communiquer ses données locales à d'autres noeuds du réseau.
 
@@ -210,13 +210,13 @@ On souhaite connaître :
 \subsubsection{Popularité d'un objet}
 
 \paragraph{} Les algorithmes à implémenter nécessitent de connaître la popularité d'un objet dans le réseau.
-La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plus ce nombre de requêtes est grand, plus l'objet est populaire.
+La popularité d'un objet est défini par le nombre de requêtes sur cet objet. Plus le nombre de requêtes est grand, plus l'objet est populaire.
 
 \paragraph{Calcul de la popularité} \besoin{1}{1}
 
 \paragraph{Stockage de la popularité} \besoin{1}{1} Chaque noeud stocke la popularité des objets qu'il contient.
 
-\paragraph{Communication de la popularité} \besoin{1}{1} Un noeud stockant des copies doit communiquer la popularité de ces derniers au noeud possédant l'objet original.
+\paragraph{Communication de la popularité} \besoin{1}{1} Un noeud stockant des copies d'un objet doit communiquer la popularité de ces derniers au noeud possédant l'objet original.
 
 
 \subsection{Protocole de réaffectation}
