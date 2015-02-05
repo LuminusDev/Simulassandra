@@ -197,6 +197,11 @@ On souhaite connaître :
 \end{itemize}
 
 \subsubsection{Réplication d'un objet}
+
+\paragraph{Définition} Une \textit{fonction de hachage} est une fonction mathématique déterministe (c'est à dire, si on lui donne la même entrée, elle renvoie la même sortie). Nous définissons ses entrées et sorties dans le paragraphe suivant.
+
+\paragraph{Définition} Un \textit{token} permet comme une étiquette sur un produit, de désigner une donnée.
+
 \paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique). On obtient ainsi un \textit{token}.
 
 \paragraph{} Tous les noeuds possèdent un intervalle de token dont ils sont responsables. On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
@@ -244,9 +249,9 @@ La notion de similitude est laissée à l'appréciation de l'équipe en charge d
 
 \subsection{Requêtes}
 
-\subsubsection{Générations de requête}
+\subsubsection{Générations de requêtes}
 
-\paragraph{} %A définir
+\paragraph{} Pour tester la validité des algorithmes, l'application devra posséder une fonction de génération de requêtes. Si l'utilisateur ne détient pas de suites de requêtes, il pourra demander à l'application d'en créer pour lui. L'application ne connaissant pas la nature des données ne pourra qu'effectuer un nombre restreint de requêtes différentes. Elle peut par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne peut pas en modifier une.
 
 
 \subsubsection{Importation d'un jeu de requête}
