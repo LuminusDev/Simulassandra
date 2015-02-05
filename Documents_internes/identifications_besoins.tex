@@ -122,7 +122,7 @@ On distingue les algorithmes d'affectation de requête :
 
 \paragraph{Requêtes} Nous supposerons que les requêtes seront effectuées en un temps fixe.
 
-%\newpage
+\newpage
 \section{Ordonnancement des besoins}
 
 \paragraph{} Nous avons dégagé une liste de besoins fonctionnels et non-fonctionnels. 
@@ -290,8 +290,6 @@ La notion de similitude est laissée à l'appréciation de l'équipe en charge d
 \paragraph{Ecriture dans un fichier} \besoin{1}{2} Lorsque les données locales d'un noeud sont modifiés, on enregistre dans un fichier ces données.
 L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du noeud; charge du noeud;}
 
-\paragraph{}
-
 \subsubsection{Affichage des données}
 
 \paragraph{Définition} Un \textit{graphe} est un ensemble de points appelés \textit{sommets}, dont certaines paires sont directement reliées par un (ou plusieurs) lien(s) appelé(s) \textit{arêtes} \cite{graphe}. 
@@ -380,7 +378,7 @@ Un délai plus faible risquerait de ralentir le système, étant donné que l'ob
 hgrid,
 vgrid={*6{blue,dashed}, *1{red}},
 inline = true,
-x unit=4.5mm,
+x unit=4mm,
 time slot format=isodate,
 milestone inline label node/.append style={left=3mm},
 y unit chart = 0.65cm,
@@ -390,14 +388,15 @@ bar height = 0.8
 \gantttitlecalendar{month=name, day} \\
 
 \ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-06} \\
-\ganttbar[name=a1]{A1}{2015-02-16}{2015-02-23} \\ %Création noeuds via script ?
+\ganttbar[name=a1]{A1}{2015-02-16}{2015-02-23} \\ %Création noeuds
 \ganttbar[name=a2]{A2}{2015-02-16}{2015-02-23} \\ %Implémentation et initialisations données noeuds
 \ganttbar[name=a3]{A3}{2015-02-24}{2015-03-28} \\ %Communication entre noeuds
 \ganttbar[name=a4]{A4}{2015-02-27}{2015-03-02} \\ %Gestion des replicats
 \ganttbar{AT}{2015-03-03}{2015-03-06} \\ %Tests
 
 \ganttgroup{Simulation de requête (B)}{2015-03-01}{2015-03-08} \\
-\ganttbar{B1}{2015-03-01}{2015-03-06} \\ %Création d'un interpreteur pour lire un fichier jeu de requête
+\ganttbar{B1}{2015-03-01}{2015-03-06} \\ %Génération jeu de requêtes
+\ganttbar{B2}{2015-03-01}{2015-03-06} \\ %Importation jeu de requêtes
 \ganttbar{BT}{2015-03-07}{2015-03-08} \\ %Tests
 
 \ganttgroup{Gestion de la popularité (C)}{2015-03-07}{2015-03-16} \\
@@ -407,15 +406,16 @@ bar height = 0.8
 \ganttbar{CT}{2015-03-15}{2015-03-16} \\ %Tests
 
 
-\ganttgroup{Equilibrage des charges (D)}{2015-03-15}{2015-03-29} \\
+\ganttgroup{Protocoles d'affectations (D)}{2015-03-15}{2015-03-29} \\
 \ganttbar{D1}{2015-03-15}{2015-03-24} \\ %Algorithme SLVO
 \ganttbar{D2}{2015-03-15}{2015-03-24} \\ %Algorithme AvergeDegree
 \ganttbar{DT}{2015-03-25}{2015-03-29} \\ %Tests 
 
 \ganttgroup{Visualisation de données (E)}{2015-03-29}{2015-04-08} \\
 \ganttbar{E1}{2015-03-29}{2015-04-01} \\ %Prise en main tulip
-\ganttbar{E2}{2015-04-01}{2015-04-04} \\ %Affichage réseau
-\ganttbar{E3}{2015-04-04}{2015-04-06} \\ %AFfichage informations (charges)
+\ganttbar{E2}{2015-03-29}{2015-04-01} \\ %Enregistrement des données
+\ganttbar{E3}{2015-04-01}{2015-04-04} \\ %Affichage réseau
+\ganttbar{E4}{2015-04-04}{2015-04-06} \\ %AFfichage informations (charges)
 
 \ganttbar{T}{2015-04-06}{2015-04-07} \\
 
@@ -439,7 +439,7 @@ bar height = 0.8
     \hline
     A2 & Données locales des noeuds &  & Initialisation et implémentation \tabularnewline
     \hline
-    A3 & Communication entre noeuds &  &  \tabularnewline
+    A3 & Communication des locales entre noeuds &  &  \tabularnewline
     \hline
     A4 & Gestion des replicats &  &  \tabularnewline
     \hline
@@ -448,6 +448,8 @@ bar height = 0.8
     \hline
     B1 & Générateur de requêtes &  & A détailler  \tabularnewline
     \hline
+    B2 & Importateur de jeu de requêtes &  & A détailler  \tabularnewline
+    \hline
     BT & Tests groupe B &  &  Vérification, tests, mémoire \tabularnewline
     \hline
     \hline
@@ -455,7 +457,7 @@ bar height = 0.8
     \hline
     C2 & Space-Saving Algorithm &  &  \tabularnewline
     \hline
-    C3 & Popularité d'un objet &  &  \tabularnewline
+    C3 & Popularité d'un objet dans le réseau &  &  \tabularnewline
     \hline
     CT & Tests groupe C &  & Vérification, tests, mémoire \tabularnewline
     \hline
@@ -469,6 +471,8 @@ bar height = 0.8
     \hline
     E1 & Prise en main Tulip &  &  \tabularnewline
     \hline
+    E2 & Ecriture des données dans un fichier &  &  (+Analyseur syntaxique) \tabularnewline
+    \hline
     E2 & Représentation réseau &  &  \tabularnewline
     \hline
     E3 & Représentation données &  &  \tabularnewline
@@ -478,15 +482,24 @@ bar height = 0.8
     \hline
  \end{tabular}
  
+ \vspace{1cm}
+ 
+\paragraph{Remarque} Il s'agit d'une première version de notre GANTT. Nous n'avons pas encore défini l'affectation des tâches aux développeurs.
 
 
 \newpage
 
 \section{Livrables}
 
-\subsection{Livrable ``final''}
+\subsection{Livrables \textless intermédiaires \textgreater}
 
-\paragraph{} Il devra être remis le 8 Avril 2015.
+\paragraph{} Un livrable \textless intermédiaire \textgreater est une ébauche de l'application. C'est à dire que seulement quelques fonctionnalités sont implémentées.
+
+\paragraph{} Il n'a pas encore été décidé de remettre un ou plusieurs livrables \textless intermédiaire \textgreater au client.
+
+\subsection{Livrable \textless final \textgreater}
+
+\paragraph{} Il devra être remis le 8 Avril 2015. Il comportera les besoins de priorité 1 et 2.
 
 
 \begin{figure}[p]
