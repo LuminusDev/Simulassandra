@@ -38,8 +38,8 @@
 \maketitle
 
 \abstract
-Dans une première partie, nous présentons le projet, le contexte et les hyothèses. Ensuite, nous développons les besoins fonctionnels et les besoins non-fonctionnels.
-De plus, nous dégageons une première version de la plannification du projet (GANTT). Enfin, nous présentons les livrables.
+Dans une première partie, nous présenterons le projet, le contexte et les hypothèses. Ensuite, nous développerons les besoins fonctionnels et les besoins non-fonctionnels.
+De plus, nous dégageons une première version de la plannification du projet (GANTT). Enfin, nous présenterons les livrables.
 
 
 
@@ -123,7 +123,7 @@ On distingue les algorithmes d'affectation de requête :
 \paragraph{Requêtes} Nous supposerons que les requêtes seront effectuées en un temps fixe.
 
 %\newpage
-\section{Hiérarchisation des besoins}
+\section{Ordonnancement des besoins}
 
 \paragraph{} Nous avons dégagé une liste de besoins fonctionnels et non-fonctionnels. 
 Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité et de leur criticité.
@@ -158,9 +158,9 @@ Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité 
     \hline
     1 & Criticité extrême & L'application ne sera pas utilisable par le client. \tabularnewline
     \hline
-    2 & Criticité haute & L'application est utilisable par le client. En revanche certaines fonctionnalités de l'application ne seront pas utilisables. \tabularnewline
+    2 & Criticité haute & L'application est utilisable par le client. En revanche, certaines fonctionnalités de l'application ne seront pas utilisables. \tabularnewline
     \hline
-    3 & Criticité moyenne & L'application est utilisable par le client. En revanche certaines fonctionnalités de l'application n'améneront pas au résultat attendu.  \tabularnewline
+    3 & Criticité moyenne & L'application est utilisable par le client. En revanche, certaines fonctionnalités de l'application n'améneront pas au résultat attendu.  \tabularnewline
     \hline
     4 & Criticité faible & L'application peut fonctionner sans l'ajout de ces fonctionnalités  \tabularnewline
     \hline
@@ -185,7 +185,12 @@ Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité 
  	\item initialiser les données locales d'un noeud
  \end{itemize}
 
+
+\paragraph{Mise à jour des données locales} \besoin{1}{1} Afin de connaître l'état du réseau de manière précise, les données locales doivent être mise à jour à chaque action,
+c'est à dire lors du traitement d'un message dans la file d'attente.
+
 \paragraph{Mise à jour des données locales} \besoin{1}{1} Afin de connaître l'état du réseau de manière précise, les données locales doivent être mise à jour à chaque action. Une mise à jour a donc lieu lors du traitement d'un message dans la file d'attente.
+
 
 \paragraph{Communication des données locales} \besoin{1}{1} Un noeud doit être capable de communiquer ses données locales à d'autres noeuds du réseau.
 
@@ -197,11 +202,26 @@ On souhaite connaître :
 \end{itemize}
 
 \subsubsection{Réplication d'un objet}
+
+\paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. 
+Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique).
+On obtient ainsi un \textit{token}.
+
+
+\paragraph{Définition} Une \textit{fonction de hachage} est une fonction mathématique déterministe (c'est à dire, si on lui donne la même entrée, elle renvoie la même sortie). Nous définissons ses entrées et sorties dans le paragraphe suivant.
+
+\paragraph{Définition} Un \textit{token} permet comme une étiquette sur un produit, de désigner une donnée.
+
 \paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un ensemble de noeud, appelé \textit{data center}. Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique). On obtient ainsi un \textit{token}.
 
-\paragraph{} Tous les noeuds possèdent un intervalle de token dont ils sont responsables. On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
 
-\paragraph{} Une stratégie de réplication est la méthode qui permet de placer les copies d'un objet dans un data center. La stratégie consiste à utiliser une fonction de hachage différente pour chaque copie (voir la figure~\ref{fig:multi_hash_partitionning}). Le numéro de la copie définit la fonction à utiliser. Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la fonction de hachage "Hash2" pour obtenir un token et placer la copie.
+\paragraph{} Tous les noeuds possèdent un intervalle de token dont ils sont responsables. 
+On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
+
+\paragraph{} Une stratégie de réplication est la méthode qui permet de placer les copies d'un objet dans un data center.
+La stratégie consiste à utiliser une fonction de hachage différente pour chaque copie (voir la figure~\ref{fig:multi_hash_partitionning}). 
+Le numéro de la copie définit la fonction à utiliser. 
+Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la fonction de hachage \texttt{Hash2} pour obtenir un token et placer la copie.
 
 \paragraph{Définition des fonctions de hachage} \besoin{1}{3}
 \paragraph{Mise en place de la stratégie de réplication} \besoin{1}{3}
@@ -210,7 +230,12 @@ On souhaite connaître :
 \subsubsection{Popularité d'un objet}
 
 \paragraph{} Les algorithmes à implémenter nécessitent de connaître la popularité d'un objet dans le réseau.
+
+La popularité d'un objet est fonction du nombre de requêtes sur cet objet.
+Plus ce nombre de requêtes est grand, plus l'objet est populaire.
+
 La popularité d'un objet est défini par le nombre de requêtes sur cet objet. Plus le nombre de requêtes est grand, plus l'objet est populaire.
+
 
 \paragraph{Calcul de la popularité} \besoin{1}{1}
 
@@ -242,10 +267,10 @@ La popularité d'un objet est défini par le nombre de requêtes sur cet objet. 
 
 \begin{itemize}
 	\item Définir un réseau $R$, un ensemble d'objets $O$ et un ensemble de requêtes $Q$
-	\item Faire tourner l'algorithme à la main
+	\item Faire tourner l'algorithme à la main avec $R$, $O$ et $Q$
 	\item Stocker l'état final du réseau
 	\item Faire valider ce processus par le client
-	\item Exécuter l'algorithme avec $R$, $O$ et $Q$
+	\item Exécuter l'algorithme sur ordinateur avec $R$, $O$ et $Q$
 	\item Vérifier les résultats constatés avec les résultats attendus
 \end{itemize}
 	
@@ -256,25 +281,43 @@ La notion de similitude est laissée à l'appréciation de l'équipe en charge d
 
 \subsection{Requêtes}
 
-\subsubsection{Générations de requête}
+\subsubsection{Générations de requêtes}
 
-\paragraph{} %A définir
+\paragraph{} Pour tester la validité des algorithmes, l'application devra posséder une fonction de génération de requêtes. Si l'utilisateur ne détient pas de suites de requêtes, il pourra demander à l'application d'en créer pour lui. L'application ne connaissant pas la nature des données ne pourra qu'effectuer un nombre restreint de requêtes différentes. Elle peut par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne peut pas en modifier une.
 
 
 \subsubsection{Importation d'un jeu de requête}
 
-\paragraph{} Pour comparer l'efficacité des algorithmes, il doit être possible d'envoyer sur le réseau un même suite de requêtes, un jeu de requête.
+\paragraph{} Pour comparer l'efficacité des algorithmes, il doit être possible d'envoyer sur le réseau une même suite de requêtes, un jeu de requête.
 
 \paragraph{Importation} \besoin{1}{2} L'application doit pouvoir lire un fichier contenant une suite de requête et envoyer ces requêtes sur le réseau.
 
 
 \subsection{Visualisation des données}
 
-\begin{itemize}
- \item Temps de réponse moyen sur les requêtes passées.
- \item Charge d'un noeud
- \item Popularité des objets
-\end{itemize}
+\paragraph{} Afin de suivre l'évolution des charges de chaque noeud lors de l'éxecution des algorithmes, on enregistre les données locales de chaque noeud à chaque modifications de celles-ci.
+
+\subsubsection{Enregistrement des données}
+
+\paragraph{Ecriture dans un fichier} \besoin{1}{2} Lorsque les données locales d'un noeud sont modifiés, on enregistre dans un fichier ces données.
+L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du noeud; charge du noeud;}
+
+\paragraph{}
+
+\subsubsection{Affichage des données}
+
+\paragraph{Définition} Un \textit{graphe} est un ensemble de points appelés \textit{sommets}, dont certaines paires sont directement reliées par un (ou plusieurs) lien(s) appelé(s) \textit{arêtes} \cite{graphe}. 
+
+\paragraph{Noeuds} \besoin{3}{2} L'application doit permettre la représentation de chaque noeud par un sommet.
+
+\paragraph{Analyse syntaxique} \besoin{2}{1} Lors de l'éxecution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
+Un analyseur syntaxique découpe chaque ligne du fichier pour récuperer le moment auquel a été enregistré l'information (\texttt{itération de l'algorithme}),
+le noeud concerné ( \texttt{ identifiant du noeud} ) et la charge de ce noeud à ce moment ( \texttt{charge du noeud} ).
+
+\paragraph{Charge des noeuds}  \besoin{3}{3} A chaque sommet est associé une valeur correspondant à la charge de ce noeud.
+Ces données sont récupérées grâce à l'analyseur syntaxique.
+
+\paragraph{Film de l'éxecution} \besoin{3}{3} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
 
 
 \newpage
@@ -318,7 +361,8 @@ Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \te
 
 \subsubsection{Taille des données}
 
-\paragraph{} La taille de chaque donnée est laissée à l'appréciation de l'équipe. Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
+\paragraph{} La taille de chaque donnée est laissée à l'appréciation de l'équipe. 
+Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
 
 
 \subsection{Visualisation des données}
