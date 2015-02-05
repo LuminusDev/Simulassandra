@@ -4,6 +4,8 @@
 \usepackage[tikz]{bclogo}
 \usepackage{geometry}
 \usepackage{array}
+\usepackage{graphics}
+\usepackage{graphicx}
 \usepackage{pgfgantt}
 \usepackage{url}
 \bibliographystyle{alpha}
@@ -198,13 +200,14 @@ On souhaite connaître :
 \end{itemize}
 
 \subsubsection{Réplication d'un objet}
-\paragraph{} Il s'agit de copier un objet sur un autre noeud.
+\paragraph{} Il s'agit de copier un objet sur un autre noeud. Il est possible de définir le nombre de copie d'un objet au sein d'un data center (un ensemble de noeud). Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique). On obtient ainsi un \textit{token}.
 
-%Schéma réplication avec fonction de hashage
+\paragraph{} Tous les noeuds possèdent un intervalle de token dont ils sont responsables. On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
 
-%Explication du schéma
+\paragraph{} Une stratégie de réplication est la méthode qui permet de placer les copies d'un objet dans un data center. La stratégie consiste à utiliser une fonction de hachage différente pour chaque copie (voir la figure~\ref{fig:multi_hash_partitionning}). Le numéro de la copie définit la fonction à utiliser. Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la fonction de hachage "Hash2" pour obtenir un token et placer la copie.
 
-\paragraph{Définition des fonctions de hashage} \besoin{1}{3} %A completer
+\paragraph{Définition des fonctions de hachage} \besoin{1}{3}
+\paragraph{Mise en place de la stratégie de réplication} \besoin{1}{3}
 
 
 \subsubsection{Popularité d'un objet}
@@ -216,15 +219,15 @@ La popularité d'un objet est fonction du nombre de requêtes sur cet objet. Plu
 
 \paragraph{Stockage de la popularité} \besoin{1}{1} Chaque noeud stocke la popularité des objets qu'il contient.
 
-\paragraph{Communication de la popularité} \besoin{1}{1} Un noeud stockant des replicats doit communiquer la popularité de ces derniers au noeud possédant l'objet original.
+\paragraph{Communication de la popularité} \besoin{1}{1} Un noeud stockant des copies doit communiquer la popularité de ces derniers au noeud possédant l'objet original.
 
 
 \subsection{Protocole de réaffectation}
 
-\paragraph{} \besoin{1}{1} Les algorithmes d'équilibrage de charge à implémenter sont  \textbf{SLVO} et \textbf{AverageDegree}.
+\paragraph{} \besoin{1}{1} Les algorithmes d'équilibrage de charge à implémenter sont \textbf{SLVO} et \textbf{AverageDegree}.
 
 
-\subsubsection{Protocole de test}
+\subsection{Protocole de test}
 
 \paragraph{} La conformité des algorithmes implémentés est assurée par un protocole de test suivant la démarche :
 
@@ -272,7 +275,7 @@ La notion de similitude est laissée à l'appréciation de l'équipe en charge d
 \subsection{Cassandra}
 
 \paragraph{} Cassandra est une base de données distribuée.
-Nous créons notre environnement de simulation à partir de la dernière version stable, Cassandra.
+Nous créons notre environnement de simulation à partir de la dernière version stable de Cassandra.
 
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
@@ -301,18 +304,15 @@ Nous cherchons donc a récupérer ces données en un temps raisonnable ($O(log(n
 \paragraph{}Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
 Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}, noeud en mesure d'avoir une connaissance globale du système, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
 
-\paragraph{}Ainsi, la connaissance globale du système se fait en $O(log(n))$.
+\paragraph{}Ainsi, la connaissance globale du système se fait, dans la théorie, en $O(log(n))$.
 
 
 \subsubsection{Taille des données}
 
-\paragraph{} La taille de chaque donnée est laissée à l'apréciation de l'équipe. Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
+\paragraph{} La taille de chaque donnée est laissée à l'appréciation de l'équipe. Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
 
 
 \subsection{Visualisation des données}
-
-\paragraph{} Une vue correspond à une fenêtre de l'application, c'est à dire ce que voit l'utilisateur.
-
 
 \subsubsection{Etat du réseau}
 
@@ -321,16 +321,12 @@ Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \te
 \paragraph{} Le réseau est représenté par un graphe, les machines par des noeuds. 
 Pour chaque machine, les données affichées sont la charge ainsi que le contenu de la file d'attente.
 
-
 \subsubsection{Actualisation de la vue}
 
-\paragraph{} L'état du réseau doit-être visible en temps réel.
+\paragraph{} L'état du réseau doit être visible en temps réel.
 
 \paragraph{} La vue peut donc être actualisée toutes les $0.5$ secondes. 
-Un délai plus faible risquerait de la rendre invisible (données clignotantes sur l'écran).
-
-
-
+Un délai plus faible risquerait de ralentir le système, étant donné que l'obtention des données nécessaires à la visualisation se fait sur la même base de données que celle qui est testée.
 
 
 \newpage
@@ -451,7 +447,36 @@ bar height = 0.8
 
 \paragraph{} Il devra être remis le 8 Avril 2015.
 
-\include{user_scenario}
+
+\begin{figure}[h]
+	\centering
+		\include{distributed_database}
+	\caption{Visualisation d'une base de données distribuées sous forme de cluster possédant quatre data center\label{fig:distributed_database}}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+		\include{partitionning}
+	\caption{Exemple de partitionnement des données dans une base de données distribuées\label{fig:partitionning}}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+		\include{multi_hash_partitionning}
+	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+		\include{request}
+	\caption{Cheminement d'une requête dans une base de données distribuées avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+		\include{user_scenario}
+	\caption{Scénario d'utilisation du projet par le client\label{fig:user_scenario}}
+\end{figure}
 
 \bibliography{identifications_besoins}
 
