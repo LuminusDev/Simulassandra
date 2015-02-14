@@ -48,12 +48,44 @@
 
 \subsection{Staged event-driven architecture (SEDA)}
 
-\paragraph{} Cassandra est basée sur une architecture de type Staged Event Driven Architecture (SEDA). Cela permet de séparer des tâches dans différents emplacements, appelés \textit{stages}, qui sont connectés par un service de messages. Chaque stage possède une file d'attente pour les messages (un message correspondant à une tâche à traiter), ainsi qu'un ensemble de threads pour traiter les tâches. \ref{fig:stages}
+\paragraph{} Cassandra est basée sur une architecture de type Staged Event Driven Architecture (SEDA). Cela permet de séparer des tâches dans différents emplacements, appelés \textit{stages}, qui sont connectés par un service de messages. Chaque stage possède une file d'attente pour les messages (un message correspondant à une tâche à traiter), ainsi qu'un ensemble de threads pour traiter les tâches (voir figure \ref{fig:stages}).
+
+\paragraph{} Dans le cas de Cassandra, la gestion des stages se fait dans le package \path{org.apache.cassandra.concurrent}. Les stages sont -pour la plupart- énumérés dans \textit{Stage}. Ils sont ensuite gérés par le \textit{StageManager}. Nous nous intéresserons principalement aux stages :
+
+\begin{itemize}
+	\item \textbf{READ} : lectures locales
+	\item \textbf{GOSSIP} : communications sur l'état des noeuds
+\end{itemize}
+\paragraph{} Ces stages permettent de répondre à différents besoins.
+
+\paragraph{} Le stage "READ" permet de répondre aux besoins des protocoles d'affectation. L'idée est de créer un nouveau stage "QUEUE\_MANAGER" pour gérer les file d'attentes du stage de lecture. Ainsi, les tâches traitées par le stage "READ" entraîneraient un message vers le stage "QUEUE\_MANAGER", envoyant un message pour supprimer un message d'une file d'attente dans les autres noeuds ayant à traiter la même tâche. Les noeuds recevant le message le transmettraient au stage "QUEUE\_MANAGER" qui s'occuperait alors de supprimer le message voulu de la file d'attente s'il y est encore présent. La figure \ref{fig:read_request} montre un exemple avec une requête de lecture arrivant sur le noeud 5, et avec les données à lire sur les noeuds 1 et 2.
+
+\paragraph{} Le stage "GOSSIP" permet de répondre aux besoins qui concernent la communication des données locales d'un noeud. Les noeuds de la base de données s'échangent des informations sur leur état toutes les secondes. L'ajout de données locales entraînera la modification du stage "GOSSIP" pour permettre l'envoi de ces nouvelles données.
+
+\subsection{Gossip}
+
+\paragraph{} Cassandra utilise le protocole Gossip pour les communications entres les noeuds. Chaque noeud envoie les informations qu'il possède -sur lui et sur les autres noeuds- à au plus 3 autres noeuds du réseau. Cela permet d'avoir pour chaque noeud une connaissance globale du réseau avec un minimum d'interaction.
+\paragraph{} Les classes en rapport avec Gossip se situe dans package \path{org.apache.cassandra.gms}. La classe chargée de traiter les tâches de Gossip est \path{org.apache.cassandra.gms.Gossiper}.
+\paragraph{} Gossiper maintient une liste de noeuds "vivants" et "morts" (des noeuds inatteignables). Toutes les secondes, le module démarre un tour. Un tour entier de Gossip est composé de trois messages. Un noeud X envoie un message syn à un noeud Y pour initialiser Gossip. Y, à la réception de ce message syn, renvoie un message ack à X. Pour répondre à ce message ack, X envoie un message ack2 à Y pour compléter le tour (voir la figure \ref{fig:round_gossip}).
+
+\newpage
 
 \begin{figure}[p]
 	\centering
 		\include{stages}
 	\caption{Schéma de deux stages dans une architecture SEDA \label{fig:stages}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\include{read_request}
+	\caption{Exemple simplifié d'une requête de lecture au niveau des stages, avec l'ajout d'un stage "QUEUE\_MANAGER" \label{fig:read_request}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\include{round_gossip}
+	\caption{Tour de messages Gossip entre les noeuds X et Y \label{fig:round_gossip}}
 \end{figure}
 
 \end{document}
