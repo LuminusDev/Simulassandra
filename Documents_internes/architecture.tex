@@ -68,6 +68,24 @@
 \paragraph{} Les classes en rapport avec Gossip se situe dans package \path{org.apache.cassandra.gms}. La classe chargée de traiter les tâches de Gossip est \path{org.apache.cassandra.gms.Gossiper}.
 \paragraph{} Gossiper maintient une liste de noeuds "vivants" et "morts" (des noeuds inatteignables). Toutes les secondes, le module démarre un tour. Un tour entier de Gossip est composé de trois messages. Un noeud X envoie un message syn à un noeud Y pour initialiser Gossip. Y, à la réception de ce message syn, renvoie un message ack à X. Pour répondre à ce message ack, X envoie un message ack2 à Y pour compléter le tour (voir la figure \ref{fig:round_gossip}).
 
+\subsection{Modèle de données}
+
+\paragraph{} Le modèle de données de Cassandra s’appuie sur un schéma dynamique, avec un modèle de données orienté colonne (voir figure \ref{fig:keyspace}). On retrouve les classes gérant la modélisation de la base de données au sein du package \path{org.apache.cassandra.db}.
+
+\begin{itemize}
+	\item \textbf{Keyspace} : le conteneur des données de l'application
+	\item \textbf{Row} : une ligne dans le Keyspace, composée d'une clé et d'un ensemble de colonnes
+	\item \textbf{DecoratedKey} : un token identifiant le positionnement d'une ligne dans la base de données
+	\item \textbf{ColumnFamily} : un ensemble de colonnes pour une ligne donnée
+	\item \textbf{Column} : un tuple contenant un nom, une valeur et un \textit{timestamp} (la date de la mise à jour la plus récente de cette colonne)
+\end{itemize}
+
+Nous allons nous intéresser dans notre projet à la classe \textbf{ColumnFamily}, afin de pouvoir garder une trace de la popularité des objets. Les objets étant définis par un token, porté par la classe \textbf{DecoratedKey}, ColumnFamily est l'objet dont nous souhaitons connaître la popularité.
+
+\subsection{Métriques}
+
+\paragraph{} Nous allons devoir sortir des données. Pour ça, Metrics ! Parler de JMX, de la librairie Metrics, et des possibilités pour notre projet grâce à ça (je pense aux histogrammes). Tout est surveillés dans Cassandra, facile d'avoir des infos sur un peu tout du coup.
+
 \newpage
 
 \begin{figure}[p]
@@ -86,6 +104,12 @@
 	\centering
 		\include{round_gossip}
 	\caption{Tour de messages Gossip entre les noeuds X et Y \label{fig:round_gossip}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\include{keyspace}
+	\caption{Modèle de données de Cassandra \label{fig:keyspace}}
 \end{figure}
 
 \end{document}
