@@ -1,0 +1,59 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[tikz]{bclogo}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{pgfgantt}
+\usepackage{url}
+\bibliographystyle{alpha}
+\usepackage[counterclockwise]{rotating}
+\geometry{hmargin=2.5cm,vmargin=1.5cm}
+
+\setlength{\parskip}{1ex plus 2ex minus 1ex}
+\newcolumntype{M}[1]{
+    >{\raggedright}m{#1}
+}
+
+\title{
+ \begin{minipage}\linewidth
+        \centering
+        Simulation d'algorithmes d'équilibrage de charge dans un environnement distribué 
+        \vskip3pt
+        \large Architecture
+    \end{minipage}
+ }
+ 
+\bibliographystyle{alpha}
+\author{Kevin Barreau \and Guillaume Marques \and Corentin Salingue}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\renewcommand{\contentsname}{Sommaire} 
+\tableofcontents
+
+\newpage
+
+\section{Architecture de Cassandra}
+
+\paragraph{} Cassandra est une base de données distribuées, écrite en langage Java. Dans sa version 2.1.2, elle est composée de 963 fichiers, répartis dans 62 dossiers, pour un total de 126 502 lignes de codes et 36 287 lignes de commentaires.
+
+\paragraph{} Cassandra est un projet riche et complet. Nous ne nous intéresserons qu'aux parties de son architecture sur lesquelles nous allons travailler.
+
+\subsection{Staged event-driven architecture (SEDA)}
+
+\paragraph{} Cassandra est basée sur une architecture de type Staged Event Driven Architecture (SEDA). Cela permet de séparer des tâches dans différents emplacements, appelés \textit{stages}, qui sont connectés par un service de messages. Chaque stage possède une file d'attente pour les messages (un message correspondant à une tâche à traiter), ainsi qu'un ensemble de threads pour traiter les tâches. \ref{fig:stages}
+
+\begin{figure}[p]
+	\centering
+		\include{stages}
+	\caption{Schéma de deux stages dans une architecture SEDA \label{fig:stages}}
+\end{figure}
+
+\end{document}
