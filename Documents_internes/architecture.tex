@@ -46,11 +46,13 @@
 
 \paragraph{} Cassandra est un projet riche et complet. Nous ne nous intéresserons qu'aux parties de son architecture sur lesquelles nous allons travailler.
 
+\paragraph{} Par ailleurs, nous ne nous intéresserons pas non plus à la représentation sous forme de diagramme de classes de Cassandra, étant donné une forte utilisation du pattern \textit{singleton} et des méthodes \textit{statiques}. Cette représentation donne peu d'information sur le fonctionnement de la base de données.
+
 \subsection{Staged event-driven architecture (SEDA)}
 
 \paragraph{} Cassandra est basée sur une architecture de type Staged Event Driven Architecture (SEDA). Cela permet de séparer des tâches dans différents emplacements, appelés \textit{stages}, qui sont connectés par un service de messages. Chaque stage possède une file d'attente pour les messages (un message correspondant à une tâche à traiter), ainsi qu'un ensemble de threads pour traiter les tâches (voir figure \ref{fig:stages}).
 
-\paragraph{} Dans le cas de Cassandra, la gestion des stages se fait dans le package \path{org.apache.cassandra.concurrent}. Les stages sont -pour la plupart- énumérés dans \textit{Stage}. Ils sont ensuite gérés par le \textit{StageManager}. Nous nous intéresserons principalement aux stages :
+\paragraph{} Dans le cas de Cassandra, la gestion des stages se fait dans le package \path{org.apache.cassandra.concurrent}. Les stages sont -pour la plupart- énumérés dans \textit{Stage}. Ils sont ensuite gérés par le \textit{StageManager} (qui a pour particularité de ne posséder que des méthodes et des attributs statiques). Nous nous intéresserons principalement aux stages :
 
 \begin{itemize}
 	\item \textbf{READ} : lectures locales
@@ -82,9 +84,15 @@
 
 Nous allons nous intéresser dans notre projet à la classe \textbf{ColumnFamily}, afin de pouvoir garder une trace de la popularité des objets. Les objets étant définis par un token, porté par la classe \textbf{DecoratedKey}, ColumnFamily est l'objet dont nous souhaitons connaître la popularité.
 
-\subsection{Métriques}
+\subsection{Statistiques}
 
-\paragraph{} Nous allons devoir sortir des données. Pour ça, Metrics ! Parler de JMX, de la librairie Metrics, et des possibilités pour notre projet grâce à ça (je pense aux histogrammes). Tout est surveillés dans Cassandra, facile d'avoir des infos sur un peu tout du coup.
+\paragraph{} Cassandra possède un système permettant d'exposer des mesures internes, grâce à la libraire \textbf{Metrics} [\textit{https://github.com/dropwizard/metrics} (à mettre en bibliographie)].
+
+\paragraph{} Les classes s'occupant de collecter les mesures se situent dans le package \path{org.apache.cassandra.metrics}. Chaque classe de Metrics est chargé de collecter des statistiques sur certaines classes de Cassandra, comme par exemple sur la classe Keyspace vue précédemment dont les données sont collectées par \path{org.apache.cassandra.metrics.KeyspaceMetrics}.
+
+\paragraph{} L'intêret dans le cas de notre projet est de pouvoir exposer les mesures initiales de Cassandra, mais aussi d'ajouter des mesures sur les implémentations que nous allons faire. Il nous sera possible d'ajouter une nouvelle classe de Metrics pour répondre à ce besoin.
+
+\paragraph{} Une classe de Metrics est liée à une classe que l'on souhaite de manière bidirectionnelle. C'est à dire que la classe que l'on souhaite observée possède en attribut une instance de la classe de Metrics, à laquelle elle passe en paramètre sa propre référence. La référence n'est pas stockée par la classe de Metrics mais seulement utilisée dans des \textit{closures}.
 
 \newpage
 
