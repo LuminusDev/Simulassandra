@@ -94,6 +94,67 @@ Nous allons nous intéresser dans notre projet à la classe \textbf{ColumnFamily
 
 \paragraph{} Une classe de Metrics est liée à une classe que l'on souhaite de manière bidirectionnelle. C'est à dire que la classe que l'on souhaite observée possède en attribut une instance de la classe de Metrics, à laquelle elle passe en paramètre sa propre référence. La référence n'est pas stockée par la classe de Metrics mais seulement utilisée dans des \textit{closures}.
 
+
+\newpage
+
+\section{Client}
+
+\paragraph{} Le client est une application qui permet à l'utilisateur d'intéragir avec Cassandra. 
+Elle permet à l'utilisateur de choisir la stratégie de réplication et d'envoyer des requêtes sur une base de données distribuées Cassandra.
+
+
+\subsection{Architecture du pilote}
+
+\paragraph{} Un \textit{pilote} est un programme informatique permettant à un programme d'intéragir avec un autre programme.
+
+\paragraph{} La communication entre le client et Cassandra se faît grâce à un pilote développé par Datastax, DataStax Java Driver for Apache Cassandra, écrit en Java.
+Nous nous interessons uniquement aux parties du pilote permettant d'implémenter les fonctionnalités du client, c'est à dire les objets permettant de se connecter et d'envoyer des requêtes sur une base de données Cassandra.
+
+\paragraph{} Nous ne présentons pas les objets stockant les résultats des requêtes, comme \path{Row}, qui ne sont que des structures de données. 
+
+\subsubsection{Objet Cluster}
+
+\paragraph{Package}  \path{com.datastax.driver.core.Cluster}
+
+\paragraph{Description} L'objet \textbf{Cluster} permet de se connecter à une \textit{grappe de serveurs}, ensemble de serveurs appelés \textit{noeuds} qui sont reliés entre eux (par exemple par Internet) et qui communiquent ensemble.
+Plus précisément, l'objet se connecte à un noeud de la grappe de serveurs et grâce à cette connexion, il peut connaître l'ensemble des noeuds de la grappe.
+
+
+\subsubsection{Interface Session}
+
+\paragraph{Package}  \path{com.datastax.driver.core.Session}
+
+\paragraph{Description} Les objets implémentant l'interface \textbf{Session} créent une \textit{session}, connexion entre un programme et Cassandra permettant au programme d'exécuter des requêtes sur Cassandra et de récuperer le résultat de ses requêtes.
+
+\paragraph{} Pour exécuter une requête, les objets disposent d'une méthode \path{execute}.
+
+
+
+\subsection{Architecture du client}
+
+
+
+\subsection{Diagramme de séquence}
+
+
+
+\subsubsection{Connexion à une grappe de serveurs}
+
+\paragraph{} Une \textit{grappe de serveur} est un ensemble de serveurs ou noeuds qui sont reliés entre eux (par exemple par Internet) et qui communiquent ensemble.
+
+\subsubsection{Création d'une session}
+
+\paragraph{} Lors de la création d'une session, nous devons créer un \path{KEYSPACE}.
+\subsubsection{Envoi de requêtes}
+
+
+\newpage
+
+
+\section{Visualisation des métriques}
+
+\paragraph{} Pour visualiser les métriques, nous utilisons une application nommée \path{Graphite}.
+
 \newpage
 
 \bibliography{architecture}
