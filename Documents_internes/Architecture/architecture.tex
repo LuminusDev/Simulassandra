@@ -86,7 +86,7 @@ Nous allons nous intéresser dans notre projet à la classe \textbf{ColumnFamily
 
 \subsection{Statistiques}
 
-\paragraph{} Cassandra possède un système permettant d'exposer des mesures internes, grâce à la libraire \textbf{Metrics} [\textit{https://github.com/dropwizard/metrics} (à mettre en bibliographie)].
+\paragraph{} Cassandra possède un système permettant d'exposer des mesures internes, grâce à la libraire \textbf{Metrics} \cite{Metrics2010}.
 
 \paragraph{} Les classes s'occupant de collecter les mesures se situent dans le package \path{org.apache.cassandra.metrics}. Chaque classe de Metrics est chargé de collecter des statistiques sur certaines classes de Cassandra, comme par exemple sur la classe Keyspace vue précédemment dont les données sont collectées par \path{org.apache.cassandra.metrics.KeyspaceMetrics}.
 
@@ -95,6 +95,8 @@ Nous allons nous intéresser dans notre projet à la classe \textbf{ColumnFamily
 \paragraph{} Une classe de Metrics est liée à une classe que l'on souhaite de manière bidirectionnelle. C'est à dire que la classe que l'on souhaite observée possède en attribut une instance de la classe de Metrics, à laquelle elle passe en paramètre sa propre référence. La référence n'est pas stockée par la classe de Metrics mais seulement utilisée dans des \textit{closures}.
 
 \newpage
+
+\bibliography{architecture}
 
 \begin{figure}[p]
 	\centering
