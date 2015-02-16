@@ -7,6 +7,7 @@
 \usepackage{graphics}
 \usepackage{graphicx}
 \usepackage{pgfgantt}
+\usepackage{float}
 \usepackage{url}
 \bibliographystyle{alpha}
 \usepackage[counterclockwise]{rotating}
@@ -110,7 +111,7 @@ Elle permet à l'utilisateur de choisir la stratégie de réplication et d'envoy
 \paragraph{} La communication entre le client et Cassandra se faît grâce à un pilote développé par Datastax, DataStax Java Driver for Apache Cassandra, écrit en Java.
 Nous nous interessons uniquement aux parties du pilote permettant d'implémenter les fonctionnalités du client, c'est à dire les objets permettant de se connecter et d'envoyer des requêtes sur une base de données Cassandra.
 
-\paragraph{} Nous ne présentons pas les objets stockant les résultats des requêtes, comme \path{Row}, qui ne sont que des structures de données. 
+\paragraph{} Nous ne présentons pas les objets stockant les résultats des requêtes, comme \path{ResultSet} ou \path{Row}, qui ne sont que des structures de données. 
 
 \subsubsection{Objet Cluster}
 
@@ -129,23 +130,61 @@ Plus précisément, l'objet se connecte à un noeud de la grappe de serveurs et 
 \paragraph{} Pour exécuter une requête, les objets disposent d'une méthode \path{execute}.
 
 
+\subsubsection{Objet BoundStatement}
+
+\paragraph{Package}  \path{com.datastax.driver.core.BoundStatement}
+
+\paragraph{} Avec \path{CQL}, le langage dans lequel sont écrites les requêtes de Cassandra, il est possible de \textit{préparer des requêtes}. 
+Ce sont des requêtes incomplètes dont seules les clauses (\path{SELECT}, \path{FROM}, ...) sont définies.
+
+\paragraph{Exemple} \path{SELECT} ?  \path{FROM} ? \path{WHERE} ? \path{=} ? est une requête préparée.
+
+\paragraph{Description} L'objet \path{BoundStatement} permet de compléter des requêtes préparées afin de les rendre exécutables.
+
+
+
 
 \subsection{Architecture du client}
 
+\subsubsection{Diagramme de classe}
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=15cm]{schemas/umlclient.png}
+	\caption{Diagramme de classe du client. Avec un fond bleu, les classes du pilote \label{fig:umlclient}}
+\end{figure}
+
+\subsubsection{ Objet Connection }
+
+\paragraph{} Un \textit{keyspace} est un objet contenant un ensemble de données. C'est l'équivalent d'un \textit{schéma} dans une base de données relationnelle.
+
+\paragraph{} Cet objet permet de créer une session pour exécuter des requêtes dans un keyspace donné.
+Si le keyspace n'existe pas, l'objet \path{KeySpace} le crée.
+
+\subsubsection{ Objet KeySpace }
+
+\paragraph{} L'objet \path{KeySpace} permet de créer un keyspace et d'initialiser ses données en fonction d'un jeu de données contenu dans un fichier \path{data_file} écrit au format \path{CQL}.
+Si l'utilisateur souhaite importer un autre jeu de données, il suffit de réinitialiser le keyspace avec la méthode \path{resetKeySpace}.
+
+\paragraph{Attributs}
+\begin{itemize}
+ \item \path{name} : nom du keyspace
+ \item \path{replication_type} : choix de l'algorithme d'équilibrage des charges.
+ \item \path{data_file} : fichier au format \path{CQL} contenant un jeu de données, suite de requête permettant d'importer des données dans Cassandra.
+\end{itemize}
 
 
-\subsection{Diagramme de séquence}
+\subsubsection{ Objet QueriesFactory }
 
+\paragraph{} Cet objet permet de génerer ou d'importer des requêtes \path{CQL} que nous exécutons sur une session donnée.
 
+\paragraph{} L'attribut \path{seed} permet la génération de requêtes de manière pseudo-aléatoire. 
+Si on change le seed, la suite de requêtes générée sera différente.
 
-\subsubsection{Connexion à une grappe de serveurs}
+\subsubsection{ Objet ClientApp }
 
-\paragraph{} Une \textit{grappe de serveur} est un ensemble de serveurs ou noeuds qui sont reliés entre eux (par exemple par Internet) et qui communiquent ensemble.
+\paragraph{} C'est le client, la méthode \path{run} permet de l'exécuter.
 
-\subsubsection{Création d'une session}
-
-\paragraph{} Lors de la création d'une session, nous devons créer un \path{KEYSPACE}.
-\subsubsection{Envoi de requêtes}
 
 
 \newpage
@@ -153,7 +192,16 @@ Plus précisément, l'objet se connecte à un noeud de la grappe de serveurs et 
 
 \section{Visualisation des métriques}
 
-\paragraph{} Pour visualiser les métriques, nous utilisons une application nommée \path{Graphite}.
+\paragraph{} Pour visualiser les métriques, nous utilisons les applications nommées \path{Graphite} et \path{Cyanite}. Ces applications sont écrites en Python.
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=6cm]{schemas/cyanite.png}
+	\caption{Architecture pour la visualisation des métriques}
+\end{figure}
+
+\paragraph{} Les métriques sont sauvegardées dans des fichiers traités par \path{Cyanite}. 
+Puis, \path{Graphite} affiche ces informations sous forme de graphes (courbes, histogrammes...) dans un navigateur web.
 
 \newpage
 
