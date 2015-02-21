@@ -53,6 +53,58 @@ De plus, nous dégageons une première version de la plannification du projet (G
 
 \newpage
 
+\section{Présentation du projet}
+
+\subsection{Utilisation d'une base de données par un client}
+\paragraph{} Présentation de la relation client <-> base de données. Aucune notion de "distribuée" ne doit encore apparaitre. Le client accède à une base de données et peut faire des requêtes de lecture et des requêtes d'écriture de données. Les données sont stockés sous forme d'objet (un objet étant composé d'une clé d'identification -appelé token- et d'un ensemble de données).
+
+\paragraph{} On génère des requêtes ou on en importe. On se connecte à une base de donnée. On lance les requêtes.
+
+\paragraph{} 1 schéma : scénario d'utilisation
+
+\subsection{Base de données distribuée}
+\paragraph{} Présentation de la base de données, qui est en fait distribuée. Explication de ce que cela signifie. Plusieurs machines connectées, elles communiques entre elles. Structure appelée cluster possédant des data center. Un ensemble de noeuds stockant chacun un intervalle de tokens ressemble à un cercle (ring).
+
+\paragraph{} 2 schémas : base de données distribuée, et partitionnement des données
+
+\subsection{Gestion des requêtes dans la base de données distribuée}
+\subsubsection{Requêtes de lecture}
+\paragraph{} Explication du cheminement d'une requête de lecture dans la base de données. Parler des files d'attentes. Parler de l'affectation d'une requête (on prend le traitement et on averti les autres de ne pas le prendre).
+
+\paragraph{} 1 schéma : cheminement d'une requête de lecture
+
+\subsubsection{Requêtes d'écriture}
+\paragraph{} Explication du cheminement d'une requête d'écriture dans la base de données. Parler des files d'attentes.
+
+\paragraph{} 1 schéma : cheminement d'une requête d'écriture
+
+\subsection{Stockage des données}
+\paragraph{} Petite partie indiquant que les données sont stockées sur les ordinateurs. Rapide explication des méthodes utilisées par les bases de données. Précisions comme quoi ce c'est pas sur ça que nous allons travailler.
+
+\subsection{Protocoles de réaffectation des requêtes de lecture}
+\paragraph{} Explication sur la raison d'un algorithme de réaffectation (pour rééquilibrer la charge des noeuds). Explication du fonctionnement des algorithmes.
+
+\paragraph{} 1 schéma : réaffectation des requêtes
+
+\subsubsection{Algorithme SLVO}
+\paragraph{} Charge min
+\subsubsection{Algorithme AverageDegree}
+\paragraph{} Charge moyenne
+
+\subsection{Gestion de la popularité des objets}
+\paragraph{} Parler du pourquoi on cherche à connaître la popularité d'un objet. Explication des méthodes pour calculer, stocker, et diffuser le popularité des objets. Gérer le nombre de copies grâce à ça (c'est pas la partie sur laquelle j'ai travaillé, je vois beaucoup de problème là dedans encore).
+
+\paragraph{} 1 schéma : (je vois pas quoi faire non plus là)
+
+\subsection{Gestion des copies d'un objet}
+\paragraph{} Explication de la méthode de fonction de hash pour chaque index de copie. Mettre en comparaison avec une méthode connu de placement de réplica (mettre sur le noeud suivant). Distribution plus homogène des copies de cette manière.
+
+\paragraph{} 1 schéma : partitionnement des copies d'un objet avec plusieurs fonctions de hachages
+
+\subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
+\paragraph{} Parler des données que l'on souhaite afficher et pourquoi on souhaite les afficher (comparaison et tout le blabla). Parler de la forme sous laquelle on veut les afficher aussi (représentation type graphe suggéré par le client, représentation type histogramme plutôt intéressant aussi).
+
+
 \section{Définition du projet}
 
 \subsection{Contexte}
