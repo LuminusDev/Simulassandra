@@ -49,7 +49,7 @@ De plus, nous dégageons une première version de la plannification du projet (G
 \renewcommand{\contentsname}{Sommaire} 
 \tableofcontents
 
-
+\listoffigures
 
 \newpage
 
@@ -57,7 +57,7 @@ De plus, nous dégageons une première version de la plannification du projet (G
 
 \subsection{Utilisation d'une base de données par un client}
 
-\paragraph{} Un \textit{objet} est composé d'une clé d'identification appelé \textit{token} et d'un ensemble de \texit{données}, codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
+\paragraph{} Un \textit{objet} est composé d'une clé d'identification appelé \textit{token} et d'un ensemble de \textit{données}, codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
 
 \paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des objets.
 
@@ -93,9 +93,16 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 %\paragraph{} 1 schéma : scénario d'utilisation
 
 \subsection{Base de données distribuée}
-\paragraph{} Présentation de la base de données, qui est en fait distribuée. Explication de ce que cela signifie. Plusieurs machines connectées, elles communiques entre elles. Structure appelée cluster possédant des data center. Un ensemble de noeuds stockant chacun un intervalle de tokens ressemble à un cercle (ring).
 
-\paragraph{} 2 schémas : base de données distribuée, et partitionnement des données
+\paragraph{} La base de données utilisée par le client est plus précisément une base de données dites \textit{distribuée}. Le client ne voit pas de différence, lorsqu'il l'utilise, entre une base de données classique et une base de données distribuée. On dit qu'une base de données est distribuée lorsque les données qu'elle stocke sont réparties sur plusieurs machines ou emplacements physiques, appelés \textit{noeuds}. Les noeuds sont capables de communiquer entre eux afin de s'échanger des informations.
+
+\paragraph{} On peut rassembler des noeuds pour former un \textit{data center}. Un rassemblement de data center correspond à un \textit{cluster} (voir la figure~\ref{fig:distributed_database}).
+
+\paragraph{} La base de données va stocker les données sous forme d'\textit{objet}. Un \textit{objet} est composé d'une clé d'identification appelé \textit{token} et d'un ensemble de \textit{données}.
+
+\paragraph{} Pour savoir quel noeud doit stocker quel donnée, on utilise une méthode de \textit{partitionnement}. Cette méthode se base sur les \textit{tokens}. Chaque noeud a un token qui lui est attribué. Un noeud prend en charge les objets dont le token est compris entre celui que le noeud possède et celui qui est le plus grand dans ses prédécesseurs (voir la figure~\ref{fig:partitionning}). Ainsi dans cette exemple, le noeud 2 a le token 25 qui lui est attribué. Il s'occupe donc des objets dont le token est compris entre 25 et 0 (qui est le token le plus grand dans ses prédécesseurs). On parle alors de l'\textit{intervalle} de tokens dont s'occupe le noeud.
+
+\paragraph{} En positionnant les noeuds suivant leur token, on obtient alors une forme d'anneau (ou de \textit{ring}).
 
 \subsection{Gestion des requêtes dans la base de données distribuée}
 \subsubsection{Requêtes de lecture}
@@ -591,7 +598,7 @@ bar height = 0.8
 \begin{figure}[p]
 	\centering
 		\include{distributed_database}
-	\caption{Visualisation d'une base de données distribuée sous forme de clusters possédant quatre data center\label{fig:distributed_database}}
+	\caption{Visualisation d'une base de données distribuée sous forme de cluster possédant trois data center\label{fig:distributed_database}}
 \end{figure}
 
 \begin{figure}[p]
@@ -606,7 +613,7 @@ bar height = 0.8
 	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}
 	\centering
 		\include{request}
 	\caption{Cheminement d'une requête dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
