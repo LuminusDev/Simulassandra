@@ -56,11 +56,41 @@ De plus, nous dégageons une première version de la plannification du projet (G
 \section{Présentation du projet}
 
 \subsection{Utilisation d'une base de données par un client}
-\paragraph{} Présentation de la relation client <-> base de données. Aucune notion de "distribuée" ne doit encore apparaitre. Le client accède à une base de données et peut faire des requêtes de lecture et des requêtes d'écriture de données. Les données sont stockés sous forme d'objet (un objet étant composé d'une clé d'identification -appelé token- et d'un ensemble de données).
 
-\paragraph{} On génère des requêtes ou on en importe. On se connecte à une base de donnée. On lance les requêtes.
+\paragraph{} Un \textit{objet} est composé d'une clé d'identification appelé \textit{token} et d'un ensemble de \texit{données}, codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
 
-\paragraph{} 1 schéma : scénario d'utilisation
+\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des objets.
+
+\paragraph{} Dans un premier temps, le client se connecte à la base de données.
+Le client intéragit avec la base de données en envoyant des \textit{requêtes} à celle-ci, message, dont la forme dépend de la base de données, permettant de stocker, récupérer ou modifier des données.
+
+\paragraph{}Selon les requêtes émisent par le client, la base de données envoie des resultats stockés dans des structure de données (par exemple, tableau, vecteur...).
+
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{bd.png}
+	\caption{Intéractions client/base de données \label{fig:bd}}
+\end{figure}
+
+
+\paragraph{} On distingue deux types de requêtes :
+\begin{itemize}
+ \item Les requêtes de \textbf{lecture}: requête ne modifiant pas les données contenues dans la base de données. \newline
+ Il s'agit, le plus souvent, de récupérer des données stockées par la base de données.
+ On peut aussi récupérer des informations sur la façon dont les données sont stockées (schémas relationnel par exemple).
+ 
+ \item Les requêtes d' \textbf{écriture} : requêtes modifiant les données contenues dans la base de données. \newline
+ Il s'agit de stocker de nouvelles données, modifier des données. 
+ On peut aussi modifier des \textit{paramètres} de la base de données, valeur définissant le comportement de la base de données (encodage des caractères par exemple : UTF-8, ISO...).
+\end{itemize}
+
+
+%\paragraph{}  Aucune notion de "distribuée" ne doit encore apparaitre. Le client accède à une base de données et peut faire des requêtes de lecture et des requêtes d'écriture de données. Les données sont stockés sous forme d'objet (un objet étant composé d'une clé d'identification -appelé token- et d'un ensemble de données).
+
+%\paragraph{} On génère des requêtes ou on en importe. On se connecte à une base de donnée. On lance les requêtes.
+
+%\paragraph{} 1 schéma : scénario d'utilisation
 
 \subsection{Base de données distribuée}
 \paragraph{} Présentation de la base de données, qui est en fait distribuée. Explication de ce que cela signifie. Plusieurs machines connectées, elles communiques entre elles. Structure appelée cluster possédant des data center. Un ensemble de noeuds stockant chacun un intervalle de tokens ressemble à un cercle (ring).
@@ -113,13 +143,13 @@ De plus, nous dégageons une première version de la plannification du projet (G
 
 \paragraph{Définition} Une \textit{base de données} est une entité permettant de stocker des données afin d'en faciliter l'exploitation (ajout, mise à jour, recherche de données).
 
-\paragraph{Définition} Une \textit{donnée} ou un \textit{objet} est un codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
+%\paragraph{Définition} Une \textit{donnée} ou un \textit{objet} est un codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
 
 %Assez précis ?%
 
 %\paragraph{} Diff BD et BD distrib et maitre esclave (faire, apparaitre file d'attente & def charge )
 
-\paragraph{Définition} Une \textit{requête} est une interrogation d'une base de données afin de récupérer ou modifier des données.
+%\paragraph{Définition} Une \textit{requête} est une interrogation d'une base de données afin de récupérer ou modifier des données.
 
 \paragraph{Définition} Une \textit{charge} est associée à un noeud et désigne le nombre de requêtes restantes que le noeud doit traiter à l'instant $T$.
 
