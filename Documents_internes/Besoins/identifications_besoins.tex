@@ -57,14 +57,12 @@ De plus, nous dégageons une première version de la plannification du projet (G
 
 \subsection{Utilisation d'une base de données par un client}
 
-\paragraph{} Un \textit{objet} est composé d'une clé d'identification appelé \textit{token} et d'un ensemble de \textit{données}, codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
-
-\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des objets.
+\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des \textit{données}, codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
 
 \paragraph{} Dans un premier temps, le client se connecte à la base de données.
 Le client intéragit avec la base de données en envoyant des \textit{requêtes} à celle-ci, message, dont la forme dépend de la base de données, permettant de stocker, récupérer ou modifier des données.
 
-\paragraph{}Selon les requêtes émisent par le client, la base de données envoie des resultats stockés dans des structure de données (par exemple, tableau, vecteur...).
+\paragraph{}Selon les requêtes émisent par le client, la base de données envoie des resultats.
 
 
 \begin{figure}[h]
@@ -76,14 +74,13 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 
 \paragraph{} On distingue deux types de requêtes :
 \begin{itemize}
- \item Les requêtes de \textbf{lecture}: requête ne modifiant pas les données contenues dans la base de données. \newline
- Il s'agit, le plus souvent, de récupérer des données stockées par la base de données.
- On peut aussi récupérer des informations sur la façon dont les données sont stockées (schémas relationnel par exemple).
+ \item Les requêtes de \textbf{lecture}: requête ne modifiant pas les données contenues dans la base de données.
+ Il s'agit de récupérer des objets contenus dans la base de données.
  
- \item Les requêtes d' \textbf{écriture} : requêtes modifiant les données contenues dans la base de données. \newline
- Il s'agit de stocker de nouvelles données, modifier des données. 
- On peut aussi modifier des \textit{paramètres} de la base de données, valeur définissant le comportement de la base de données (encodage des caractères par exemple : UTF-8, ISO...).
+ \item Les requêtes d' \textbf{écriture} : requêtes modifiant les données contenues dans la base de données.
 \end{itemize}
+
+\paragraph{} Le client peut être une personne physique comme un logiciel. Dans notre cas, il s'agit d'un logiciel permettant l'importation de fichiers contenant des requêtes ou de génerer des requêtes pseudo-aléatoirement.
 
 
 %\paragraph{}  Aucune notion de "distribuée" ne doit encore apparaitre. Le client accède à une base de données et peut faire des requêtes de lecture et des requêtes d'écriture de données. Les données sont stockés sous forme d'objet (un objet étant composé d'une clé d'identification -appelé token- et d'un ensemble de données).
@@ -139,7 +136,28 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 \paragraph{} 1 schéma : partitionnement des copies d'un objet avec plusieurs fonctions de hachages
 
 \subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
-\paragraph{} Parler des données que l'on souhaite afficher et pourquoi on souhaite les afficher (comparaison et tout le blabla). Parler de la forme sous laquelle on veut les afficher aussi (représentation type graphe suggéré par le client, représentation type histogramme plutôt intéressant aussi).
+
+\paragraph{} Le but est de visualiser les statistiques de fonctionnement de la base de données pour permettre une comparaison de l'efficacité des algorithmes d'équilibrage de charge.
+
+\paragraph{} On souhaite récuperer:
+\begin{itemize}
+ \item la charge effective de chaque noeud ou taille de la file d'attente des requêtes de lecture.
+ \item une représentation de la file d'attente des requêtes de lecture
+ \item la popularité de chaque objet
+ \item la requête en cours de traitement
+\end{itemize}
+
+\paragraph{} On enregistre les statistiques de fonctionnement de la base de données distribuée dans des fichiers. Un outil de visualisation traite ces fichiers et affiche ensuite les statistiques.
+
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{visu.png}
+	\caption{Processus pour la visualisation des statistiques \label{fig:visu}}
+\end{figure}
+
+
+%\paragraph{} Parler des données que l'on souhaite afficher et pourquoi on souhaite les afficher (comparaison et tout le blabla). Parler de la forme sous laquelle on veut les afficher aussi (représentation type graphe suggéré par le client, représentation type histogramme plutôt intéressant aussi).
 
 
 \section{Définition du projet}
