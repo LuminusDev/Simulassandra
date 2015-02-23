@@ -101,16 +101,32 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 
 \paragraph{} En positionnant les noeuds suivant leur token, on obtient alors une forme d'anneau (ou de \textit{ring}).
 
+\paragraph{} Afin de garantir une meilleure disponibilité, chaque objet possèdent des copies, appelés \textit{réplicas}, disposées sur d'autre noeuds que le noeud initial (le noeud qui s'occupe du token de cet objet). La méthode pour choisir l'emplacement des copies d'un objet est variable. C'est ce que l'on appelle la \textit{stratégie de réplication}.
+
 \subsection{Gestion des requêtes dans la base de données distribuée}
 \subsubsection{Requêtes de lecture}
-\paragraph{} Explication du cheminement d'une requête de lecture dans la base de données. Parler des files d'attentes. Parler de l'affectation d'une requête (on prend le traitement et on averti les autres de ne pas le prendre).
 
-\paragraph{} 1 schéma : cheminement d'une requête de lecture
+\paragraph{} Il est possible de réaliser des requêtes de lecture sur un objet, ce qui consiste à vouloir récupérer une donnée contenue dans un objet. Pour expliquer le cheminement d'une requête de lecture dans la base de données, nous allons prendre un exemple (voir la figure~\ref{fig:request}).
+
+\paragraph{} Un client réalise une requête de lecture R. Il envoie la requête à n'importe quel noeud du réseau. On appelle alors ce noeud le noeud \textit{coordinateur} pour cette requête. Ce noeud ne contient pas forcément l'objet de la requête, mais il va faire la liaison entre le réseau et le client.
+
+\paragraph{} Le noeud coordinateur va avoir cette requête dans une file d'attente dédiée aux requêtes des clients. Il les traite les unes à la suite des autres. Lorsque le noeud commence à traiter cette requête, il va d'abord identifier les noeuds responsables de l'objet de la requête. Cela inclut le noeud possédant l'objet \textit{original} (dont le token est géré par ce noeud) ainsi que les noeuds possédant un réplica. Cette étape exige une connaissance complète du réseau sur chaque noeud et une connaissance de la stratégie de réplication mise en place.
+
+\paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message à tous pour traiter la requête de lecture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes de lecture de ces noeuds.
+
+\paragraph{} A un moment, l'un des noeuds qui possède cette requête dans sa file d'attente va la défiler et la traiter. Ce noeud s'\textit{affecte} la requête. Il avertit les autres noeuds possédant cette même requête dans leur file d'attente (c.à.d tous les autres noeuds possédant une copie de l'objet de la requête) qu'ils n'auront pas besoin de la traiter, et qu'ils peuvent la supprimer de leur file d'attente (les flèches oranges sur le schéma). Le noeud qui s'est affecté la requête la traite et renvoie le résultat au noeud coordinateur, qui peut transmettre le résultat obtenu au client (les flèches vertes sur le schéma).
 
 \subsubsection{Requêtes d'écriture}
-\paragraph{} Explication du cheminement d'une requête d'écriture dans la base de données. Parler des files d'attentes.
 
-\paragraph{} 1 schéma : cheminement d'une requête d'écriture
+\paragraph{} Il est possible de réaliser des requêtes d'écriture d'un objet, ce qui consiste à stocker des données dans la base de données, sous forme d'objet.  Pour expliquer le cheminement d'une requête d'écriture dans la base de données, nous allons prendre un exemple (voir la figure~\ref{fig:write_request}). Le cheminement est plus simple que pour une requête de lecture car il n'y a pas le mécanisme d'affectation.
+
+\paragraph{} Un client réalise une requête d'écriture R. Il envoie la requête à n'importe quel noeud du réseau. On appelle alors ce noeud le noeud \textit{coordinateur} pour cette requête. Ce noeud n'est pas forcément celui qui va stocker les données, mais il va faire la liaison entre le réseau et le client.
+
+\paragraph{} Le noeud coordinateur va avoir cette requête dans une file d'attente dédiée aux requêtes des clients. Il les traite les unes à la suite des autres. Lorsque le noeud commence à traiter cette requête, il va d'abord identifier les noeuds responsables de l'objet de la requête. Cela inclut le noeud qui se charge de l'objet \textit{original} (dont le token est géré par ce noeud) ainsi que les noeuds devant posséder un réplica. Cette étape exige une connaissance complète du réseau sur chaque noeud et une connaissance de la stratégie de réplication mise en place.
+
+\paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message à tous pour traiter la requête d'écriture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes d'écriture de ces noeuds.
+
+\paragraph{} Tous les noeuds recevant le message vont alors stocker les données envoyées par la requête. Le noeud coordinateur peut demander un certain nombre de message de retour pour s'assurer que les requêtes d'écritures se sont bien déroulées. Dans l'exemple, le noeud coordinateur demande \textbf{1} retour. L'un des messages envoyés aux noeuds demandera donc un message de retour pour confirmer que l'écriture s'est bien passée (la flèche verte entre les noeuds sur le schéma). Dès que le noeud coordinateur reçoit le message, il indique au client que sa requête s'est terminée et bien passée.
 
 \subsection{Stockage des données}
 \paragraph{} Petite partie indiquant que les données sont stockées sur les ordinateurs. Rapide explication des méthodes utilisées par les bases de données. Précisions comme quoi ce c'est pas sur ça que nous allons travailler.
@@ -634,7 +650,13 @@ bar height = 0.8
 \begin{figure}
 	\centering
 		\include{request}
-	\caption{Cheminement d'une requête dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
+	\caption{Cheminement d'une requête de lecture dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
+\end{figure}
+
+\begin{figure}
+	\centering
+		\include{write_request}
+	\caption{Cheminement d'une requête d'écriture dans une base de données distribuée\label{fig:write_request}}
 \end{figure}
 
 \end{document}
