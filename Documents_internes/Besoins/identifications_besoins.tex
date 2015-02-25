@@ -55,12 +55,14 @@ De plus, nous dégageons une première version de la plannification du projet (G
 
 \section{Présentation du projet}
 
+Dans le présent document, nous considérons que le lecteur possède des notions en informatique et que chaque mot est défini par son sens commun. Cependant, si un terme utilisé présentant une définition différente que celle admise par tous, nous ne manquerons pas de le préciser et de le définir.
+
 \subsection{Utilisation d'une base de données par un client}
 
-\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des \textit{données}, codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
+\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des \textit{données}, : codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
 
 \paragraph{} Dans un premier temps, le client se connecte à la base de données.
-Le client intéragit avec la base de données en envoyant des \textit{requêtes} à celle-ci, message, dont la forme dépend de la base de données, permettant de stocker, récupérer ou modifier des données.
+Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, message, dont la forme dépend de la base de données et permettant de stocker, récupérer ou modifier des données.
 
 \paragraph{}Selon les requêtes émisent par le client, la base de données envoie des resultats.
 
@@ -74,13 +76,13 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 
 \paragraph{} On distingue deux types de requêtes :
 \begin{itemize}
- \item Les requêtes de \textbf{lecture}: requête ne modifiant pas les données contenues dans la base de données.
+ \item Les requêtes de \textbf{lecture}: requêtes ne modifiant pas les données contenues dans la base de données.
  Il s'agit de récupérer des objets contenus dans la base de données.
  
  \item Les requêtes d' \textbf{écriture} : requêtes modifiant les données contenues dans la base de données.
 \end{itemize}
 
-\paragraph{} Le client peut être une personne physique comme un logiciel. Dans notre cas, il s'agit d'un logiciel permettant l'importation de fichiers contenant des requêtes ou de génerer des requêtes pseudo-aléatoirement.
+\paragraph{} Le client peut être une personne physique ou un logiciel. Dans notre cas, il s'agit d'un logiciel permettant l'importation de fichiers contenant des requêtes ou de génerer des requêtes pseudo-aléatoirement.
 
 
 %\paragraph{}  Aucune notion de "distribuée" ne doit encore apparaitre. Le client accède à une base de données et peut faire des requêtes de lecture et des requêtes d'écriture de données. Les données sont stockés sous forme d'objet (un objet étant composé d'une clé d'identification -appelé token- et d'un ensemble de données).
@@ -95,13 +97,13 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 
 \paragraph{} On peut rassembler des noeuds pour former un \textit{data center}. Un rassemblement de data center correspond à un \textit{cluster} (voir la figure~\ref{fig:distributed_database}).
 
-\paragraph{} La base de données va stocker les données sous forme d'\textit{objet}. Un \textit{objet} est composé d'une clé d'identification appelé \textit{token} et d'un ensemble de \textit{données}.
+\paragraph{} La base de données va stocker les données sous forme d'\textit{objets}. Un \textit{objet} est composé d'une clé d'identification appelée \textit{token} et d'un ensemble de \textit{données}.
 
-\paragraph{} Pour savoir quel noeud doit stocker quel donnée, on utilise une méthode de \textit{partitionnement}. Cette méthode se base sur les \textit{tokens}. Chaque noeud a un token qui lui est attribué. Un noeud prend en charge les objets dont le token est compris entre celui que le noeud possède et celui qui est le plus grand dans ses prédécesseurs (voir la figure~\ref{fig:partitionning}). Ainsi dans cette exemple, le noeud 2 a le token 25 qui lui est attribué. Il s'occupe donc des objets dont le token est compris entre 25 et 0 (qui est le token le plus grand dans ses prédécesseurs). On parle alors de l'\textit{intervalle} de tokens dont s'occupe le noeud.
+\paragraph{} Pour savoir quel noeud doit stocker quelle donnée, on utilise une méthode de \textit{partitionnement}. Cette méthode se base sur les \textit{tokens}. Chaque noeud a un token qui lui est attribué. Un noeud prend en charge des objets dont le token est compris entre celui que le noeud possède et celui qui est le plus grand dans ses prédécesseurs (voir la figure~\ref{fig:partitionning}). Ainsi dans cet exemple, le noeud 2 a le token 25 qui lui est attribué. Il s'occupe donc des objets dont le token est compris entre 25 et 0 (qui est le token le plus grand dans ses prédécesseurs). On parle alors de l'\textit{intervalle} de tokens dont s'occupe le noeud.
 
 \paragraph{} En positionnant les noeuds suivant leur token, on obtient alors une forme d'anneau (ou de \textit{ring}).
 
-\paragraph{} Afin de garantir une meilleure disponibilité, chaque objet possèdent des copies, appelés \textit{réplicas}, disposées sur d'autre noeuds que le noeud initial (le noeud qui s'occupe du token de cet objet). La méthode pour choisir l'emplacement des copies d'un objet est variable. C'est ce que l'on appelle la \textit{stratégie de réplication}.
+\paragraph{} Afin de garantir une meilleure disponibilité, chaque objet possède des copies, appelées \textit{réplicas}, disposées sur d'autres noeuds que le noeud initial (le noeud qui s'occupe du token de cet objet). La méthode pour choisir l'emplacement des copies d'un objet est variable. C'est ce que l'on appelle la \textit{stratégie de réplication}.
 
 \subsection{Gestion des requêtes dans la base de données distribuée}
 \subsubsection{Requêtes de lecture}
@@ -112,7 +114,7 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 
 \paragraph{} Le noeud coordinateur va avoir cette requête dans une file d'attente dédiée aux requêtes des clients. Il les traite les unes à la suite des autres. Lorsque le noeud commence à traiter cette requête, il va d'abord identifier les noeuds responsables de l'objet de la requête. Cela inclut le noeud possédant l'objet \textit{original} (dont le token est géré par ce noeud) ainsi que les noeuds possédant un réplica. Cette étape exige une connaissance complète du réseau sur chaque noeud et une connaissance de la stratégie de réplication mise en place.
 
-\paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message à tous pour traiter la requête de lecture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes de lecture de ces noeuds.
+\paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message pour traiter la requête de lecture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes de lecture de ces noeuds.
 
 \paragraph{} A un moment, l'un des noeuds qui possède cette requête dans sa file d'attente va la défiler et la traiter. Ce noeud s'\textit{affecte} la requête. Il avertit les autres noeuds possédant cette même requête dans leur file d'attente (c.à.d tous les autres noeuds possédant une copie de l'objet de la requête) qu'ils n'auront pas besoin de la traiter, et qu'ils peuvent la supprimer de leur file d'attente (les flèches oranges sur le schéma). Le noeud qui s'est affecté la requête la traite et renvoie le résultat au noeud coordinateur, qui peut transmettre le résultat obtenu au client (les flèches vertes sur le schéma).
 
