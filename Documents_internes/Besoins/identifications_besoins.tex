@@ -129,7 +129,10 @@ Le client intéragit avec la base de données en envoyant des \textit{requêtes}
 \paragraph{} Tous les noeuds recevant le message vont alors stocker les données envoyées par la requête. Le noeud coordinateur peut demander un certain nombre de message de retour pour s'assurer que les requêtes d'écritures se sont bien déroulées. Dans l'exemple, le noeud coordinateur demande \textbf{1} retour. L'un des messages envoyés aux noeuds demandera donc un message de retour pour confirmer que l'écriture s'est bien passée (la flèche verte entre les noeuds sur le schéma). Dès que le noeud coordinateur reçoit le message, il indique au client que sa requête s'est terminée et bien passée.
 
 \subsection{Stockage des données}
-\paragraph{} Petite partie indiquant que les données sont stockées sur les ordinateurs. Rapide explication des méthodes utilisées par les bases de données. Précisions comme quoi ce c'est pas sur ça que nous allons travailler.
+
+\paragraph{} Chaque base de données possède sa propre manière de stocker les données dans un espace de stockage. Pour le projet, la méthode de stockage n'est pas un problème sur lequel nous allons travailler. La seule contrainte imposée pour la base de données est qu'elle stocke les données sous la forme d'objet. C'est à dire qu'un objet est identifiable par son token, une clé d'identification générée le plus souvent par une fonction de hachage.
+
+\paragraph{} Le token est généré par la base de donnée à partir de la \textit{clé primaire} d'une table. Une clé primaire est, comme le token, une donnée permettant d'identifier un objet. Sauf que que la clé primaire est une donnée choisit par le client. Elle peut être un entier, une chaîne de caractères, toutes les représentations possibles d'une donnée au sein de la base de données (voir la figure~\ref{fig:token}).
 
 \subsection{Protocoles de réaffectation des requêtes de lecture}
 \paragraph{} Explication sur la raison d'un algorithme de réaffectation (pour rééquilibrer la charge des noeuds). Explication du fonctionnement des algorithmes.
@@ -629,19 +632,19 @@ bar height = 0.8
 
 \bibliography{identifications_besoins}
 
-\begin{figure}[p]
+\begin{figure}
 	\centering
 		\include{distributed_database}
 	\caption{Visualisation d'une base de données distribuée sous forme de cluster possédant trois data center\label{fig:distributed_database}}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}
 	\centering
 		\include{partitionning}
 	\caption{Exemple de partitionnement des données dans une base de données distribuée\label{fig:partitionning}}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}
 	\centering
 		\include{multi_hash_partitionning}
 	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
@@ -657,6 +660,12 @@ bar height = 0.8
 	\centering
 		\include{write_request}
 	\caption{Cheminement d'une requête d'écriture dans une base de données distribuée\label{fig:write_request}}
+\end{figure}
+
+\begin{figure}
+	\centering
+		\include{token}
+	\caption{Passage d'une répresentation des données pour le client à une représentation pour la base de données\label{fig:token}}
 \end{figure}
 
 \end{document}
