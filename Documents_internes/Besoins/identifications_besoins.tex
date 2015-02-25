@@ -149,7 +149,17 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 \paragraph{} Si la valeur est inférieure ou égale (strictement égale dans le cas de SLVO), alors le noeud s'affecte toutes les requêtes de sa file d'attente et avertit tous les autres noeuds. Les noeuds possédant les requêtes qui ont été affectées les suppriment de leur file d'attente, modifiant ainsi leur charge. L'opération est renouvelée jusqu'à ce que tous les noeuds se sont attribués leurs requêtes.
 
 \subsection{Gestion de la popularité des objets}
-\paragraph{} Parler du pourquoi on cherche à connaître la popularité d'un objet. Explication des méthodes pour calculer, stocker, et diffuser le popularité des objets. Gérer le nombre de copies grâce à ça (c'est pas la partie sur laquelle j'ai travaillé, je vois beaucoup de problème là dedans encore).
+
+\paragraph{} Pour mieux équilibrer la charge du réseau, nous nous intéressons à la \textit{popularité} des objets. En effet, plus un objet va recevoir de requêtes, plus il sera populaire et occasionnera une grande charge pour les noeuds qui s'en occupent. Afin de répartir cette charge, il faudra alors augmenter ou diminuer le nombre de réplicas. Si un objet est populaire, il suffira de créer de nouveaux réplicas, ce qui permettra d'envoyer une partie de la charge sur d'autres noeuds. A l'inverse, si un objet n'est pas populaire, diminuer le nombre de copies fera gagner de l'espace mémoire et du temps (quand on a besoin de contacter tous les noeuds qui gèrent un objet, le nombre de noeuds joue sur le temps nécessaire à réaliser l'action...).
+
+\paragraph{} Il y a plusieurs méthodes pour calculer la popularité des objets durant un intervalle de temps $T$ défini par l'utilisateur :
+
+\begin{itemize}
+    \item La première consiste à ce que chaque noeud possède un vecteur de la taille du nombre d'objets dont il a la gestion. A chaque nouvelle requête, la case de l'objet est incrémentée. Au début de chaque période $T$, les noeuds envoient la popularité aux autres noeuds et décident du nombre de copies à faire.
+    \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}.
+\end{itemize}
+
+%\paragraph{} Parler du pourquoi on cherche à connaître la popularité d'un objet. Explication des méthodes pour calculer, stocker, et diffuser le popularité des objets. Gérer le nombre de copies grâce à ça (c'est pas la partie sur laquelle j'ai travaillé, je vois beaucoup de problème là dedans encore).
 
 \paragraph{} 1 schéma : (je vois pas quoi faire non plus là)
 
