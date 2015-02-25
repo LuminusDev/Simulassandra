@@ -137,14 +137,16 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 \paragraph{} Le token est généré par la base de donnée à partir de la \textit{clé primaire} d'une table. Une clé primaire est, comme le token, une donnée permettant d'identifier un objet. Sauf que que la clé primaire est une donnée choisit par le client. Elle peut être un entier, une chaîne de caractères, toutes les représentations possibles d'une donnée au sein de la base de données (voir la figure~\ref{fig:token}).
 
 \subsection{Protocoles de réaffectation des requêtes de lecture}
-\paragraph{} Explication sur la raison d'un algorithme de réaffectation (pour rééquilibrer la charge des noeuds). Explication du fonctionnement des algorithmes.
 
-\paragraph{} 1 schéma : réaffectation des requêtes
+\paragraph{} Lorsqu'une requête de lecture est envoyée par un client, on a vu précédemment que cette requête était transmise à tous les noeuds possédant une copie de l'objet à lire. Si un nombre important de requêtes de lecture arrivent en même temps, les files d'attentes dans les noeuds pour les requêtes de lecture vont commencer à se remplir plus vite que les requêtes ne sont traitées. Les charges des files d'attentes ne seront pas forcément uniformes entre les noeuds, certains pouvant avoir plus de requêtes à traiter que d'autre.
 
-\subsubsection{Algorithme SLVO}
-\paragraph{} Charge min
-\subsubsection{Algorithme AverageDegree}
-\paragraph{} Charge moyenne
+\paragraph{} C'est pourquoi on met en place un système de \textit{réaffectation} des requêtes de lecture, afin de rééquilibrer la charge des noeuds. La réaffectation consiste, de manière périodique, à stopper le traitement des requêtes de lecture et enclencher un processus permettant de décider de l'affectation des requêtes suivant l'état actuel du réseau.
+
+\paragraph{} Les algorithmes de réaffectation à implémenter, \textbf{SLVO} et \textbf{AverageDegree}, ont un comportement similaire qui se base sur la connaissance des charges de chaque noeud du réseau. L'algorithme consiste à comparer, pour tous les noeuds, sa propre charge par rapport à une certaine valeur.
+
+\paragraph{} Pour SLVO, la valeur est la charge minimale sur le réseau. Pour AverageDegree, la valeur est la charge moyenne sur le réseau.
+
+\paragraph{} Si la valeur est inférieure ou égale (strictement égale dans le cas de SLVO), alors le noeud s'affecte toutes les requêtes de sa file d'attente et avertit tous les autres noeuds. Les noeuds possédant les requêtes qui ont été affectées les suppriment de leur file d'attente, modifiant ainsi leur charge. L'opération est renouvelée jusqu'à ce que tous les noeuds se sont attribués leurs requêtes.
 
 \subsection{Gestion de la popularité des objets}
 \paragraph{} Parler du pourquoi on cherche à connaître la popularité d'un objet. Explication des méthodes pour calculer, stocker, et diffuser le popularité des objets. Gérer le nombre de copies grâce à ça (c'est pas la partie sur laquelle j'ai travaillé, je vois beaucoup de problème là dedans encore).
