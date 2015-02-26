@@ -146,7 +146,7 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 
 \paragraph{} Pour SLVO, la valeur est la charge minimale sur le réseau. Pour AverageDegree, la valeur est la charge moyenne sur le réseau.
 
-\paragraph{} Si la valeur est inférieure ou égale (strictement égale dans le cas de SLVO), alors le noeud s'affecte toutes les requêtes de sa file d'attente et avertit tous les autres noeuds. Les noeuds possédant les requêtes qui ont été affectées les suppriment de leur file d'attente, modifiant ainsi leur charge. L'opération est renouvelée jusqu'à ce que tous les noeuds se sont attribués leurs requêtes.
+\paragraph{} Si la valeur est inférieure ou égale (strictement égale dans le cas de SLVO), alors le noeud s'affecte toutes les requêtes de sa file d'attente et avertit tous les autres noeuds. Les noeuds possédant les requêtes qui ont été affectées les suppriment de leur file d'attente, modifiant ainsi leur charge. L'opération est renouvelée jusqu'à ce que tous les noeuds se sont attribués leurs requêtes (voir la figure~\ref{fig:reaffectation} pour un exemple avec SLVO).
 
 \subsection{Gestion de la popularité des objets}
 
@@ -680,6 +680,12 @@ bar height = 0.8
 	\centering
 		\include{token}
 	\caption{Passage d'une répresentation des données pour le client à une représentation pour la base de données\label{fig:token}}
+\end{figure}
+
+\begin{figure}
+	\centering
+		\include{reaffectation}
+	\caption{Fonctionnement de l'algorithme de réaffectation des requêtes de lecture SLVO\label{fig:reaffectation}}
 \end{figure}
 
 \end{document}
