@@ -101,12 +101,21 @@ Nous allons nous intéresser dans notre projet à la classe \textbf{ColumnFamily
 \section{Client}
 
 \paragraph{} Le client est une application qui permet à l'utilisateur d'intéragir avec Cassandra. 
-Elle permet à l'utilisateur de choisir la stratégie de réplication et d'envoyer des requêtes sur une base de données distribuées Cassandra.
+Elle permet de choisir la stratégie de réplication et d'envoyer des requêtes sur une base de données distribuées Cassandra.
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=8cm]{schemas/pilote.png}
+	\caption{Intéractions client/pilote/Cassandra \label{fig:pilote}}
+\end{figure}
+
+\paragraph{} Nous utilisons un \textit{pilote}, programme informatique permettant à un programme d'intéragir avec un autre programme, que nous présentons dans la partie suivante.
+Il permet notamment de se connecter à Cassandra, d'envoyer des requêtes et de récupérer les résultats de ces requêtes.
+
+\paragraph{} Le client initialise la connexion, c'est-à-dire récupère les informations nécessaires à la connexion (ip de l'host par exemple), importe les données, prépare les requêtes.
 
 
 \subsection{Architecture du pilote}
-
-\paragraph{} Un \textit{pilote} est un programme informatique permettant à un programme d'intéragir avec un autre programme.
 
 \paragraph{} La communication entre le client et Cassandra se faît grâce à un pilote développé par Datastax, DataStax Java Driver for Apache Cassandra, écrit en Java.
 Nous nous interessons uniquement aux parties du pilote permettant d'implémenter les fonctionnalités du client, c'est à dire les objets permettant de se connecter et d'envoyer des requêtes sur une base de données Cassandra.
@@ -192,13 +201,36 @@ Si on change le seed, la suite de requêtes générée sera différente.
 
 \section{Visualisation des métriques}
 
-\paragraph{} Pour visualiser les métriques, nous utilisons les applications nommées \path{Graphite} et \path{Cyanite}. Ces applications sont écrites en Python.
+\paragraph{} Pour visualiser les métriques, nous utilisons l'application nommée \path{Graphite} écrite en Python.
+
+\subsection{Présentation de Graphite}
+
+\paragraph{} Graphite est l'union de trois logiciels:
+\begin{itemize}
+ \item \textbf{carbon}, un logiciel permettant de traiter des données temporelles, comme l'évolution de la charge d'un noeud en fonction du temps.
+ \item \textbf{whisper}, une base de données stockant toutes ces données
+ \item \textbf{graphite webapp}, une application web permettant la visualisation de ces données.
+\end{itemize}
+
+\vspace{0.5cm} %Pour aérer un peu
 
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=6cm]{schemas/cyanite.png}
-	\caption{Architecture pour la visualisation des métriques}
+		\includegraphics[width=12cm]{schemas/graphite.png}
+	\caption{Graphite, union de trois logiciels}
 \end{figure}
+
+\paragraph{} Cassandra enregistre ses metrics dans des fichiers.
+Carbon lit ces fichiers et stocke les données dans whisper.
+Enfin, graphite webapp traite ces données pour les afficher dans une page web.
+
+\subsection{Enregistrement des metrics}
+
+
+
+
+
+
 
 \paragraph{} Les métriques sont sauvegardées dans des fichiers traités par \path{Cyanite}. 
 Puis, \path{Graphite} affiche ces informations sous forme de graphes (courbes, histogrammes...) dans un navigateur web.
