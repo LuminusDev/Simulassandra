@@ -85,12 +85,6 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 \paragraph{} Le client peut être une personne physique ou un logiciel. Dans notre cas, il s'agit d'un logiciel permettant l'importation de fichiers contenant des requêtes ou de génerer des requêtes pseudo-aléatoirement.
 
 
-%\paragraph{}  Aucune notion de "distribuée" ne doit encore apparaitre. Le client accède à une base de données et peut faire des requêtes de lecture et des requêtes d'écriture de données. Les données sont stockés sous forme d'objet (un objet étant composé d'une clé d'identification -appelé token- et d'un ensemble de données).
-
-%\paragraph{} On génère des requêtes ou on en importe. On se connecte à une base de donnée. On lance les requêtes.
-
-%\paragraph{} 1 schéma : scénario d'utilisation
-
 \subsection{Base de données distribuée}
 
 \paragraph{} La base de données utilisée par le client est plus précisément une base de données dites \textit{distribuée}. Le client ne voit pas de différence, lorsqu'il l'utilise, entre une base de données classique et une base de données distribuée. On dit qu'une base de données est distribuée lorsque les données qu'elle stocke sont réparties sur plusieurs machines ou emplacements physiques, appelés \textit{noeuds}. Les noeuds sont capables de communiquer entre eux afin de s'échanger des informations.
@@ -159,8 +153,6 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
     \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}.
 \end{itemize}
 
-%\paragraph{} Parler du pourquoi on cherche à connaître la popularité d'un objet. Explication des méthodes pour calculer, stocker, et diffuser le popularité des objets. Gérer le nombre de copies grâce à ça (c'est pas la partie sur laquelle j'ai travaillé, je vois beaucoup de problème là dedans encore).
-
 \paragraph{} 1 schéma : (je vois pas quoi faire non plus là)
 
 \subsection{Gestion des copies d'un objet}
@@ -190,127 +182,100 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 \end{figure}
 
 
-%\paragraph{} Parler des données que l'on souhaite afficher et pourquoi on souhaite les afficher (comparaison et tout le blabla). Parler de la forme sous laquelle on veut les afficher aussi (représentation type graphe suggéré par le client, représentation type histogramme plutôt intéressant aussi).
-
-
-\section{Définition du projet}
-
-\subsection{Contexte}
-
-\paragraph{Définition} Un \textit{environnement distribué} est constitué de plusieurs machines (ordinateurs généralement), appelées \textit{noeuds}, sur lesquelles sont stockées des données et pouvant traiter des requêtes. Chaque noeud possède des informations locales propres à son fonctionnement (exemple : une liste des noeuds voisins).
-
-\paragraph{Définition} Une \textit{base de données} est une entité permettant de stocker des données afin d'en faciliter l'exploitation (ajout, mise à jour, recherche de données).
-
-%\paragraph{Définition} Une \textit{donnée} ou un \textit{objet} est un codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
-
-%Assez précis ?%
-
-%\paragraph{} Diff BD et BD distrib et maitre esclave (faire, apparaitre file d'attente & def charge )
-
-%\paragraph{Définition} Une \textit{requête} est une interrogation d'une base de données afin de récupérer ou modifier des données.
-
-\paragraph{Définition} Une \textit{charge} est associée à un noeud et désigne le nombre de requêtes restantes que le noeud doit traiter à l'instant $T$.
-
-\paragraph{Définition} La \textit{réplication} d'une donnée est une action qui réalise des copies de cette donnée sur d'autres noeuds.
-
-\paragraph{Définition} Un \textit{réseau} est un ensemble de noeuds qui sont reliés entre eux (par exemple par Internet) et qui communiquent ensemble.
-
-\paragraph{} L'expansion, au cours des deux dernières décennies, des réseaux et notamment d'Internet a engendré une importante création de données, massives par leur nombre et leur taille.
-Stocker ces informations sur un seul point de stockage (ordinateur par exemple) n'est bien sûr plus envisageable, que ce soit pour des raisons techniques ou pour des raisons de sûreté (pannes potentielles par exemple).
-Pour cela des systèmes de stockages dits distribués sont utilisés en pratique afin des les répartir sur différentes unités de stockages.
-
-\paragraph{} Pour répartir toutes ces données, notre client a développé de nouveaux algorithmes d'équilibrage de charge basés sur la réplication qu'il souhaite tester dans un environnement distribué.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{Finalité}
-
-\paragraph{} Nous devons développer une solution logicielle permettant de tester ces nouveaux algorithmes d'équilibrage de charge et de réplication proposés par le client dans un environnement distribué.
-
-\paragraph{Définition} Une \textit{charge minimum} d'un environnement distribué est la plus petite charge trouvée sur un noeud parmi l'ensemble des noeuds. La \textit{charge moyenne}, est la moyenne des charges de l'ensemble des noeuds.
-
-\paragraph{}Il s'agira d'implémenter les algorithmes développés par le client.
-On distingue les algorithmes d'affectation de requête :
-
-\begin{itemize}
- \item \textbf{SLVO} 
-    Si la charge du noeud est inférieure ou égale à la charge minimum, il s'affecte toutes les requêtes en attente et en avertit les autres noeuds.
- \item \textbf{AverageDegree}
-    Si la charge du noeud est inférieure ou égale à la charge moyenne, il s'affecte toutes les requêtes en attente et en avertit les autres noeuds.
-\end{itemize}
-
-\paragraph{Définition} La \textit{popularité} d'un objet est le nombre de requêtes que va recevoir un objet durant un intervalle de temps $T$ défini par l'utilisateur.
-
-\paragraph{}Ainsi que l'algorithme de gestion de copie, permettant d'établir le nombre de réplicas d'un objet en fonction de sa popularité.
-
-\paragraph{} Pour comparer l'efficacité de ces algorithmes, on peut visualiser l'état du réseau \textit{en temps réel}.
-
-
-\subsection{Hypothèses}
-
-\paragraph{} Nous évoluerons dans un environnement distribué constitué de $n$ noeuds de stockage dans lequel on souhaite stocker $m$ objets. C'est un réseau statique : on ne peut pas ajouter ou supprimer de noeuds après création du réseau.
-
-\paragraph{Définition} Un \textit{message} est un envoi d'information d'un noeud vers un autre noeud pour mettre à jour ses données locales ou effectuer des actions particulières (autre que des requêtes, comme par exemple, "donne à tel noeud ta charge actuelle").
-
-\paragraph{Données locales d'un noeud} Un noeud contient les données locales suivantes :
-\begin{itemize}
- \item la charge de tous les noeuds du réseau
- \item la popularité de chaque objet stocké sur ce noeud
- \item une file d'attente de message à traiter
- \item la requête en cours de traitement
-\end{itemize}
-
-\paragraph{Requêtes} Nous supposerons que les requêtes seront effectuées en un temps fixe.
-
 \newpage
+
 \section{Ordonnancement des besoins}
 
 \paragraph{} Nous avons dégagé une liste de besoins fonctionnels et non-fonctionnels. 
-Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité et de leur criticité.
-
-
-\subsection{Priorité}
+Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité.
 
 \paragraph{} La priorité est un indicateur de l'ordre dans lequel nous devrons implémenter les fonctionnalités afin de satisfaire les besoins du client.
 
 \paragraph{}
-\begin{tabular}{| l | M{3cm} | M{9cm} |}
+\begin{tabular}{| l | M{12cm} |}
     \hline
-    Valeur & Signification & Description \tabularnewline
+    Valeur & Signification \tabularnewline
     \hline
-    1 & Priorité haute & A implémenter en premier. \tabularnewline
+    1 & Priorité haute \tabularnewline
     \hline
-    2 & Priorité moyenne & A implémenter.  \tabularnewline
+    2 & Priorité moyenne  \tabularnewline
     \hline
-    3 & Priorité faible & A implémenter (en fonction du temps restant).  \tabularnewline
-    \hline
- \end{tabular}
- 
-
-\subsection{Criticité}
-
-\paragraph{} Le niveau de criticité d'un besoin est un indicateur de l'impact qu'aura la non-implémentation de ce besoin sur le bon fonctionnement de l'application.
-
-\paragraph{}
-\begin{tabular}{| l | M{3cm} | M{9cm} |}
-    \hline
-    Valeur & Signification & Description \tabularnewline
-    \hline
-    1 & Criticité extrême & L'application ne sera pas utilisable par le client. \tabularnewline
-    \hline
-    2 & Criticité haute & L'application est utilisable par le client. En revanche, certaines fonctionnalités de l'application ne seront pas utilisables. \tabularnewline
-    \hline
-    3 & Criticité moyenne & L'application est utilisable par le client. En revanche, certaines fonctionnalités de l'application n'améneront pas au résultat attendu.  \tabularnewline
-    \hline
-    4 & Criticité faible & L'application peut fonctionner sans l'ajout de ces fonctionnalités  \tabularnewline
+    3 & Priorité faible  \tabularnewline
     \hline
  \end{tabular}
-
 
 
 \newpage
 
 \section{Besoins fonctionnels}
+
+----- FONCTIONNEL -------
+CLIENT
+Connexion client
+Envoi de requête
+ - de type lecture
+ - de type écriture
+ 
+Importation de fichiers contenant des requêtes
+Génération de requête pseudo-aléatoire
+
+
+Echanger des informations entre les noeuds
+
+REQUETE DE LECTURE
+File d'attente des requêtes client
+	- Ajouter / Traiter
+Connaitre les informations des noeuds du réseau
+Connaitre la stratégie de réplication
+Identifier les noeuds responsables de l'objet
+Message
+	- Envoyer un message aux noeuds responsables pour traiter une requête de lecture
+	- Recevoir le message
+File d'attente des requêtes de lecture
+	- ajouter
+	- Traiter
+	- Supprimer
+Envoyer un message aux noeuds responsables pour supprimer une requête de lecture (identification requête)
+	-> recevoir (a)
+Renvoyer le resultat au noeud coordinateur
+Transmettre le résultat du noeud coordinateur au client
+
+
+REQUETE D'ECRITURE
+
+Message
+	- Envoyer un message aux noeuds responsables pour traiter une requête d'écriture
+	- Recevoir le message
+File d'attente des requêtes d'écriture
+	- ajouter
+	- Traiter
+Renvoyer le resultat au noeud coordinateur
+Transmettre le résultat du noeud coordinateur au client
+
+
+REAFFECTATION DES REQUETES DE LECTURE
+
+Stopper le traitement des requêtes de lecture periodiquement
+ - Horloge
+ - Stopper
+ 
+Connaître la charge de chaque noeud du réseau
+Choisir un protocole de réaffectation
+Exécuter le protocole de réaffectation choisi
+*(a)
+
+
+POPULARITÉ
+
+
+
+
+
+-------BESOIN NON FONCTIONNEL-----
+
+STOCKAGE DES DONNÉES
+
+stocker les données sous la forme d'objet
 
 \subsection{Gestion d'un réseau}
 
