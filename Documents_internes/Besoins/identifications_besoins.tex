@@ -159,12 +159,20 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
     \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}.
 \end{itemize}
 
-\paragraph{} 1 schéma : (je vois pas quoi faire non plus là)
-
 \subsection{Gestion des copies d'un objet}
-\paragraph{} Explication de la méthode de fonction de hash pour chaque index de copie. Mettre en comparaison avec une méthode connu de placement de réplica (mettre sur le noeud suivant). Distribution plus homogène des copies de cette manière.
 
-\paragraph{} 1 schéma : partitionnement des copies d'un objet avec plusieurs fonctions de hachages
+\paragraph{} Une \textit{fonction de hachage} est une fonction mathématique qui possède les propriétés suivantes :
+\begin{itemize}
+    \item Ensemble d'entrée : une clé primaire ;
+    \item Ensemble d'arrivée : Un entier ;
+\end{itemize}
+On lui associe souvent d'autres propriétés pour équilibrer la répartition des données (cf paragraphe suivant).
+
+\paragraph{} Pour fabriquer un token, qui sert à placer les données sur le réseau, une clé primaire est hachée avec une fonction de hachage. Nous obtenons une valeur (ici un entier). Chaque noeud du réseau est responsable d'un intervalle d'entiers de l'ensemble des valeurs du domaine. Avec une bonne fonction de hachage, les hash des clés primaires seront distribués uniformément dans l'ensemble des entiers.
+
+\paragraph{} Placer les copies sur le même noeud revient à n'avoir théoriquement l'équivalent d'aucune copie puisque la charge reste sur le même noeud. Il existe plusieurs stratégies de placement de copies des données et nous n'en développerons qu'une ici.
+
+\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. Cassandra se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}).
 
 \subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
 
