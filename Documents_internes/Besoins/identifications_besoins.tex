@@ -172,7 +172,7 @@ On lui associe souvent d'autres propriétés pour équilibrer la répartition de
 
 \paragraph{} Placer les copies sur le même noeud revient à n'avoir théoriquement l'équivalent d'aucune copie puisque la charge reste sur le même noeud. Il existe plusieurs stratégies de placement de copies des données et nous n'en développerons qu'une ici.
 
-\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. Cassandra se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}).
+\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. La base de données se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}).
 
 \subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
 
