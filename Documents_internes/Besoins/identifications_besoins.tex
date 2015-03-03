@@ -170,9 +170,11 @@ On lui associe souvent d'autres propriétés pour équilibrer la répartition de
 
 \paragraph{} Pour fabriquer un token, qui sert à placer les données sur le réseau, une clé primaire est hachée avec une fonction de hachage. Nous obtenons une valeur (ici un entier). Chaque noeud du réseau est responsable d'un intervalle d'entiers de l'ensemble des valeurs du domaine. Avec une bonne fonction de hachage, les hash des clés primaires seront distribués uniformément dans l'ensemble des entiers.
 
-\paragraph{} Placer les copies sur le même noeud revient à n'avoir théoriquement l'équivalent d'aucune copie puisque la charge reste sur le même noeud. Il existe plusieurs stratégies de placement de copies des données et nous n'en développerons qu'une ici.
+\paragraph{} Placer les copies sur le même noeud revient à n'avoir théoriquement l'équivalent d'aucune copie puisque la charge reste sur le même noeud. Il existe plusieurs stratégies de placement de copies des données et nous n'en développerons que deux ici. La première permet de comprendre les mécanismes de base d'une stratégie de placement. La seconde décrit celle que nous allons développer.
 
-\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. La base de données se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}).
+\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. La base de données se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}.
+
+\paragraph{} La seconde consiste à utiliser les fonctions de hachage. En effet, dans la stratégie précédente, une seule fonction de hachage était définie pour placer la donnée et les réplicas était ensuite déterminée à partir de sa position. Ici, nous avons $n$ fonctions de hachage, toutes numérotées de $0$ à $n-1$. La fonction de hachage numéro 0 sert à placer la donnée. La fonction numéro 1 sert à placer le premier réplica et ainsi de suite...
 
 \subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
 
@@ -362,44 +364,62 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
 
 \subsection{Gestion d'un réseau}
 
+\subsubsection{Popularité d'un objet}
+
+\paragraph{Stockage de la popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{description}
+        \besoin{Créer un vecteur d'entiers compatabilisant le nombre de requêtes}{1}
+        \besoin{Augmenter la taille du vecteur}{1} dans le cas où on a l'algorithme qui calcule la popularité de tous les objets
+        \besoin{Créer un identifiant permettant de relier la popularité à un objet}{1}
+\end{description}
+
+\paragraph{Calcul de la popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{description}
+        \besoin{Incrémenter la popularité de l'objet requêté dans le vecteur à chaque requête sur celui-ci}{1}
+\end{description}
+
+\paragraph{Communication de la popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{description}
+        \besoin{Identifier le noeud responsable d'un objet}{1}
+        \besoin{Créer un message de popularité}{1}
+        \besoin{Envoyer un message de popularité au noeud responsable de l'objet}{1}
+        \besoin{Recevoir un message de popularité}{1}
+        \besoin{Traiter un message de popularité (cf paragraphe suivant)}{1}
+\end{description}
+
+\paragraph{Traitement d'un message de popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{description}
+        \besoin{Stocker la popularité du message dans le vecteur du noeud traitant le message}{1}
+        \besoin{Vérifier avoir reçu tous les messages concernant les objets dont le noeud a la gestion}{1}
+        \besoin{Décider de créer ou non de nouveau réplicas}{1}
+        \besoin{Réinitialiser le vecteur après la création des nouveaux objets les plus populaires}{1}
+\end{description}
 
 
 \subsubsection{Réplication d'un objet}
 
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\paragraph{Définition} Une \textit{fonction de hachage} est une fonction mathématique déterministe (c'est à dire, si on lui donne la même entrée, elle renvoie la même sortie). Nous définissons ses entrées et sorties dans le paragraphe suivant.
-
-\paragraph{Définition} Un \textit{token} permet comme une étiquette sur un produit, de désigner une donnée.
-
-\paragraph{} Il s'agit de copier un objet sur un autre noeud. 
-Il est possible de définir le nombre de copies d'un objet au sein d'un ensemble de noeuds, appelé \textit{data center}. 
-Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique).
-On obtient ainsi un \textit{token}.
-
-\paragraph{} Tous les noeuds possèdent un intervalle (ou ensemble) de tokens dont ils sont responsables. 
-On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
-
-\paragraph{} Une stratégie de réplication est la méthode qui permet de placer les copies d'un objet dans un data center.
-La stratégie consiste à utiliser une fonction de hachage différente pour chaque copie (voir la figure~\ref{fig:multi_hash_partitionning}). 
-Le numéro de la copie définit la fonction à utiliser. 
-Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la fonction de hachage \texttt{Hash2} pour obtenir un token et placer la copie.
-
-\paragraph{Définition des fonctions de hachage}
-\paragraph{Mise en place de la stratégie de réplication}
-
-
-\subsubsection{Popularité d'un objet}
-
-\paragraph{} Les algorithmes à implémenter nécessitent de connaître la popularité d'un objet dans le réseau.
-La popularité d'un objet est défini par le nombre de requêtes sur cet objet.
-Plus le nombre de requêtes est grand, plus l'objet est populaire.
-
-\paragraph{Calcul de la popularité}
-
-\paragraph{Stockage de la popularité} Chaque noeud stocke la popularité des objets qu'il contient.
-
-\paragraph{Communication de la popularité} Un noeud stockant des copies d'un objet doit communiquer la popularité de ces derniers au noeud possédant l'objet original.
-
+\begin{description}
+        \besoin{Créer une nouvelle stratégie de réplication}{2}
+        \besoin{Permettre la définition par l'utilisateur de fonctions de hachage et leur ordre d'utilisation}{2}
+        \besoin{Stocker chaque fonction de hachage et son ordre}{2}
+        \besoin{Définir un ordre dans les réplicas}{2}
+        \besoin{Utiliser la première fonction de hachage pour placer le premier réplica}{2} la seconde pour le second, et ainsi de suite...
+        \besoin{Retrouver les réplicas en fonction des fonctions de hachage}{2}
+\end{description}
 
 \subsection{Requêtes}
 
