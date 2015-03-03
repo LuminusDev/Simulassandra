@@ -1,17 +1,33 @@
 package simulassandra.client;
 
-import com.datastax.driver.core.Cluster;
+import java.io.IOException;
+import java.util.Scanner;
 
-/**
- * Hello world!
- *
- */
+import simulassandra.client.app.ClientApp;
+import simulassandra.client.app.Interactor;
+import simulassandra.client.exceptions.UnreachableHostException;
+
+
 public class App 
 {
-	private Cluster cluster; // fonctionne ok!
+	private static ClientApp clientApp;
 	
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+    	Interactor.welcome();
+    	
+    	setAddress();
+    	
+    }
+    
+    public static void setAddress(){
+    	
+    	try {
+			clientApp = new ClientApp(Interactor.getHostAddress());
+		} catch (UnreachableHostException | IOException e) {
+			e.printStackTrace();
+			
+			setAddress();
+		}
     }
 }
