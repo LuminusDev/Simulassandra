@@ -24,22 +24,31 @@ public class ClientApp {
 	
 	private void setAddress(String a) throws UnreachableHostException, IOException{
 		//First, we're testing the existence of the host
-		InetAddress i = InetAddress.getByName(address);
+		
+		Interactor.checkingHost(a);
+		InetAddress i = InetAddress.getByName(a);
+		
 		//Ping
 		if(i.isReachable(Config.TIMEOUT)){
 			this.address = a;
 		} else {
-			throw new UnreachableHostException("Timeout");
+			throw new UnreachableHostException("Timeout, host "+a+" is unreachable.");
 		}
+		
 	}
 	
 	public Boolean run(){
-		//TODO
+		this.connectToCluster();
+		
 		return Boolean.TRUE;
 	}
 	
 	private void connectToCluster(){
+		
+		Interactor.creatingContactPoint();
+		
 		this.cluster = Cluster.builder().addContactPoint(this.address).build();
+		
 	}
 	
 	public void finalize(){

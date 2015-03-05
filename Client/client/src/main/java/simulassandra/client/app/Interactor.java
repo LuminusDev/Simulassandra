@@ -13,5 +13,20 @@ public class Interactor {
     	System.out.println("Please, tip the host address :");
     	return sc.nextLine();
 	}
+	
+	public static void checkingHost(String h){
+		System.out.println("Checking if "+h+" host is reachable.");
+	}
+	
+	public static void creatingContactPoint(){
+		System.out.println("Connecting to cluster.");
+	}
+	
+	public static void displayException(Exception e){
+		System.out.println("Error > "+e.getMessage());
+	}
 
+	public static void end(){
+		System.out.println("End");
+	}
 }
