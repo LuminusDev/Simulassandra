@@ -2,7 +2,6 @@ package simulassandra.client.app;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import simulassandra.client.Config;
 import simulassandra.client.exceptions.UnreachableHostException;
@@ -13,9 +12,11 @@ public class ClientApp {
 	
 	private String address;
 	private Cluster cluster;
+    private Connection connection;
 	
 	public ClientApp(String a) throws UnreachableHostException, IOException{
 		this.setAddress(a);
+		this.connection = new Connection(cluster);
 	}
 	
 	public String getAdress(){
@@ -24,7 +25,6 @@ public class ClientApp {
 	
 	private void setAddress(String a) throws UnreachableHostException, IOException{
 		//First, we're testing the existence of the host
-		
 		Interactor.checkingHost(a);
 		InetAddress i = InetAddress.getByName(a);
 		
@@ -37,8 +37,10 @@ public class ClientApp {
 		
 	}
 	
+	
 	public Boolean run(){
 		this.connectToCluster();
+		
 		
 		return Boolean.TRUE;
 	}
