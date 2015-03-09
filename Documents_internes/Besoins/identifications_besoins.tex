@@ -245,7 +245,6 @@ Stopper le traitement des requêtes de lecture periodiquement
 Connaître la charge de chaque noeud du réseau
 Choisir un protocole de réaffectation
 Exécuter le protocole de réaffectation choisi
-*(a)
 
 POPULARITÉ
 
@@ -359,7 +358,33 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
 
 \subsection{Réaffectation des requêtes de lecture}
 
+\begin{comment}
+Stopper le traitement des requêtes de lecture periodiquement
+ - Horloge
+ - Stopper
+ 
+Connaître la charge de chaque noeud du réseau
+Choisir un protocole de réaffectation
+Exécuter le protocole de réaffectation choisi
+\end{comment}
+
 \paragraph{} Les besoins sur la réaffectation des requêtes de lecture se recoupent avec ceux de gestion des requêtes de lecture en ce qui concerne les messages envoyés entre les noeuds.
+
+\begin{description}
+\besoin{Synchroniser l'horloge interne des noeuds du réseau}{1}
+\besoin{Définir un intervalle de temps périodique}{1}
+\besoin{Modifier l'intervalle de temps périodique par une configuration}{3}{La configuration est accessible par l'utilisateur, et la valeur de l'intervalle de temps doit être la même pour tous les noeuds du réseau}
+\besoin{Suspendre le traitement des requêtes de lecture}{1}
+\besoin{Exécuter du code à temps périodique}{1}
+\besoin{Reprendre le traitement des requêtes de lecture après une suspension}{1}
+\end{description}
+
+\begin{description}
+\besoin{Connaître la charge des files d'attentes de requêtes de lecture de chaque noeud du réseau}{1}{Cette information fait partie des informations de chaque noeud, communiqué entre eux comme vu précédemment dans la partie \textit{Communication entre les noeuds}.}
+\besoin{Définir un protocole de réaffectation}{1}
+\besoin{Modifier le protocole de réaffectation par une configuration}{3}{La configuration est accessible par l'utilisateur, et le protocole de réaffectation doit être la même pour tous les noeuds du réseau}
+\besoin{Exécuter le code d'un protocole de réaffectation défini}{1}
+\end{description}
 
 
 \subsection{Gestion d'un réseau}
@@ -407,7 +432,6 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
         \besoin{Réinitialiser le vecteur après la création des nouveaux objets les plus populaires}{1}
 \end{description}
 
-
 \subsubsection{Réplication d'un objet}
 
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
@@ -429,7 +453,6 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
 Si l'utilisateur ne détient pas de suites de requêtes prêtes, il pourra demander à l'application d'en créer pour lui. 
 L'application, ne connaissant pas la nature des données, ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
 Elle pourra par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne pourra pas en modifier une.
-
 
 \subsubsection{Importation d'un jeu de requête}
 
@@ -477,6 +500,7 @@ Nous créons notre environnement distribué à partir de la dernière version st
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
 
+
 \subsection{Maintenabilité du projet}
 
 \paragraph{} L'envergure du projet fait qu'il est possible que d'autres personnes travaillent sur la finalité de ce projet, peu importe son état d'avancement.
@@ -486,26 +510,6 @@ Afin de faciliter la compréhension, nous avons défini quelques normes pour que
 	\item document externe spécifiant les fichiers modifiés par rapport au code source original;
 	\item guide d'installation pour utiliser le projet et pour modifier le projet.
 \end{itemize}
-
-\subsection{Gestion d'un réseau}
-
-\subsubsection{Communication entre noeuds}
-
-\paragraph{Algorithme} Le calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
-
-\paragraph{}Pour connaître l'état du réseau, il faut regrouper les données locales des noeuds.
-Nous cherchons donc à récupérer ces données en un temps raisonnable ($O(log(n))$ pour $n$ noeuds).
-
-\paragraph{}Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
-Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}\cite{seed}, noeud en mesure d'avoir une connaissance globale du système, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
-
-\paragraph{}Ainsi, la connaissance globale du système se fait, dans la théorie, en $O(log(n))$.
-
-
-\subsubsection{Taille des données}
-
-\paragraph{} La taille de chaque donnée est laissée à l'appréciation de l'équipe. 
-Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
 
 
 \subsection{Protocole de test}
@@ -524,14 +528,8 @@ Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de cr
 \paragraph{} S'il y a une différence entre les deux résultats, une vérification par le client peut être envisagée dans le cas de résultats \textit{presque} similaires. 
 La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
 
+
 \subsection{Visualisation des données}
-
-\subsubsection{Etat du réseau}
-
-\paragraph{} La vue permet de montrer l'état du réseau.
-
-\paragraph{} Le réseau est représenté par un graphe, les machines par des noeuds. 
-Pour chaque machine, les données affichées sont la charge ainsi que le contenu de la file d'attente.
 
 \subsubsection{Actualisation de la vue}
 
