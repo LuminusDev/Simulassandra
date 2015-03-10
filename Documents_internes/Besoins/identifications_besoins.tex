@@ -4,10 +4,12 @@
 \usepackage[tikz]{bclogo}
 \usepackage{geometry}
 \usepackage{array}
+\usepackage{version}
 \usepackage{graphics}
 \usepackage{graphicx}
 \usepackage{pgfgantt}
 \usepackage{url}
+\usepackage{enumitem}
 \bibliographystyle{alpha}
 \usepackage[counterclockwise]{rotating}
 \geometry{hmargin=2.5cm,vmargin=1.5cm}
@@ -16,9 +18,13 @@
 \newcolumntype{M}[1]{
     >{\raggedright}m{#1}
 }
+\setlist[description]{topsep=20pt}
 
-\newcommand{\besoin}[2] {
-  (\textit{Priorité} : #1, \textit{criticité} : #2)
+\newcommand{\priority}[1] {
+  (\textit{Priorité}:#1)
+}
+\newcommand{\besoin}[3]{
+	\item[#1] \priority{#2} #3
 }
 
 \title{
@@ -153,12 +159,22 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
     \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}.
 \end{itemize}
 
-\paragraph{} 1 schéma : (je vois pas quoi faire non plus là)
-
 \subsection{Gestion des copies d'un objet}
-\paragraph{} Explication de la méthode de fonction de hash pour chaque index de copie. Mettre en comparaison avec une méthode connu de placement de réplica (mettre sur le noeud suivant). Distribution plus homogène des copies de cette manière.
 
-\paragraph{} 1 schéma : partitionnement des copies d'un objet avec plusieurs fonctions de hachages
+\paragraph{} Une \textit{fonction de hachage} est une fonction mathématique qui possède les propriétés suivantes :
+\begin{itemize}
+    \item Ensemble d'entrée : une clé primaire ;
+    \item Ensemble d'arrivée : Un entier ;
+\end{itemize}
+On lui associe souvent d'autres propriétés pour équilibrer la répartition des données (cf paragraphe suivant).
+
+\paragraph{} Pour fabriquer un token, qui sert à placer les données sur le réseau, une clé primaire est hachée avec une fonction de hachage. Nous obtenons une valeur (ici un entier). Chaque noeud du réseau est responsable d'un intervalle d'entiers de l'ensemble des valeurs du domaine. Avec une bonne fonction de hachage, les hash des clés primaires seront distribués uniformément dans l'ensemble des entiers.
+
+\paragraph{} Placer les copies sur le même noeud revient à n'avoir théoriquement l'équivalent d'aucune copie puisque la charge reste sur le même noeud. Il existe plusieurs stratégies de placement de copies des données et nous n'en développerons que deux ici. La première permet de comprendre les mécanismes de base d'une stratégie de placement. La seconde décrit celle que nous allons développer.
+
+\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. La base de données se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}.
+
+\paragraph{} La seconde consiste à utiliser les fonctions de hachage. En effet, dans la stratégie précédente, une seule fonction de hachage était définie pour placer la donnée et les réplicas était ensuite déterminée à partir de sa position. Ici, nous avons $n$ fonctions de hachage, toutes numérotées de $0$ à $n-1$. La fonction de hachage numéro 0 sert à placer la donnée. La fonction numéro 1 sert à placer le premier réplica et ainsi de suite...
 
 \subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
 
@@ -209,6 +225,7 @@ Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité.
 
 \section{Besoins fonctionnels}
 
+\begin{comment}
 ----- FONCTIONNEL -------
 CLIENT
 Connexion client
@@ -219,40 +236,6 @@ Envoi de requête
 Importation de fichiers contenant des requêtes
 Génération de requête pseudo-aléatoire
 
-
-Echanger des informations entre les noeuds
-
-REQUETE DE LECTURE
-File d'attente des requêtes client
-	- Ajouter / Traiter
-Connaitre les informations des noeuds du réseau
-Connaitre la stratégie de réplication
-Identifier les noeuds responsables de l'objet
-Message
-	- Envoyer un message aux noeuds responsables pour traiter une requête de lecture
-	- Recevoir le message
-File d'attente des requêtes de lecture
-	- ajouter
-	- Traiter
-	- Supprimer
-Envoyer un message aux noeuds responsables pour supprimer une requête de lecture (identification requête)
-	-> recevoir (a)
-Renvoyer le resultat au noeud coordinateur
-Transmettre le résultat du noeud coordinateur au client
-
-
-REQUETE D'ECRITURE
-
-Message
-	- Envoyer un message aux noeuds responsables pour traiter une requête d'écriture
-	- Recevoir le message
-File d'attente des requêtes d'écriture
-	- ajouter
-	- Traiter
-Renvoyer le resultat au noeud coordinateur
-Transmettre le résultat du noeud coordinateur au client
-
-
 REAFFECTATION DES REQUETES DE LECTURE
 
 Stopper le traitement des requêtes de lecture periodiquement
@@ -262,14 +245,10 @@ Stopper le traitement des requêtes de lecture periodiquement
 Connaître la charge de chaque noeud du réseau
 Choisir un protocole de réaffectation
 Exécuter le protocole de réaffectation choisi
-*(a)
-
 
 POPULARITÉ
 
-
-
-
+-------FIN FONCTIONNEL-----
 
 -------BESOIN NON FONCTIONNEL-----
 
@@ -277,84 +256,194 @@ STOCKAGE DES DONNÉES
 
 stocker les données sous la forme d'objet
 
-\subsection{Gestion d'un réseau}
-
-\paragraph{} Un réseau est un ensemble de noeuds qui sont reliés entre eux (par exemple par Internet) et qui communiquent ensemble afin de traiter toutes les requêtes reçues. On peut rassembler des noeuds pour former un \textit{data center}, et rassembler des data center pour former un \textit{cluster}(voir la figure~\ref{fig:distributed_database}).
-
-
-\subsubsection{Gestion des noeuds}
-
-\paragraph{Création d'un noeud} \besoin{1}{1} Il est possible de séparer ce besoin en plusieurs sous-besoins :
- \begin{itemize}
- 	\item créer un noeud dans l'environnement
- 	\item initialiser les données locales d'un noeud
- \end{itemize}
-
-\paragraph{Mise à jour des données locales} \besoin{1}{1} Afin de connaître l'état du réseau de manière précise, les données locales doivent être mise à jour à chaque action,
-c'est à dire lors du traitement d'un message dans la file d'attente.
+-------FIN BESOIN NON FONCTIONNEL-----
+\end{comment}
 
 
-\paragraph{Communication des données locales} \besoin{1}{1} Un noeud doit être capable de communiquer ses données locales à d'autres noeuds du réseau.
+\subsection{Communication entre les noeuds}
 
-\paragraph{Récupération de l'état du réseau} \besoin{1}{1} L'application doit permettre la description de l'état du réseau.
-On souhaite connaître : 
-\begin{itemize}
- \item le nombre de requêtes en attente
- \item la popularité des objets
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{description}
+\besoin{Envoyer les informations du noeud à n'importe quel autre noeud}{1}
+\besoin{Recevoir les informations provenant d'un autre noeud}{1}
+\besoin{Stocker les informations de tous les noeuds du réseau}{1}{
+Cela concerne tous les noeuds, y compris soi-même.
+}
+\end{description}
+
+\paragraph{} Les informations d'un noeud doivent permettre d'envoyer un message à ce dernier.
+
+
+
+\subsection{Gestion des requêtes}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+
+\subsubsection{Requêtes client}
+
+\begin{description}
+\besoin{Créer une file d'attente des requêtes client}{1}
+\besoin{Ajouter une requête à la file d'attente des requêtes client}{1}
+\besoin{Défiler une requête de la file d'attente des requêtes client}{1}
+\besoin{Traiter une requête client}{1}
+\end{description}
+
+\begin{description}
+\besoin{Identifier les noeuds responsables d'un objet}{1}{
+Cela nécessite de connaitre plusieurs informations :
+\begin{itemize}[noitemsep]
+	\item la stratégie de réplication
+	\item la token de chaque noeud
+	\item le nombre de copie de chaque objet
 \end{itemize}
+}
+\end{description}
 
-\subsubsection{Réplication d'un objet}
+\begin{description}
+\besoin{Créer une requête de lecture}{1}{
+Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les supprimer. Il faut donc générer un identifiant pour chaque requête de lecture lors de sa création.
+}
+\besoin{Envoyer une requête de lecture}{1}
+\besoin{Créer une requête d'écriture}{1}
+\besoin{Envoyer une requête d'écriture}{1}
+\end{description}
 
 
-\paragraph{Définition} Une \textit{fonction de hachage} est une fonction mathématique déterministe (c'est à dire, si on lui donne la même entrée, elle renvoie la même sortie). Nous définissons ses entrées et sorties dans le paragraphe suivant.
+\subsubsection{Requêtes de lecture}
 
-\paragraph{Définition} Un \textit{token} permet comme une étiquette sur un produit, de désigner une donnée.
+\begin{description}
+\besoin{Créer une file d'attente des requêtes de lecture}{1}
+\besoin{Recevoir une requête de lecture}{1}
+\besoin{Ajouter une requête à la file d'attente des requêtes de lecture}{1}
+\besoin{Supprimer une requête de la file d'attente des requêtes de lecture}{1}
+\besoin{Défiler une requête de la file d'attente des requêtes de lecture}{1}
+\besoin{Traiter une requête de lecture}{1}
+\end{description}
 
-\paragraph{} Il s'agit de copier un objet sur un autre noeud. 
-Il est possible de définir le nombre de copies d'un objet au sein d'un ensemble de noeuds, appelé \textit{data center}. 
-Pour savoir quel noeud stocke l'objet, on utilise une fonction de hachage dans laquelle on fait passer la clé de l'objet (la clé de l'objet est une donnée permettant d'identifier un objet de manière unique).
-On obtient ainsi un \textit{token}.
+\begin{description}
+\besoin{Créer un message de suppression de requête de lecture}{1}
+\besoin{Envoyer un message de suppression de requête de lecture}{1}
+\besoin{Recevoir un message de suppression de requête de lecture}{1}
+\besoin{Traiter un message de suppression de requête de lecture}{1}
+\end{description}
 
-\paragraph{} Tous les noeuds possèdent un intervalle (ou ensemble) de tokens dont ils sont responsables. 
-On regarde le token de l'objet pour savoir quel noeud va le prendre en charge (voir la figure~\ref{fig:partitionning}).
+\begin{description}
+\besoin{Créer un message de résultat}{1}
+\besoin{Envoyer un message de résultat au noeud coordinateur}{1}
+\besoin{Recevoir un message de résultat}{1}
+\besoin{Transmettre un message de résultat au client}{1}
+\end{description}
 
-\paragraph{} Une stratégie de réplication est la méthode qui permet de placer les copies d'un objet dans un data center.
-La stratégie consiste à utiliser une fonction de hachage différente pour chaque copie (voir la figure~\ref{fig:multi_hash_partitionning}). 
-Le numéro de la copie définit la fonction à utiliser. 
-Ainsi, sur le schéma, la deuxième copie de tous les objets utilisera la fonction de hachage \texttt{Hash2} pour obtenir un token et placer la copie.
 
-\paragraph{Définition des fonctions de hachage} \besoin{1}{3}
-\paragraph{Mise en place de la stratégie de réplication} \besoin{1}{3}
+\subsubsection{Requêtes d'écriture}
 
+\begin{description}
+\besoin{Créer une file d'attente des requêtes d'écriture}{1}
+\besoin{Recevoir une requête d'écriture}{1}
+\besoin{Ajouter une requête à la file d'attente des requêtes d'écriture}{1}
+\besoin{Défiler une requête de la file d'attente des requêtes d'écriture}{1}
+\besoin{Traiter une requête d'écriture}{1}
+\end{description}
+
+\begin{description}
+\besoin{Créer un message de résultat}{1}
+\besoin{Envoyer un message de résultat au noeud coordinateur}{1}
+\besoin{Recevoir un message de résultat}{1}
+\besoin{Transmettre un message de résultat au client}{1}
+\end{description}
+
+
+
+\subsection{Réaffectation des requêtes de lecture}
+
+\begin{comment}
+Stopper le traitement des requêtes de lecture periodiquement
+ - Horloge
+ - Stopper
+ 
+Connaître la charge de chaque noeud du réseau
+Choisir un protocole de réaffectation
+Exécuter le protocole de réaffectation choisi
+\end{comment}
+
+\paragraph{} Les besoins sur la réaffectation des requêtes de lecture se recoupent avec ceux de gestion des requêtes de lecture en ce qui concerne les messages envoyés entre les noeuds.
+
+\begin{description}
+\besoin{Synchroniser l'horloge interne des noeuds du réseau}{1}
+\besoin{Définir un intervalle de temps périodique}{1}
+\besoin{Modifier l'intervalle de temps périodique par une configuration}{3}{La configuration est accessible par l'utilisateur, et la valeur de l'intervalle de temps doit être la même pour tous les noeuds du réseau}
+\besoin{Suspendre le traitement des requêtes de lecture}{1}
+\besoin{Exécuter du code à temps périodique}{1}
+\besoin{Reprendre le traitement des requêtes de lecture après une suspension}{1}
+\end{description}
+
+\begin{description}
+\besoin{Connaître la charge des files d'attentes de requêtes de lecture de chaque noeud du réseau}{1}{Cette information fait partie des informations de chaque noeud, communiqué entre eux comme vu précédemment dans la partie \textit{Communication entre les noeuds}.}
+\besoin{Définir un protocole de réaffectation}{1}
+\besoin{Modifier le protocole de réaffectation par une configuration}{3}{La configuration est accessible par l'utilisateur, et le protocole de réaffectation doit être la même pour tous les noeuds du réseau}
+\besoin{Exécuter le code d'un protocole de réaffectation défini}{1}
+\end{description}
+
+
+\subsection{Gestion d'un réseau}
 
 \subsubsection{Popularité d'un objet}
 
-\paragraph{} Les algorithmes à implémenter nécessitent de connaître la popularité d'un objet dans le réseau.
-La popularité d'un objet est défini par le nombre de requêtes sur cet objet.
-Plus le nombre de requêtes est grand, plus l'objet est populaire.
+\paragraph{Stockage de la popularité}
 
-\paragraph{Calcul de la popularité} \besoin{1}{1}
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\paragraph{Stockage de la popularité} \besoin{1}{1} Chaque noeud stocke la popularité des objets qu'il contient.
+\begin{description}
+        \besoin{Créer un vecteur d'entiers compatabilisant le nombre de requêtes}{1}
+        \besoin{Augmenter la taille du vecteur}{1} dans le cas où on a l'algorithme qui calcule la popularité de tous les objets
+        \besoin{Créer un identifiant permettant de relier la popularité à un objet}{1}
+\end{description}
 
-\paragraph{Communication de la popularité} \besoin{1}{1} Un noeud stockant des copies d'un objet doit communiquer la popularité de ces derniers au noeud possédant l'objet original.
+\paragraph{Calcul de la popularité}
 
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\subsection{Protocoles d'affectation}
+\begin{description}
+        \besoin{Incrémenter la popularité de l'objet requêté dans le vecteur à chaque requête sur celui-ci}{1}
+\end{description}
 
-\paragraph{} Une \textit{affectation} consiste, pour un noeud, à effectuer le traitement d'une requête. Les requêtes peuvent arriver sur n'importe quel noeud. On dit alors que ce noeud devient le noeud \textit{coordinateur} pour cette requête. Il transmet la requête aux noeuds possédant l'objet de la requête (voir la figure \ref{fig:request}).
+\paragraph{Communication de la popularité}
 
-\paragraph{} Les noeuds possédant l'objet mettent la requête dans leur file d'attente. Dès qu'un noeud aura à traiter cette requête, il communique aux autres noeuds possédant l'objet qu'il se charge de la traiter. Les noeuds suppriment la requête de leur file d'attente. Le noeud qui prend en charge la requête la traite et donne le résultat de la requête au noeud coordinateur, qui peut ainsi renvoyer le résultat.
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\paragraph{Communication d'un message d'ajout d'une requête dans la file d'attente} \besoin{1}{1}
-\paragraph{Communication d'un message de suppression d'une requête de la file d'attente} \besoin{1}{1}
-\paragraph{Ajout d'une requête dans la file d'attente} \besoin{1}{1}
-\paragraph{Suppression d'une requête de la file d'attente} \besoin{1}{1}
+\begin{description}
+        \besoin{Identifier le noeud responsable d'un objet}{1}
+        \besoin{Créer un message de popularité}{1}
+        \besoin{Envoyer un message de popularité au noeud responsable de l'objet}{1}
+        \besoin{Recevoir un message de popularité}{1}
+        \besoin{Traiter un message de popularité (cf paragraphe suivant)}{1}
+\end{description}
 
-\paragraph{} Des protocoles (équivalent algorithmes) d'affectation plus spécifiques peuvent être implémentés. Ils utilisent les données locales du noeud pour décider de l'affectation des requêtes.
+\paragraph{Traitement d'un message de popularité}
 
-\paragraph{Implémentation de l'algorithme \textbf{SLVO}} \besoin{1}{1}
-\paragraph{Implémentation de l'algorithme \textbf{AverageDegree}} \besoin{1}{1}  
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{description}
+        \besoin{Stocker la popularité du message dans le vecteur du noeud traitant le message}{1}
+        \besoin{Vérifier avoir reçu tous les messages concernant les objets dont le noeud a la gestion}{1}
+        \besoin{Décider de créer ou non de nouveau réplicas}{1}
+        \besoin{Réinitialiser le vecteur après la création des nouveaux objets les plus populaires}{1}
+\end{description}
+
+\subsubsection{Réplication d'un objet}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{description}
+        \besoin{Créer une nouvelle stratégie de réplication}{2}
+        \besoin{Permettre la définition par l'utilisateur de fonctions de hachage et leur ordre d'utilisation}{2}
+        \besoin{Stocker chaque fonction de hachage et son ordre}{2}
+        \besoin{Définir un ordre dans les réplicas}{2}
+        \besoin{Utiliser la première fonction de hachage pour placer le premier réplica}{2} la seconde pour le second, et ainsi de suite...
+        \besoin{Retrouver les réplicas en fonction des fonctions de hachage}{2}
+\end{description}
 
 \subsection{Client}
 
@@ -383,31 +472,29 @@ Elle pourra par exemple, compter le nombre de données sauvegardées, chercher s
 \paragraph{Importer un jeu de requêtes} \besoin{1}{1} L'utilisateur peut importer son propre jeu de requêtes.
 
 
-
-
 \subsection{Visualisation des données}
 
 \paragraph{} Afin de suivre l'évolution des charges de chaque noeud lors de l'exécution des algorithmes, on enregistre les données locales de chaque noeud à chaque modifications de celles-ci.
 
 \subsubsection{Enregistrement des données}
 
-\paragraph{Ecriture dans un fichier} \besoin{1}{2} Lorsque les données locales d'un noeud sont modifiées, on les enregistre dans un fichier.
+\paragraph{Ecriture dans un fichier} Lorsque les données locales d'un noeud sont modifiées, on les enregistre dans un fichier.
 L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du noeud; charge du noeud;}
 
 \subsubsection{Affichage des données}
 
 \paragraph{Définition} Un \textit{graphe} est un ensemble de points appelés \textit{sommets}, dont certaines paires sont directement reliées par un (ou plusieurs) lien(s) appelé(s) \textit{arêtes} \cite{graphe}. 
 
-\paragraph{Noeuds} \besoin{3}{2} L'application doit permettre la représentation de chaque noeud par un sommet.
+\paragraph{Noeuds} L'application doit permettre la représentation de chaque noeud par un sommet.
 
-\paragraph{Analyse syntaxique} \besoin{2}{1} Lors de l'éxecution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
+\paragraph{Analyse syntaxique} Lors de l'éxecution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
 Un analyseur syntaxique (un programme qui possède des règles et qui agit sur un fichier donné en entrée selon celles-ci) découpe chaque ligne du fichier pour récupérer le moment auquel a été enregistrée l'information (\texttt{itération de l'algorithme}),
 le noeud concerné ( \texttt{ identifiant du noeud} ) et la charge de ce noeud à ce moment ( \texttt{charge du noeud} ).
 
-\paragraph{Charge des noeuds}  \besoin{3}{3} A chaque sommet est associée une valeur correspondant à la charge de ce noeud.
+\paragraph{Charge des noeuds} A chaque sommet est associée une valeur correspondant à la charge de ce noeud.
 Ces données sont récupérées grâce à l'analyseur syntaxique.
 
-\paragraph{Film de l'éxecution} \besoin{3}{3} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
+\paragraph{Film de l'éxecution} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
 
 
 \newpage
@@ -422,6 +509,7 @@ Nous créons notre environnement distribué à partir de la dernière version st
 \paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
 En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
 
+
 \subsection{Maintenabilité du projet}
 
 \paragraph{} L'envergure du projet fait qu'il est possible que d'autres personnes travaillent sur la finalité de ce projet, peu importe son état d'avancement.
@@ -431,26 +519,6 @@ Afin de faciliter la compréhension, nous avons défini quelques normes pour que
 	\item document externe spécifiant les fichiers modifiés par rapport au code source original;
 	\item guide d'installation pour utiliser le projet et pour modifier le projet.
 \end{itemize}
-
-\subsection{Gestion d'un réseau}
-
-\subsubsection{Communication entre noeuds}
-
-\paragraph{Algorithme} Le calcul de la popularité nécessite l'implémentation de l'algorithme d'approximation Space-Saving Algorithm \cite{SpaceSaving}.
-
-\paragraph{}Pour connaître l'état du réseau, il faut regrouper les données locales des noeuds.
-Nous cherchons donc à récupérer ces données en un temps raisonnable ($O(log(n))$ pour $n$ noeuds).
-
-\paragraph{}Pour cela, nous nous appuierons sur le protocole \texttt{Gossip} \cite{gossip}.
-Périodiquement, chaque noeud choisi $n$ noeuds aléatoirement dont un noeud \textit{seed}\cite{seed}, noeud en mesure d'avoir une connaissance globale du système, et il communique à ces noeuds ses statistiques (valeur de sa charge, objets les plus populaires...).
-
-\paragraph{}Ainsi, la connaissance globale du système se fait, dans la théorie, en $O(log(n))$.
-
-
-\subsubsection{Taille des données}
-
-\paragraph{} La taille de chaque donnée est laissée à l'appréciation de l'équipe. 
-Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de créer des requêtes qui "stressent" le système pour avoir des résultats cohérents (sur la base de l'hypothèse : chaque requête prend un même temps à être traitée).
 
 
 \subsection{Protocole de test}
@@ -469,14 +537,8 @@ Néanmoins, celle-ci doit être suffisamment importante, afin de permettre de cr
 \paragraph{} S'il y a une différence entre les deux résultats, une vérification par le client peut être envisagée dans le cas de résultats \textit{presque} similaires. 
 La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
 
+
 \subsection{Visualisation des données}
-
-\subsubsection{Etat du réseau}
-
-\paragraph{} La vue permet de montrer l'état du réseau.
-
-\paragraph{} Le réseau est représenté par un graphe, les machines par des noeuds. 
-Pour chaque machine, les données affichées sont la charge ainsi que le contenu de la file d'attente.
 
 \subsubsection{Actualisation de la vue}
 
