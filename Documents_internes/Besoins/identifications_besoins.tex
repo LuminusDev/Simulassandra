@@ -356,23 +356,33 @@ Plus le nombre de requêtes est grand, plus l'objet est populaire.
 \paragraph{Implémentation de l'algorithme \textbf{SLVO}} \besoin{1}{1}
 \paragraph{Implémentation de l'algorithme \textbf{AverageDegree}} \besoin{1}{1}  
 
-\subsection{Requêtes}
+\subsection{Client}
 
-\subsubsection{Générations de requêtes}
+\subsubsection{Intéractions avec Cassandra}
+
+\paragraph{Connexion à Cassandra}  \besoin{1}{1}
+
+\paragraph{Récupérer le nom des tables contenues dans Cassandra} \besoin{1}{1} Afin de pouvoir générer des requêtes.
+ 
+
+\subsubsection{Initialisation des données}
+
+\paragraph{Créer un Keyspace} \besoin{1}
+
+\paragraph{Importer des données} \besoin{1}
+
+\subsubsection{Gestion de requêtes}
 
 \paragraph{} Pour tester la validité des algorithmes, l'application devra posséder une fonction de génération de requêtes. 
 Si l'utilisateur ne détient pas de suites de requêtes prêtes, il pourra demander à l'application d'en créer pour lui. 
 L'application, ne connaissant pas la nature des données, ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
 Elle pourra par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne pourra pas en modifier une.
 
+\paragraph{Générer un jeu de données pseudo-aléatoirement} \besoin{2}{1} Il s'agit de coder une fonction $f$, qui aura pour ensemble des antecedants des suites de caractères alpha-numériques (par exemple: 5832fg4gh52 ) et pour image un jeu de données.
 
-\subsubsection{Importation d'un jeu de requête}
+\paragraph{Importer un jeu de requêtes} \besoin{1}{1} L'utilisateur peut importer son propre jeu de requêtes.
 
-\paragraph{Définition} La notion d'efficacité est laissée à l'appréciation du client. Une brève approche serait de comparer les temps d'exécution.
 
-\paragraph{} Pour comparer l'efficacité des algorithmes, il doit être possible d'envoyer sur le réseau une même suite de requêtes : un jeu de requêtes.
-
-\paragraph{Importation} \besoin{1}{2} L'application doit pouvoir lire un fichier contenant une suite de requêtes et envoyer ces requêtes sur le réseau.
 
 
 \subsection{Visualisation des données}
