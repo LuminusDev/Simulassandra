@@ -188,14 +188,15 @@ On lui associe souvent d'autres propriétés pour équilibrer la répartition de
  \item la requête en cours de traitement
 \end{itemize}
 
-\paragraph{} On enregistre les statistiques de fonctionnement de la base de données distribuée dans des fichiers. Un outil de visualisation traite ces fichiers et affiche ensuite les statistiques.
-
-
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=12cm]{visu.png}
 	\caption{Processus pour la visualisation des statistiques \label{fig:visu}}
 \end{figure}
+
+\paragraph{} On enregistre les statistiques de fonctionnement de la base de données distribuée dans des fichiers. Un outil de visualisation traite ces fichiers et affiche ensuite les statistiques.
+
+
 
 
 \newpage
@@ -445,20 +446,26 @@ Exécuter le protocole de réaffectation choisi
         \besoin{Retrouver les réplicas en fonction des fonctions de hachage}{2}
 \end{description}
 
-\subsection{Client}
+\subsection{Application cliente}
 
 \subsubsection{Intéractions avec Cassandra}
 
-\paragraph{Connexion à Cassandra}  \besoin{1}{1}
 
-\paragraph{Récupérer le nom des tables contenues dans Cassandra} \besoin{1}{1} Afin de pouvoir générer des requêtes.
+\begin{description}
+  	\besoin{Se connecter à Cassandra}{1}
+  	\besoin{Se déconnecter de Cassandra}{1}
+\end{description}
  
 
 \subsubsection{Initialisation des données}
 
-\paragraph{Créer un Keyspace} \besoin{1}
+\paragraph{} L'initialisation des données consiste à créer un Keyspace et à enregistrer des données dans celui-ci.
 
-\paragraph{Importer des données} \besoin{1}
+\begin{description}
+	\besoin{Créer un Keyspace}{1}
+	\besoin{Importer des données}{1}
+	\besoin{Initialiser les données}{1} Si les données sont modifiées, le client doit pouvoir les initialiser pour revenir aux données d'origine.
+\end{description}
 
 \subsubsection{Gestion de requêtes}
 
@@ -467,9 +474,11 @@ Si l'utilisateur ne détient pas de suites de requêtes prêtes, il pourra deman
 L'application, ne connaissant pas la nature des données, ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
 Elle pourra par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne pourra pas en modifier une.
 
-\paragraph{Générer un jeu de données pseudo-aléatoirement} \besoin{2}{1} Il s'agit de coder une fonction $f$, qui aura pour ensemble des antecedants des suites de caractères alpha-numériques (par exemple: 5832fg4gh52 ) et pour image un jeu de données.
-
-\paragraph{Importer un jeu de requêtes} \besoin{1}{1} L'utilisateur peut importer son propre jeu de requêtes.
+\begin{description}
+  	\besoin{Récupérer le nom des tables}{1} Afin de pouvoir générer des requêtes, nous devons connaître le nom des tables contenues dans un keyspace.
+	\besoin{Générer un jeu de données pseudo-aléatoirement}{2} Il s'agit de créer une fonction $f$, qui aura pour ensemble des antécédents des suites de caractères alpha-numériques (par exemple: 5832fg4gh52 ) et pour image un jeu de données.
+	\besoin{Importer un jeu de requêtes}{1} L'utilisateur peut importer son propre jeu de requêtes.
+\end{description}
 
 
 \subsection{Visualisation des données}
