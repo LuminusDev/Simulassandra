@@ -16,6 +16,7 @@ public class ClientApp {
 	
 	public ClientApp(String a) throws UnreachableHostException, IOException{
 		this.setAddress(a);
+		this.connectToCluster();
 		this.connection = new Connection(cluster);
 	}
 	
@@ -24,6 +25,7 @@ public class ClientApp {
 	}
 	
 	private void setAddress(String a) throws UnreachableHostException, IOException{
+		
 		//First, we're testing the existence of the host
 		Interactor.checkingHost(a);
 		InetAddress i = InetAddress.getByName(a);
@@ -39,9 +41,8 @@ public class ClientApp {
 	
 	
 	public Boolean run(){
-		this.connectToCluster();
 		
-		
+	
 		return Boolean.TRUE;
 	}
 	
