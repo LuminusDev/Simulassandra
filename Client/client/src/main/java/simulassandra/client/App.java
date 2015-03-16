@@ -16,8 +16,7 @@ public class App
 	
     public static void main( String[] args ) throws IOException
     {
-    	Interactor.welcome();
-    	
+    	Interactor.welcome(); 	
     	setAddress();
     	
     	clientApp.run();
@@ -27,14 +26,11 @@ public class App
     }
     
     public static void setAddress(){
-    	
     	try {
 			clientApp = new ClientApp(Interactor.getHostAddress());
 		} catch (UnreachableHostException | IOException e) {
 			Interactor.displayException(e);
 			setAddress();
 		}
-    	
-    	
     }
 }

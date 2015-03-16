@@ -7,6 +7,8 @@ import simulassandra.client.Config;
 import simulassandra.client.exceptions.UnreachableHostException;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Host;
+import com.datastax.driver.core.Metadata;
 
 public class ClientApp {
 	
@@ -36,22 +38,24 @@ public class ClientApp {
 		} else {
 			throw new UnreachableHostException("Timeout, host "+a+" is unreachable.");
 		}
-		
 	}
 	
 	
 	public Boolean run(){
-		
-	
+		Boolean end = Boolean.FALSE;
+		while(!end){
+			String command = Interactor.commandInput();
+			/*switch(Config.whichAction(command)){
+			
+			}*/
+		}
 		return Boolean.TRUE;
 	}
 	
+	
 	private void connectToCluster(){
-		
-		Interactor.creatingContactPoint();
-		
 		this.cluster = Cluster.builder().addContactPoint(this.address).build();
-		
+		Interactor.displayMetadata(cluster.getMetadata());
 	}
 	
 	public void finalize(){
