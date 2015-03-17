@@ -45,9 +45,16 @@ public class ClientApp {
 		Boolean end = Boolean.FALSE;
 		while(!end){
 			String command = Interactor.commandInput();
-			/*switch(Config.whichAction(command)){
-			
-			}*/
+			switch(InputCommandParser.whichAction(command)){
+				case 6:
+					end=true;
+					break;
+				default:
+					System.out.println(InputCommandParser.whichAction(command)+"  >"+command);
+					for(String s: InputCommandParser.getArguments(command)){
+						System.out.println("arg :"+s);
+					}
+			}
 		}
 		return Boolean.TRUE;
 	}
