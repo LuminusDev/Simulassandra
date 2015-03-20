@@ -3,13 +3,16 @@ package simulassandra.client.app;
 import java.util.Collection;
 
 import simulassandra.client.exceptions.ArgumentException;
+import utils.InputCommandParser;
 
 public class Command {
 	private Integer action;
 	private String[] args;
 	
-	public Command(String cmd){
-		
+	public Command(String cmd) throws ArgumentException{
+		cmd = InputCommandParser.inputCleaner(cmd);
+		this.action = InputCommandParser.whichAction(cmd);
+		this.args = InputCommandParser.getArguments(cmd);
 	}
 	
 	public Integer getAction(){

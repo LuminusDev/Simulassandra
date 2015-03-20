@@ -6,8 +6,8 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import simulassandra.client.app.ClientApp;
-import simulassandra.client.app.Interactor;
 import simulassandra.client.exceptions.UnreachableHostException;
+import utils.Interactor;
 
 
 public class App 

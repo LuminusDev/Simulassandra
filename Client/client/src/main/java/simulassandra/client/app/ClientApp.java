@@ -1,10 +1,13 @@
 package simulassandra.client.app;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 
 import simulassandra.client.Config;
+import simulassandra.client.exceptions.ArgumentException;
 import simulassandra.client.exceptions.UnreachableHostException;
+import utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
@@ -19,7 +22,10 @@ public class ClientApp {
 	public ClientApp(String a) throws UnreachableHostException, IOException{
 		this.setAddress(a);
 		this.connectToCluster();
-		this.connection = new Connection(cluster);
+		String keyspace_name = Interactor.getKeySpaceName();
+		String replication_type = Interactor.getReplicationType();
+		File data_file = Interactor.getDataFile();
+		this.connection = new Connection(cluster, new KeySpace(keyspace_name, replication_type, data_file));
 	}
 	
 	public String getAdress(){
@@ -44,21 +50,42 @@ public class ClientApp {
 	public Boolean run(){
 		Boolean end = Boolean.FALSE;
 		while(!end){
-			String command = Interactor.commandInput();
-			switch(InputCommandParser.whichAction(command)){
-				case 6:
-					end=true;
-					break;
-				default:
-					System.out.println(InputCommandParser.whichAction(command)+"  >"+command);
-					for(String s: InputCommandParser.getArguments(command)){
-						System.out.println("arg :"+s);
-					}
+			try {
+				Command command = Interactor.commandInput();
+				end = this.execute(command);
+			} catch (ArgumentException e) {
+				Interactor.displayException(e);
 			}
 		}
 		return Boolean.TRUE;
 	}
 	
+	private Boolean execute(Command cmd){
+		switch(cmd.getAction()){
+			case Config.ACT_QUIT:
+				return Boolean.TRUE;
+			case Config.ACT_HELP:
+				Interactor.showCommands();
+				return Boolean.FALSE;
+			case Config.ACT_IMPORT:
+				//TODO
+				return Boolean.FALSE;
+			case Config.ACT_SWITCH_KEYSPACE:
+				//TODO
+				return Boolean.FALSE;
+			case Config.ACT_RESET_KEYSPACE:
+				//TODO
+				return Boolean.FALSE;
+			case Config.ACT_QUERIESFACTORY:
+				//TODO
+				return Boolean.FALSE;
+			default:
+				Interactor.displayMessage("Unknown command");
+				Interactor.showCommands();
+				return Boolean.FALSE;
+				
+		}
+	}
 	
 	private void connectToCluster(){
 		this.cluster = Cluster.builder().addContactPoint(this.address).build();

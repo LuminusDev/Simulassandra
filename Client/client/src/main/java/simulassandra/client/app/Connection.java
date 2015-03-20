@@ -8,14 +8,20 @@ import com.datastax.driver.core.exceptions.SyntaxError;
 public class Connection {
 	
 	private Session session;
+	private KeySpace keyspace;
 	
-	public Connection(Cluster c){
+	public Connection(Cluster c, KeySpace ks){
 		this.session = c.connect(); //voir si définition keyspace immédiate
+		this.keyspace = ks;
+	}
+	
+	public Session getSession(){
+		return this.session;
 	}
 
 	public void executeQuery(String query){
-		
 		this.session.execute(query);
-		
 	}
+	
+	
 }

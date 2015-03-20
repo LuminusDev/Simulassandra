@@ -1,6 +1,7 @@
-package simulassandra.client.app;
+package utils;
 
 import simulassandra.client.Config;
+import simulassandra.client.exceptions.ArgumentException;
 
 public class InputCommandParser {
 	
@@ -30,10 +31,14 @@ public class InputCommandParser {
 		}
 	}
 	
-	public static String[] getArguments(String cmd){
+	public static String[] getArguments(String cmd) throws ArgumentException{
 		Integer idAction = InputCommandParser.whichAction(cmd);
 		String[] split = cmd.split(" ");
 		Integer length = Math.min(split.length-1, Config.ARGS[idAction]);
+		
+		if(length < Config.ARGS[idAction]){
+			throw new ArgumentException("Too few arguments. Use help command");
+		}
 		
 		String[] args = new String[length];
 		if(length > 0){

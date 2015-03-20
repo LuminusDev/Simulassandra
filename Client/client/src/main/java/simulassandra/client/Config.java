@@ -4,13 +4,13 @@ public class Config {
 	
 	public static final Integer TIMEOUT = 10000; //To know if a host is unreachable
 	
-	public static final Integer ACT_UNKNOWN = 0;
-	public static final Integer ACT_HELP = 1;
-	public static final Integer ACT_IMPORT = 2;
-	public static final Integer ACT_SWITCH_KEYSPACE = 3;
-	public static final Integer ACT_RESET_KEYSPACE = 4;
-	public static final Integer ACT_QUERIESFACTORY = 5;
-	public static final Integer ACT_QUIT = 6;
+	public static final int ACT_UNKNOWN = 0;
+	public static final int ACT_HELP = 1;
+	public static final int ACT_IMPORT = 2;
+	public static final int ACT_SWITCH_KEYSPACE = 3;
+	public static final int ACT_RESET_KEYSPACE = 4;
+	public static final int ACT_QUERIESFACTORY = 5;
+	public static final int ACT_QUIT = 6;
 	
 	public static final String CMD_HELP = "help";
 	public static final String CMD_IMPORT = "import";
