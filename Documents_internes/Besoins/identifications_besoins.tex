@@ -18,13 +18,16 @@
 \newcolumntype{M}[1]{
     >{\raggedright}m{#1}
 }
-\setlist[description]{topsep=20pt}
+
+\newenvironment{besoins}
+{ \begin{itemize}[topsep=20pt]   }
+{ \end{itemize}                  } 
 
 \newcommand{\priority}[1] {
   (\textit{Priorité}:#1)
 }
 \newcommand{\besoin}[3]{
-	\item[#1] \priority{#2} #3
+	\item #1 \priority{#2} #3
 }
 
 \title{
@@ -140,13 +143,13 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 
 \paragraph{} Lorsqu'une requête de lecture est envoyée par un client, on a vu précédemment que cette requête était transmise à tous les noeuds possédant une copie de l'objet à lire. Si un nombre important de requêtes de lecture arrivent en même temps, les files d'attentes dans les noeuds pour les requêtes de lecture vont commencer à se remplir plus vite que les requêtes ne sont traitées. Les charges des files d'attentes ne seront pas forcément uniformes entre les noeuds, certains pouvant avoir plus de requêtes à traiter que d'autre.
 
-\paragraph{} C'est pourquoi on met en place un système de \textit{réaffectation} des requêtes de lecture, afin de rééquilibrer la charge des noeuds. La réaffectation consiste, de manière périodique, à stopper le traitement des requêtes de lecture et enclencher un processus permettant de décider de l'affectation des requêtes suivant l'état actuel du réseau.
+\paragraph{} C'est pourquoi on met en place un système de \textit{réaffectation} des requêtes de lecture, afin de rééquilibrer la charge des noeuds. La réaffectation consiste, après chaque modification locale (une modification locale sera le traitement d'une requête dans notre cas, mais on peut imaginer d'autres moments aussi), à enclencher un processus permettant de décider de l'affectation des requêtes suivant l'état actuel du réseau.
 
 \paragraph{} Les algorithmes de réaffectation à implémenter, \textbf{SLVO} et \textbf{AverageDegree}, ont un comportement similaire qui se base sur la connaissance des charges de chaque noeud du réseau. L'algorithme consiste à comparer, pour tous les noeuds, sa propre charge par rapport à une certaine valeur.
 
 \paragraph{} Pour SLVO, la valeur est la charge minimale sur le réseau. Pour AverageDegree, la valeur est la charge moyenne sur le réseau.
 
-\paragraph{} Si la valeur est inférieure ou égale (strictement égale dans le cas de SLVO), alors le noeud s'affecte toutes les requêtes de sa file d'attente et avertit tous les autres noeuds. Les noeuds possédant les requêtes qui ont été affectées les suppriment de leur file d'attente, modifiant ainsi leur charge. L'opération est renouvelée jusqu'à ce que tous les noeuds se sont attribués leurs requêtes (voir la figure~\ref{fig:reaffectation} pour un exemple avec SLVO).
+\paragraph{} Si la valeur est inférieure ou égale (strictement égale dans le cas de SLVO), alors le noeud s'affecte toutes les requêtes de sa file d'attente et avertit tous les autres noeuds. Les noeuds possédant les requêtes qui ont été affectées les suppriment de leur file d'attente, modifiant ainsi leur charge (voir la figure~\ref{fig:reaffectation} pour un exemple avec SLVO).
 
 \subsection{Gestion de la popularité des objets}
 
@@ -226,52 +229,17 @@ Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité.
 
 \section{Besoins fonctionnels}
 
-\begin{comment}
------ FONCTIONNEL -------
-CLIENT
-Connexion client
-Envoi de requête
- - de type lecture
- - de type écriture
- 
-Importation de fichiers contenant des requêtes
-Génération de requête pseudo-aléatoire
-
-REAFFECTATION DES REQUETES DE LECTURE
-
-Stopper le traitement des requêtes de lecture periodiquement
- - Horloge
- - Stopper
- 
-Connaître la charge de chaque noeud du réseau
-Choisir un protocole de réaffectation
-Exécuter le protocole de réaffectation choisi
-
-POPULARITÉ
-
--------FIN FONCTIONNEL-----
-
--------BESOIN NON FONCTIONNEL-----
-
-STOCKAGE DES DONNÉES
-
-stocker les données sous la forme d'objet
-
--------FIN BESOIN NON FONCTIONNEL-----
-\end{comment}
-
-
 \subsection{Communication entre les noeuds}
 
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\begin{description}
+\begin{besoins}
 \besoin{Envoyer les informations du noeud à n'importe quel autre noeud}{1}
 \besoin{Recevoir les informations provenant d'un autre noeud}{1}
 \besoin{Stocker les informations de tous les noeuds du réseau}{1}{
 Cela concerne tous les noeuds, y compris soi-même.
 }
-\end{description}
+\end{besoins}
 
 \paragraph{} Les informations d'un noeud doivent permettre d'envoyer un message à ce dernier.
 
@@ -284,14 +252,14 @@ Cela concerne tous les noeuds, y compris soi-même.
 
 \subsubsection{Requêtes client}
 
-\begin{description}
+\begin{besoins}
 \besoin{Créer une file d'attente des requêtes client}{1}
 \besoin{Ajouter une requête à la file d'attente des requêtes client}{1}
 \besoin{Défiler une requête de la file d'attente des requêtes client}{1}
 \besoin{Traiter une requête client}{1}
-\end{description}
+\end{besoins}
 
-\begin{description}
+\begin{besoins}
 \besoin{Identifier les noeuds responsables d'un objet}{1}{
 Cela nécessite de connaitre plusieurs informations :
 \begin{itemize}[noitemsep]
@@ -300,92 +268,73 @@ Cela nécessite de connaitre plusieurs informations :
 	\item le nombre de copie de chaque objet
 \end{itemize}
 }
-\end{description}
+\end{besoins}
 
-\begin{description}
+\begin{besoins}
 \besoin{Créer une requête de lecture}{1}{
 Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les supprimer. Il faut donc générer un identifiant pour chaque requête de lecture lors de sa création.
 }
 \besoin{Envoyer une requête de lecture}{1}
 \besoin{Créer une requête d'écriture}{1}
 \besoin{Envoyer une requête d'écriture}{1}
-\end{description}
+\end{besoins}
 
 
 \subsubsection{Requêtes de lecture}
 
-\begin{description}
+\begin{besoins}
 \besoin{Créer une file d'attente des requêtes de lecture}{1}
 \besoin{Recevoir une requête de lecture}{1}
 \besoin{Ajouter une requête à la file d'attente des requêtes de lecture}{1}
 \besoin{Supprimer une requête de la file d'attente des requêtes de lecture}{1}
 \besoin{Défiler une requête de la file d'attente des requêtes de lecture}{1}
 \besoin{Traiter une requête de lecture}{1}
-\end{description}
+\end{besoins}
 
-\begin{description}
+\begin{besoins}
 \besoin{Créer un message de suppression de requête de lecture}{1}
 \besoin{Envoyer un message de suppression de requête de lecture}{1}
 \besoin{Recevoir un message de suppression de requête de lecture}{1}
 \besoin{Traiter un message de suppression de requête de lecture}{1}
-\end{description}
+\end{besoins}
 
-\begin{description}
+\begin{besoins}
 \besoin{Créer un message de résultat}{1}
 \besoin{Envoyer un message de résultat au noeud coordinateur}{1}
 \besoin{Recevoir un message de résultat}{1}
 \besoin{Transmettre un message de résultat au client}{1}
-\end{description}
+\end{besoins}
 
 
 \subsubsection{Requêtes d'écriture}
 
-\begin{description}
+\begin{besoins}
 \besoin{Créer une file d'attente des requêtes d'écriture}{1}
 \besoin{Recevoir une requête d'écriture}{1}
 \besoin{Ajouter une requête à la file d'attente des requêtes d'écriture}{1}
 \besoin{Défiler une requête de la file d'attente des requêtes d'écriture}{1}
 \besoin{Traiter une requête d'écriture}{1}
-\end{description}
+\end{besoins}
 
-\begin{description}
+\begin{besoins}
 \besoin{Créer un message de résultat}{1}
 \besoin{Envoyer un message de résultat au noeud coordinateur}{1}
 \besoin{Recevoir un message de résultat}{1}
 \besoin{Transmettre un message de résultat au client}{1}
-\end{description}
+\end{besoins}
 
 
 
 \subsection{Réaffectation des requêtes de lecture}
 
-\begin{comment}
-Stopper le traitement des requêtes de lecture periodiquement
- - Horloge
- - Stopper
- 
-Connaître la charge de chaque noeud du réseau
-Choisir un protocole de réaffectation
-Exécuter le protocole de réaffectation choisi
-\end{comment}
-
 \paragraph{} Les besoins sur la réaffectation des requêtes de lecture se recoupent avec ceux de gestion des requêtes de lecture en ce qui concerne les messages envoyés entre les noeuds.
 
-\begin{description}
-\besoin{Synchroniser l'horloge interne des noeuds du réseau}{1}
-\besoin{Définir un intervalle de temps périodique}{1}
-\besoin{Modifier l'intervalle de temps périodique par une configuration}{3}{La configuration est accessible par l'utilisateur, et la valeur de l'intervalle de temps doit être la même pour tous les noeuds du réseau}
-\besoin{Suspendre le traitement des requêtes de lecture}{1}
-\besoin{Exécuter du code à temps périodique}{1}
-\besoin{Reprendre le traitement des requêtes de lecture après une suspension}{1}
-\end{description}
-
-\begin{description}
+\begin{besoins}
 \besoin{Connaître la charge des files d'attentes de requêtes de lecture de chaque noeud du réseau}{1}{Cette information fait partie des informations de chaque noeud, communiqué entre eux comme vu précédemment dans la partie \textit{Communication entre les noeuds}.}
 \besoin{Définir un protocole de réaffectation}{1}
 \besoin{Modifier le protocole de réaffectation par une configuration}{3}{La configuration est accessible par l'utilisateur, et le protocole de réaffectation doit être la même pour tous les noeuds du réseau}
 \besoin{Exécuter le code d'un protocole de réaffectation défini}{1}
-\end{description}
+\end{besoins}
 
 
 \subsection{Gestion d'un réseau}
@@ -396,76 +345,76 @@ Exécuter le protocole de réaffectation choisi
 
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\begin{description}
+\begin{besoins}
         \besoin{Créer un vecteur d'entiers compatabilisant le nombre de requêtes}{1}
         \besoin{Augmenter la taille du vecteur}{1} dans le cas où on a l'algorithme qui calcule la popularité de tous les objets
         \besoin{Créer un identifiant permettant de relier la popularité à un objet}{1}
-\end{description}
+\end{besoins}
 
 \paragraph{Calcul de la popularité}
 
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\begin{description}
+\begin{besoins}
         \besoin{Incrémenter la popularité de l'objet requêté dans le vecteur à chaque requête sur celui-ci}{1}
-\end{description}
+\end{besoins}
 
 \paragraph{Communication de la popularité}
 
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\begin{description}
+\begin{besoins}
         \besoin{Identifier le noeud responsable d'un objet}{1}
         \besoin{Créer un message de popularité}{1}
         \besoin{Envoyer un message de popularité au noeud responsable de l'objet}{1}
         \besoin{Recevoir un message de popularité}{1}
         \besoin{Traiter un message de popularité (cf paragraphe suivant)}{1}
-\end{description}
+\end{besoins}
 
 \paragraph{Traitement d'un message de popularité}
 
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\begin{description}
+\begin{besoins}
         \besoin{Stocker la popularité du message dans le vecteur du noeud traitant le message}{1}
         \besoin{Vérifier avoir reçu tous les messages concernant les objets dont le noeud a la gestion}{1}
         \besoin{Décider de créer ou non de nouveau réplicas}{1}
         \besoin{Réinitialiser le vecteur après la création des nouveaux objets les plus populaires}{1}
-\end{description}
+\end{besoins}
 
 \subsubsection{Réplication d'un objet}
 
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
-\begin{description}
+\begin{besoins}
         \besoin{Créer une nouvelle stratégie de réplication}{2}
         \besoin{Permettre la définition par l'utilisateur de fonctions de hachage et leur ordre d'utilisation}{2}
         \besoin{Stocker chaque fonction de hachage et son ordre}{2}
         \besoin{Définir un ordre dans les réplicas}{2}
         \besoin{Utiliser la première fonction de hachage pour placer le premier réplica}{2} la seconde pour le second, et ainsi de suite...
         \besoin{Retrouver les réplicas en fonction des fonctions de hachage}{2}
-\end{description}
+\end{besoins}
 
 \subsection{Application cliente}
 
 \subsubsection{Intéractions avec Cassandra}
 
 
-\begin{description}
+\begin{besoins}
   	\besoin{Se connecter à Cassandra}{1}
   	\besoin{Se déconnecter de Cassandra}{1}
-\end{description}
+\end{besoins}
  
 
 \subsubsection{Initialisation des données}
 
 \paragraph{} L'initialisation des données consiste à créer un Keyspace et à enregistrer des données dans celui-ci.
 
-\begin{description}
+\begin{besoins}
 	\besoin{Créer un Keyspace}{1}
 	\besoin{Importer des données}{1}
 	\besoin{Initialiser les données}{1} Si les données sont modifiées, le client doit pouvoir les initialiser pour revenir aux données d'origine.
-\end{description}
+\end{besoins}
 
 \subsubsection{Gestion de requêtes}
 
@@ -474,11 +423,11 @@ Si l'utilisateur ne détient pas de suites de requêtes prêtes, il pourra deman
 L'application, ne connaissant pas la nature des données, ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
 Elle pourra par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne pourra pas en modifier une.
 
-\begin{description}
+\begin{besoins}
   	\besoin{Récupérer le nom des tables}{1} Afin de pouvoir générer des requêtes, nous devons connaître le nom des tables contenues dans un keyspace.
 	\besoin{Générer un jeu de données pseudo-aléatoirement}{2} Il s'agit de créer une fonction $f$, qui aura pour ensemble des antécédents des suites de caractères alpha-numériques (par exemple: 5832fg4gh52 ) et pour image un jeu de données.
 	\besoin{Importer un jeu de requêtes}{1} L'utilisateur peut importer son propre jeu de requêtes.
-\end{description}
+\end{besoins}
 
 
 \subsection{Visualisation des données}
