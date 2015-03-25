@@ -1,5 +1,7 @@
 package simulassandra.client.app;
 
+import java.io.File;
+
 import simulassandra.client.exceptions.KeyspaceException;
 
 import com.datastax.driver.core.Cluster;
@@ -18,6 +20,11 @@ public class Connection {
 		initConnection();
 	}
 	
+	public Connection(Cluster cluster, String keyspace_name,
+			String replication_type, Integer replication_factor, File data_file) {
+		// TODO Auto-generated constructor stub
+	}
+
 	private void initConnection(){
 	
 	}
@@ -28,5 +35,9 @@ public class Connection {
 	
 	public ResultSet execute(Statement query){
 		return this.session.execute(query);
+	}
+	
+	public Table getTable(Integer i){
+		return this.keyspace.getTable(i);
 	}
 }

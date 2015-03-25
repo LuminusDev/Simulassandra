@@ -30,6 +30,7 @@ public class ClientApp {
 		} catch (KeyspaceException e) {
 			Interactor.displayException(e);
 			String replication_type = Interactor.getReplicationType();
+			Integer replication_factor = Interactor.getReplicationFactor();
 			File data_file = Interactor.getDataFile();
 			this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor, data_file);
 		}

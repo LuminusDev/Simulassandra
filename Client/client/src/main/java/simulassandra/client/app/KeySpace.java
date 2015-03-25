@@ -1,11 +1,15 @@
 package simulassandra.client.app;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import simulassandra.client.exceptions.KeyspaceException;
 import utils.Validator;
 
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 
@@ -17,6 +21,7 @@ public class KeySpace {
 	private File data_file;
 	
 	private Connection connection;
+	private Collection<Table> tables;
 	
 	
 	public KeySpace(String n, Connection c) throws KeyspaceException{
@@ -33,6 +38,8 @@ public class KeySpace {
 			String[] replication_factor = r.all().get(0).getString("strategy_options").split(":");
 			String rf = replication_factor[1].replaceAll("\"", "").replaceAll("}", "");
 			this.replication_factor = Integer.parseInt(rf);
+			this.tables = new ArrayList<Table>();
+			updateTablesList();
 		}
 	}
 	
@@ -43,12 +50,12 @@ public class KeySpace {
 		this.createKeyspace();
 	}
 	
-	public void setFile(String path) throws KeyspaceException{
-		File f = new File(path);
-		if(Validator.data_file(f)){
-			throw new KeyspaceException("File ".concat(path).concat(" doesn't exist"));
+	private void updateTablesList(){
+		ResultSet tables_results = this.connection.execute("DESCRIBE TABLES;");
+		for(Row r : tables_results){
+			String table_name =  r.getString(0);
+			this.tables.add(new Table(table_name, this));
 		}
-		this.data_file = f;
 	}
 	
 	private void createKeyspace(){
@@ -61,8 +68,49 @@ public class KeySpace {
 		 this.connection.execute(s);
 	}
 	
-	public void copyDataFromFileQuery(){
-		String s = "";
+	private Boolean existingTable(String table_name){
+		for(Integer i=0; i<this.tables.size(); i++){
+			if(table_name.equals(((ArrayList<Table>) this.tables).get(i).getName())){
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	public void createTable(String name, String query_args){
+		String s = "CREATE TABLE ".concat(name)
+								  .concat(" ")
+								  .concat(query_args);
 		this.connection.execute(s);
+		this.tables.add(new Table(name, this));
+	}
+	
+	public Integer countRowsInTable(String table_name){
+		Statement q = QueryBuilder.select().countAll().from(table_name);
+		ResultSet count = this.connection.execute(q);
+		return count.one().getInt(0);
+	}
+	
+	public void setFile(String path) throws KeyspaceException {
+		File f = new File(path);
+		if(Validator.data_file(f)){
+			throw new KeyspaceException("File ".concat(path).concat(" doesn't exist"));
+		}
+		this.data_file = f;
+	}
+	
+	public void copyDataFromFileQuery(String table) throws KeyspaceException{
+		if(!existingTable(table)){
+			throw new KeyspaceException("Table ".concat(table).concat(" doesn't exist"));
+		}
+		
+		this.connection.execute("TRUNCATE ".concat(table));
+		this.connection.execute("COPY ".concat(table)
+									   .concat(" FROM ")
+									   .concat(this.data_file.getAbsolutePath()));
+	}
+	
+	public Table getTable(Integer i){
+		return ((ArrayList<Table>) this.tables).get(i%this.tables.size());
 	}
 }
