@@ -11,15 +11,25 @@ import simulassandra.client.exceptions.UnreachableHostException;
 import utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Host;
-import com.datastax.driver.core.Metadata;
 
+/**
+ * 
+ * @author Guillaume Marques <guillaume.marques33@gmail.com>
+ *
+ */
 public class ClientApp {
 	
 	private String address;
 	private Cluster cluster;
     private Connection connection;
-	
+    
+	/**
+	 * Constructeur initialisant la connexion à Cassandra.
+	 * 
+	 * @param a, adresse de connexion
+	 * @throws UnreachableHostException, si l'adresse a n'est pas accessible
+	 * @throws IOException, lorsuq'il est impossible de se connecter à l'adresse a.
+	 */
 	public ClientApp(String a) throws UnreachableHostException, IOException{
 		this.setAddress(a);
 		this.connectToCluster();
@@ -32,17 +42,23 @@ public class ClientApp {
 			String replication_type = Interactor.getReplicationType();
 			Integer replication_factor = Interactor.getReplicationFactor();
 			File data_file = Interactor.getDataFile();
-			this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor, data_file);
+			this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
 		}
 		
 		String replication_type = Interactor.getReplicationType();
 		File data_file = Interactor.getDataFile();
 	}
 	
-	public String getAdress(){
-		return this.address;
-	}
-	
+	/**
+	 * Méthode setAddress
+	 * Setteur, permet de définir l'adresse du cluster auquel on souhaite se connecter.
+	 * Cette méthode n'est à utiliser que lors de l'initialisation de la connexion.
+	 * Une execution de celle-ci une fois la connexion au cluster initialisé peut provoquer un arrêt du programme.
+	 * 
+	 * @param a addresse
+	 * @throws UnreachableHostException
+	 * @throws IOException
+	 */
 	private void setAddress(String a) throws UnreachableHostException, IOException{
 		
 		//First, we're testing the existence of the host
@@ -57,7 +73,30 @@ public class ClientApp {
 		}
 	}
 	
+	/**
+	 * Méthode connectToCluster
+	 * Initialise la connexion au cluster
+	 */
+	private void connectToCluster(){
+		this.cluster = Cluster.builder().addContactPoint(this.address).build();
+		Interactor.displayMetadata(cluster.getMetadata());
+	}
+
+	/**
+	 * Getteur getAddress
+	 * 
+	 * @return l'adresse du cluster
+	 */
+	public String getAddress(){
+		return this.address;
+	}
 	
+	/**
+	 * Méthode run
+	 * Console, l'utilisateur communique avec le programme en ligne de commande
+	 * 
+	 * @return
+	 */
 	public Boolean run(){
 		Boolean end = Boolean.FALSE;
 		while(!end){
@@ -71,6 +110,13 @@ public class ClientApp {
 		return Boolean.TRUE;
 	}
 	
+	/**
+	 * Méthode execute
+	 * Effectue une action selon la commande choisie.
+	 * 
+	 * @param cmd, commande à executer
+	 * @return
+	 */
 	private Boolean execute(Command cmd){
 		switch(cmd.getAction()){
 			case Config.ACT_QUIT:
@@ -98,11 +144,10 @@ public class ClientApp {
 		}
 	}
 	
-	private void connectToCluster(){
-		this.cluster = Cluster.builder().addContactPoint(this.address).build();
-		Interactor.displayMetadata(cluster.getMetadata());
-	}
-	
+	/**
+	 * Destructeur
+	 * Fermer la connexion au cluster lors de la destruction de l'objet.
+	 */
 	public void finalize(){
 		this.cluster.close();
 	}

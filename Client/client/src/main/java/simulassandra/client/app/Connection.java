@@ -9,34 +9,72 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 
+/**
+ * 
+ * @author Guillaume Marques <guillaume.marques33@gmail.com>
+ *
+ *
+ */
 public class Connection {
 	
 	private Session session;
 	private KeySpace keyspace;
 	
-	public Connection(Cluster c, String keyspace_name) throws KeyspaceException{
-		this.session = c.connect(); //voir si définition keyspace immédiate
+	/**
+	 * Constructeur à utiliser si le keyspace existe
+	 * 
+	 * @param cluster, cluster sur lequel nous travaillons
+	 * @param keyspace_name, keyspace existant dans le cluster
+	 * @throws KeyspaceException, lorsque le keyspace n'existe pas
+	 */
+	public Connection(Cluster cluster, String keyspace_name) throws KeyspaceException{
+		this.session = cluster.connect(); //voir si définition keyspace immédiate
 		this.keyspace = new KeySpace(keyspace_name, this);
 		initConnection();
 	}
 	
+	/**
+	 * Constructeur à utiliser si le keyspace n'existe pas
+	 * 
+	 * @param cluster, cluster sur lequel nous travaillons
+	 * @param keyspace_name, nom du keyspace
+	 * @param replication_type, classe de réplication utilisée dans le keyspace
+	 * @param replication_factor, facteur de réplication
+	 */
 	public Connection(Cluster cluster, String keyspace_name,
-			String replication_type, Integer replication_factor, File data_file) {
+			String replication_type, Integer replication_factor) {
 		// TODO Auto-generated constructor stub
+		this.session = cluster.connect();
+		this.keyspace = new KeySpace(replication_type, replication_type, replication_factor);
 	}
 
 	private void initConnection(){
-	
+		
 	}
 
+	/**
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public ResultSet execute(String query){
 		return this.session.execute(query);
 	}
 	
+	/**
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public ResultSet execute(Statement query){
 		return this.session.execute(query);
 	}
 	
+	/**
+	 * 
+	 * @param i
+	 * @return
+	 */
 	public Table getTable(Integer i){
 		return this.keyspace.getTable(i);
 	}

@@ -17,9 +17,10 @@ public class Interactor {
 	}
 	
 	private static String basicInput(String msg){
-		Scanner sc = new Scanner(System.in);
 		System.out.print(msg);
-		String r = sc.nextLine();
+		Scanner sc = new Scanner(System.in);
+		String r = new String();
+		r = sc.nextLine();
 		sc.close();
 		return r;
 	}
@@ -29,8 +30,8 @@ public class Interactor {
 	}
 	
 	public static Command commandInput() throws ArgumentException{
-		Scanner sc = new Scanner(System.in);
 		System.out.print("> ");
+		Scanner sc = new Scanner(System.in);
 		Command cmd = new Command(sc.nextLine());
 		sc.close();
 		return cmd;
