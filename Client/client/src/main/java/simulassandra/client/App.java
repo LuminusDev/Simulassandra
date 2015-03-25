@@ -1,9 +1,6 @@
 package simulassandra.client;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Scanner;
 
 import simulassandra.client.app.ClientApp;
 import simulassandra.client.exceptions.UnreachableHostException;

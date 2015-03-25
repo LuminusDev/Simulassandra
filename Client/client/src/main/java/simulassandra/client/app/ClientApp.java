@@ -6,6 +6,7 @@ import java.net.InetAddress;
 
 import simulassandra.client.Config;
 import simulassandra.client.exceptions.ArgumentException;
+import simulassandra.client.exceptions.KeyspaceException;
 import simulassandra.client.exceptions.UnreachableHostException;
 import utils.Interactor;
 
@@ -22,10 +23,19 @@ public class ClientApp {
 	public ClientApp(String a) throws UnreachableHostException, IOException{
 		this.setAddress(a);
 		this.connectToCluster();
+		
 		String keyspace_name = Interactor.getKeySpaceName();
+		try {
+			this.connection = new Connection(cluster, keyspace_name);
+		} catch (KeyspaceException e) {
+			Interactor.displayException(e);
+			String replication_type = Interactor.getReplicationType();
+			File data_file = Interactor.getDataFile();
+			this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor, data_file);
+		}
+		
 		String replication_type = Interactor.getReplicationType();
 		File data_file = Interactor.getDataFile();
-		this.connection = new Connection(cluster, new KeySpace(keyspace_name, replication_type, data_file));
 	}
 	
 	public String getAdress(){

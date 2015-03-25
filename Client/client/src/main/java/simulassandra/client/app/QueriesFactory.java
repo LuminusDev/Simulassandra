@@ -1,29 +1,48 @@
 package simulassandra.client.app;
 
-import java.math.BigInteger;
-import java.util.Random;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 
-public class QueriesFactory {
+public abstract class QueriesFactory {
 	
-	private String seed;
-	private Session session;
+	private Connection connection;
+	private File log;
 	
-	public QueriesFactory(Session session){
-		Random random = new Random();
-		this.seed = new BigInteger(130, random).toString(32); //Creating seed
-		this.session = session;
+	private HashMap<String,Integer> nbItems;
+	
+	public QueriesFactory(Connection c){
+		this.connection = c;
 	}
 	
-	public QueriesFactory(String seed, Session session){
-		this.seed = seed;
-		this.session = session;
+	protected void initData(){
+		//Création nom fichier log  : format logsimulassandra-date
+		String date = new SimpleDateFormat("dd-MM-yyyy-hh-mm", Locale.FRANCE).format(new Date());
+		this.log = new File("logsimulassandra-".concat(date));
+		
+		//Récupération du nom des tables dans le keyspace et du nombre d'enregistrements qu'elles contiennent
+		ResultSet tables = this.connection.execute("DESCRIBE TABLES;");
+		for(Row r : tables){
+			String table_name =  r.getString(0);
+			Statement q = QueryBuilder.select().countAll().from(table_name);
+			ResultSet count = this.connection.execute(q);
+			Integer nbRows = count.one().getInt(0);
+			nbItems.put(table_name, nbRows);
+		}
+		
 	}
 	
-	public String getSeed(){
-		return this.seed;
+	protected Boolean write(){
+		return Boolean.TRUE;
 	}
+	
 	
 	
 }
