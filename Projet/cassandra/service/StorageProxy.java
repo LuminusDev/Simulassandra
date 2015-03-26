@@ -1399,6 +1399,14 @@ public class StorageProxy implements StorageProxyMBean
             MessagingService.instance().addLatency(FBUtilities.getBroadcastAddress(), TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
             handler.response(result);
         }
+
+        @Override
+        public boolean equals(Object other)
+        {
+            if (other == null) return false;
+            if (other == this) return true;
+            return this.command.equals(other);
+        }
     }
 
     static class LocalRangeSliceRunnable extends DroppableRunnable

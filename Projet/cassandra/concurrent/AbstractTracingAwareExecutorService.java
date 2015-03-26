@@ -111,6 +111,68 @@ public abstract class AbstractTracingAwareExecutorService implements TracingAwar
         return new FutureTask<>(callable);
     }
 
+    protected <T> FutureTask<T> newRemovableTaskFor(Runnable runnable, T result)
+    {
+        return newRemovableTaskFor(runnable, result, Tracing.instance.get());
+    }
+
+    protected <T> FutureTask<T> newRemovableTaskFor(Runnable runnable, T result, TraceState traceState)
+    {
+        if (traceState != null)
+        {
+            if (runnable instanceof RemovableTraceSessionFutureTask)
+                return (RemovableTraceSessionFutureTask<T>) runnable;
+            return new RemovableTraceSessionFutureTask<T>(runnable, result, traceState);
+        }
+        if (runnable instanceof RemovableFutureTask)
+            return (RemovableFutureTask<T>) runnable;
+        return new RemovableFutureTask<>(runnable, result);
+    }
+
+    private class RemovableTraceSessionFutureTask<T> extends RemovableFutureTask<T>
+    {
+        private final TraceState state;
+
+        public RemovableTraceSessionFutureTask(Runnable runnable, T result, TraceState state)
+        {
+            super(runnable, result);
+            this.state = state;
+        }
+
+        public void run()
+        {
+            TraceState oldState = Tracing.instance.get();
+            Tracing.instance.set(state);
+            try
+            {
+                super.run();
+            }
+            finally
+            {
+                Tracing.instance.set(oldState);
+            }
+        }
+    }
+
+    private class RemovableFutureTask<T> extends FutureTask<T>
+    {
+        private final Runnable runnable;
+
+        public RemovableFutureTask(Runnable runnable, T result)
+        {
+           super(runnable, result);
+           this.runnable = runnable;
+        }
+
+        @Override
+        public boolean equals(Object other)
+        {
+            if (other == null) return false;
+            if (other == this) return true;
+            return this.runnable.equals(other);
+        }
+    }
+
     private class TraceSessionFutureTask<T> extends FutureTask<T>
     {
         private final TraceState state;
@@ -225,5 +287,10 @@ public abstract class AbstractTracingAwareExecutorService implements TracingAwar
     public void execute(Runnable command, TraceState state)
     {
         addTask(newTaskFor(command, null, state));
+    }
+
+    public void executeRemovable(Runnable command, TraceState state)
+    {
+        addTask(newRemovableTaskFor(command, null, state));
     }
 }

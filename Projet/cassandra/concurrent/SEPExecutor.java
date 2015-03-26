@@ -177,6 +177,35 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
         }
     }
 
+    public void removeCommand(Object command)
+    {
+        tasks.remove(command);
+    }
+
+    public void maybeExecuteImmediatelyRemovable(Runnable command)
+    {
+        FutureTask<?> ft = newRemovableTaskFor(command, null);
+        if (!takeWorkPermit(false))
+        {
+            addTask(ft);
+        }
+        else
+        {
+            try
+            {
+                ft.run();
+            }
+            finally
+            {
+                returnWorkPermit();
+                // we have to maintain our invariant of always scheduling after any work is performed
+                // in this case in particular we are not processing the rest of the queue anyway, and so
+                // the work permit may go wasted if we don't immediately attempt to spawn another worker
+                maybeSchedule();
+            }
+        }
+    }
+
     public void maybeExecuteImmediately(Runnable command)
     {
         FutureTask<?> ft = newTaskFor(command, null);

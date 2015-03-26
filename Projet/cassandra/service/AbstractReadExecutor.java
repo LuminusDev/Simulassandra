@@ -93,7 +93,7 @@ public abstract class AbstractReadExecutor
         if (readLocal)
         {
             logger.trace("reading data locally");
-            StageManager.getStage(Stage.READ).maybeExecuteImmediately(new LocalReadRunnable(command, handler));
+            StageManager.getStage(Stage.READ).maybeExecuteImmediatelyRemovable(new LocalReadRunnable(command, handler));
         }
     }
 

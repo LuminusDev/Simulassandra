@@ -126,6 +126,18 @@ public abstract class ReadCommand implements IReadCommand, Pageable
     {
         return DatabaseDescriptor.getReadRpcTimeout();
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof ReadCommand)) return false;
+        ReadCommand otherReadCommand = (ReadCommand)other;
+        return this.ksName == otherReadCommand.ksName
+            && this.cfName == otherReadCommand.cfName
+            && this.timestamp == otherReadCommand.timestamp;
+    }
 }
 
 class ReadCommandSerializer implements IVersionedSerializer<ReadCommand>
