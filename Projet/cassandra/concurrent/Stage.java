@@ -29,7 +29,8 @@ public enum Stage
     MISC,
     TRACING,
     INTERNAL_RESPONSE,
-    READ_REPAIR;
+    READ_REPAIR,
+    READ_REMOVE;
 
     public String getJmxType()
     {
@@ -46,6 +47,7 @@ public enum Stage
             case COUNTER_MUTATION:
             case READ:
             case REQUEST_RESPONSE:
+            case READ_REMOVE:
             case READ_REPAIR:
                 return "request";
             default:

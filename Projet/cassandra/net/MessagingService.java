@@ -129,7 +129,7 @@ public final class MessagingService implements MessagingServiceMBean
         PAXOS_COMMIT,
         PAGED_RANGE,
         // remember to add new verbs at the end, since we serialize by ordinal
-        UNUSED_1,
+        READ_REMOVE,
         UNUSED_2,
         UNUSED_3,
         ;
@@ -177,7 +177,7 @@ public final class MessagingService implements MessagingServiceMBean
         put(Verb.SNAPSHOT, Stage.MISC);
         put(Verb.ECHO, Stage.GOSSIP);
 
-        put(Verb.UNUSED_1, Stage.INTERNAL_RESPONSE);
+        put(Verb.READ_REMOVE, Stage.READ_REMOVE);
         put(Verb.UNUSED_2, Stage.INTERNAL_RESPONSE);
         put(Verb.UNUSED_3, Stage.INTERNAL_RESPONSE);
     }};
@@ -215,6 +215,8 @@ public final class MessagingService implements MessagingServiceMBean
         put(Verb.PAXOS_PREPARE, Commit.serializer);
         put(Verb.PAXOS_PROPOSE, Commit.serializer);
         put(Verb.PAXOS_COMMIT, Commit.serializer);
+
+        put(Verb.READ_REMOVE, ReadCommand.serializer);
     }};
 
     /**

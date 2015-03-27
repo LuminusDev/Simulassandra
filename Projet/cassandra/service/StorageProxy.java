@@ -1397,6 +1397,7 @@ public class StorageProxy implements StorageProxyMBean
             Row r = command.getRow(keyspace);
             ReadResponse result = ReadVerbHandler.getResponse(command, r);
             MessagingService.instance().addLatency(FBUtilities.getBroadcastAddress(), TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start));
+            AbstractReadExecutor.makeRemoveRequests(command);
             handler.response(result);
         }
 

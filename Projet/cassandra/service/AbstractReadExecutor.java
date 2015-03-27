@@ -97,6 +97,23 @@ public abstract class AbstractReadExecutor
         }
     }
 
+    public static void makeRemoveRequests(ReadCommand command)
+    {
+        Keyspace keyspace = Keyspace.open(command.ksName);
+        List<InetAddress> allReplicas = StorageProxy.getLiveSortedEndpoints(keyspace, command.key);
+
+
+        logger.info("Remove read requests");
+        for (InetAddress endpoint : allReplicas)
+        {
+            if (!isLocalRequest(endpoint))
+            {
+                logger.trace("remove reading task from {}", endpoint);
+                MessagingService.instance().sendOneWay(command.createRemoveMessage(), endpoint);
+            }
+        }
+    }
+
     protected void makeDigestRequests(Iterable<InetAddress> endpoints)
     {
         ReadCommand digestCommand = command.copy();

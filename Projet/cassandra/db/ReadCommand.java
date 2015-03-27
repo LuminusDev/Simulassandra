@@ -60,6 +60,11 @@ public abstract class ReadCommand implements IReadCommand, Pageable
         return new MessageOut<>(MessagingService.Verb.READ, this, serializer);
     }
 
+    public MessageOut<ReadCommand> createRemoveMessage()
+    {
+        return new MessageOut<>(MessagingService.Verb.READ_REMOVE, this, serializer);
+    }
+
     public final String ksName;
     public final String cfName;
     public final ByteBuffer key;

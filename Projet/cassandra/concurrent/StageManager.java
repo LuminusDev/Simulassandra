@@ -57,6 +57,8 @@ public class StageManager
         stages.put(Stage.MISC, new JMXEnabledThreadPoolExecutor(Stage.MISC));
         stages.put(Stage.READ_REPAIR, multiThreadedStage(Stage.READ_REPAIR, FBUtilities.getAvailableProcessors()));
         stages.put(Stage.TRACING, tracingExecutor());
+
+        stages.put(Stage.READ_REMOVE, new JMXEnabledThreadPoolExecutor(Stage.READ_REMOVE));
     }
 
     private static ExecuteOnlyExecutor tracingExecutor()
@@ -129,9 +131,24 @@ public class StageManager
             super.execute(command);
         }
 
+        public void executeRemovable(Runnable command, TraceState state)
+        {
+            execute(command, state);
+        }
+
         public void maybeExecuteImmediately(Runnable command)
         {
             execute(command);
+        }
+
+        public void maybeExecuteImmediatelyRemovable(Runnable command)
+        {
+            maybeExecuteImmediately(command);
+        }
+
+        public void removeCommand(Object command)
+        {
+            // nothing
         }
 
         @Override

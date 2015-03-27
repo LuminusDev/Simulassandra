@@ -27,6 +27,7 @@ import org.apache.cassandra.net.MessageOut;
 import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.tracing.Tracing;
+import org.apache.cassandra.service.AbstractReadExecutor;
 
 public class ReadVerbHandler implements IVerbHandler<ReadCommand>
 {
@@ -57,6 +58,7 @@ public class ReadVerbHandler implements IVerbHandler<ReadCommand>
                                                                       ReadResponse.serializer);
         Tracing.trace("Enqueuing response to {}", message.from);
         MessagingService.instance().sendReply(reply, id, message.from);
+        AbstractReadExecutor.makeRemoveRequests(command);
     }
 
     public static ReadResponse getResponse(ReadCommand command, Row row)
