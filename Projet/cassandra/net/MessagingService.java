@@ -739,7 +739,10 @@ public final class MessagingService implements MessagingServiceMBean
         TracingAwareExecutorService stage = StageManager.getStage(message.getMessageType());
         assert stage != null : "No stage for message type " + message.verb;
 
-        stage.execute(runnable, state);
+        if (verb == Verb.READ)
+            stage.executeRemovable(runnable, state);
+        else
+            stage.execute(runnable, state);
     }
 
     public void setCallbackForTests(int messageId, CallbackInfo callback)

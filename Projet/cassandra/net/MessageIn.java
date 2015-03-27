@@ -126,4 +126,12 @@ public class MessageIn<T>
         sbuf.append("FROM:").append(from).append(" TYPE:").append(getMessageType()).append(" VERB:").append(verb);
         return sbuf.toString();
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other == null) return false;
+        if (other == this) return true;
+        return this.payload.equals(other);
+    }
 }

@@ -76,6 +76,14 @@ public class MessageDeliveryTask implements Runnable
             Gossiper.instance.setLastProcessedMessageAt(constructionTime);
     }
 
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other == null) return false;
+        if (other == this) return true;
+        return this.message.equals(other);
+    }
+
     EnumSet<MessagingService.Verb> GOSSIP_VERBS = EnumSet.of(MessagingService.Verb.GOSSIP_DIGEST_ACK,
                                                              MessagingService.Verb.GOSSIP_DIGEST_ACK2,
                                                              MessagingService.Verb.GOSSIP_DIGEST_SYN);
