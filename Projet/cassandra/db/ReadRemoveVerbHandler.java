@@ -24,6 +24,7 @@ import org.apache.cassandra.net.IVerbHandler;
 import org.apache.cassandra.net.MessageIn;
 import org.apache.cassandra.concurrent.Stage;
 import org.apache.cassandra.concurrent.StageManager;
+import org.apache.cassandra.concurrent.TracingAwareExecutorService;
 
 public class ReadRemoveVerbHandler implements IVerbHandler<ReadCommand>
 {
@@ -32,6 +33,7 @@ public class ReadRemoveVerbHandler implements IVerbHandler<ReadCommand>
     public void doVerb(MessageIn<ReadCommand> message, int id)
     {
         ReadCommand command = message.payload;
+        logger.info("Verb read remove from {}", message.from);
         StageManager.getStage(Stage.READ).removeCommand(command);
     }
 }

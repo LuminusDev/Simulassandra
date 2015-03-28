@@ -35,6 +35,7 @@ public class ReadVerbHandler implements IVerbHandler<ReadCommand>
 
     public void doVerb(MessageIn<ReadCommand> message, int id)
     {
+        logger.info("verb read");
         if (StorageService.instance.isBootstrapMode())
         {
             throw new RuntimeException("Cannot service reads while bootstrapping!");
@@ -53,12 +54,12 @@ public class ReadVerbHandler implements IVerbHandler<ReadCommand>
             return;
         }
 
+        AbstractReadExecutor.makeRemoveRequests(command);
         MessageOut<ReadResponse> reply = new MessageOut<ReadResponse>(MessagingService.Verb.REQUEST_RESPONSE,
                                                                       getResponse(command, row),
                                                                       ReadResponse.serializer);
         Tracing.trace("Enqueuing response to {}", message.from);
         MessagingService.instance().sendReply(reply, id, message.from);
-        AbstractReadExecutor.makeRemoveRequests(command);
     }
 
     public static ReadResponse getResponse(ReadCommand command, Row row)

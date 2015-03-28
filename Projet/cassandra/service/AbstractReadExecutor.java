@@ -43,6 +43,7 @@ import org.apache.cassandra.metrics.ReadRepairMetrics;
 import org.apache.cassandra.net.MessageOut;
 import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.service.StorageProxy.LocalReadRunnable;
+import org.apache.cassandra.service.LoadReadBroadcaster;
 import org.apache.cassandra.utils.FBUtilities;
 
 /**
@@ -102,16 +103,16 @@ public abstract class AbstractReadExecutor
         Keyspace keyspace = Keyspace.open(command.ksName);
         List<InetAddress> allReplicas = StorageProxy.getLiveSortedEndpoints(keyspace, command.key);
 
-
-        logger.info("Remove read requests");
+        logger.info("Remove read requests with replicas : {} and key : {}", allReplicas, command.key);
         for (InetAddress endpoint : allReplicas)
         {
             if (!isLocalRequest(endpoint))
             {
-                logger.trace("remove reading task from {}", endpoint);
+                logger.info("remove reading task from {}", endpoint);
                 MessagingService.instance().sendOneWay(command.createRemoveMessage(), endpoint);
             }
         }
+        LoadReadBroadcaster.instance.broadcast();
     }
 
     protected void makeDigestRequests(Iterable<InetAddress> endpoints)
@@ -168,59 +169,9 @@ public abstract class AbstractReadExecutor
     {
         Keyspace keyspace = Keyspace.open(command.ksName);
         List<InetAddress> allReplicas = StorageProxy.getLiveSortedEndpoints(keyspace, command.key);
-        ReadRepairDecision repairDecision = Schema.instance.getCFMetaData(command.ksName, command.cfName).newReadRepairDecision();
-        List<InetAddress> targetReplicas = consistencyLevel.filterForQuery(keyspace, allReplicas, repairDecision);
-
-        // Throw UAE early if we don't have enough replicas.
-        consistencyLevel.assureSufficientLiveNodes(keyspace, targetReplicas);
 
         // Ask a complete data for all replicas.
-        return new NoDigestReadExecutor(command, consistencyLevel, targetReplicas);
-
-        // Fat client. Speculating read executors need access to cfs metrics and sampled latency, and fat clients
-        // can't provide that. So, for now, fat clients will always use NeverSpeculatingReadExecutor.
-        // if (StorageService.instance.isClientMode())
-        //     return new NeverSpeculatingReadExecutor(command, consistencyLevel, targetReplicas);
-
-        // if (repairDecision != ReadRepairDecision.NONE)
-        //     ReadRepairMetrics.attempted.mark();
-
-        // ColumnFamilyStore cfs = keyspace.getColumnFamilyStore(command.cfName);
-        // RetryType retryType = cfs.metadata.getSpeculativeRetry().type;
-
-        // // Speculative retry is disabled *OR* there are simply no extra replicas to speculate.
-        // if (retryType == RetryType.NONE || consistencyLevel.blockFor(keyspace) == allReplicas.size())
-        //     return new NeverSpeculatingReadExecutor(command, consistencyLevel, targetReplicas);
-
-        // if (targetReplicas.size() == allReplicas.size())
-        // {
-        //     // CL.ALL, RRD.GLOBAL or RRD.DC_LOCAL and a single-DC.
-        //     // We are going to contact every node anyway, so ask for 2 full data requests instead of 1, for redundancy
-        //     // (same amount of requests in total, but we turn 1 digest request into a full blown data request).
-        //     return new AlwaysSpeculatingReadExecutor(cfs, command, consistencyLevel, targetReplicas);
-        // }
-
-        // // RRD.NONE or RRD.DC_LOCAL w/ multiple DCs.
-        // InetAddress extraReplica = allReplicas.get(targetReplicas.size());
-        // // With repair decision DC_LOCAL all replicas/target replicas may be in different order, so
-        // // we might have to find a replacement that's not already in targetReplicas.
-        // if (repairDecision == ReadRepairDecision.DC_LOCAL && targetReplicas.contains(extraReplica))
-        // {
-        //     for (InetAddress address : allReplicas)
-        //     {
-        //         if (!targetReplicas.contains(address))
-        //         {
-        //             extraReplica = address;
-        //             break;
-        //         }
-        //     }
-        // }
-        // targetReplicas.add(extraReplica);
-
-        // if (retryType == RetryType.ALWAYS)
-        //     return new AlwaysSpeculatingReadExecutor(cfs, command, consistencyLevel, targetReplicas);
-        // else // PERCENTILE or CUSTOM.
-        //     return new SpeculatingReadExecutor(cfs, command, consistencyLevel, targetReplicas);
+        return new NoDigestReadExecutor(command, consistencyLevel, allReplicas);
     }
 
     private static class NeverSpeculatingReadExecutor extends AbstractReadExecutor

@@ -38,7 +38,7 @@ import static org.apache.cassandra.tracing.Tracing.isTracing;
 
 public abstract class AbstractTracingAwareExecutorService implements TracingAwareExecutorService
 {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractTracingAwareExecutorService.class);
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractTracingAwareExecutorService.class);
 
     protected abstract void addTask(FutureTask<?> futureTask);
     protected abstract void onCompletion();

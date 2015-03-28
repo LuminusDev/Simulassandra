@@ -729,6 +729,7 @@ public class StorageService extends NotificationBroadcasterSupport implements IE
             if (!MessagingService.instance().isListening())
                 MessagingService.instance().listen(FBUtilities.getLocalAddress());
             LoadBroadcaster.instance.startBroadcasting();
+            LoadReadBroadcaster.instance.broadcast();
 
             HintedHandOffManager.instance.start();
             BatchlogManager.instance.start();

@@ -145,6 +145,11 @@ public class VersionedValue implements Comparable<VersionedValue>
             return new VersionedValue(String.valueOf(load));
         }
 
+        public VersionedValue loadRead(long load)
+        {
+            return new VersionedValue(String.valueOf(load));
+        }
+
         public VersionedValue schema(UUID newVersion)
         {
             return new VersionedValue(newVersion.toString());

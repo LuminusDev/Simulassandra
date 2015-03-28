@@ -52,6 +52,8 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
 
     // TODO: see if other queue implementations might improve throughput
     protected final ConcurrentLinkedQueue<FutureTask<?>> tasks = new ConcurrentLinkedQueue<>();
+    
+    private final AtomicLong effectiveLoad = new AtomicLong();
 
     SEPExecutor(SharedExecutorPool pool, int maxWorkers, int maxTasksQueued)
     {
@@ -64,6 +66,8 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
     protected void onCompletion()
     {
         completedTasks.incrementAndGet();
+        if (effectiveLoad.get() > 0)
+            effectiveLoad.decrementAndGet();
     }
 
     // schedules another worker for this pool if there is work outstanding and there are no spinning threads that
@@ -179,7 +183,10 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
 
     public void removeCommand(Object command)
     {
-        tasks.remove(command);
+        if (tasks.remove(command))
+            logger.info("Remove tentative COMPLETED");
+        else
+            logger.info("Remove tentative NOTFOUND");
     }
 
     public void maybeExecuteImmediatelyRemovable(Runnable command)
@@ -271,6 +278,11 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
     public long getCompletedTasks()
     {
         return completedTasks.get();
+    }
+
+    public long getNonAffectedTasks()
+    {
+        return getPendingTasks() - effectiveLoad.get();
     }
 
     public int getActiveCount()
