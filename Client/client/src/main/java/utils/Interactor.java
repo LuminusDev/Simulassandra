@@ -21,7 +21,7 @@ public class Interactor {
 		Scanner sc = new Scanner(System.in);
 		String r = new String();
 		r = sc.nextLine();
-		sc.close();
+		//sc.close();
 		return r;
 	}
 	

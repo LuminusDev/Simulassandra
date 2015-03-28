@@ -39,7 +39,7 @@ public class KeySpace {
 		this.name = n;
 		this.connection = c;
 		Statement q = QueryBuilder.select()
-								  .from("schema_keyspaces", "system")
+								  .from("system", "schema_keyspaces")
 								  .where(QueryBuilder.eq("keyspace_name", this.name));
 		ResultSet r = this.connection.execute(q);
 		if(r.all().size() <= 0){
