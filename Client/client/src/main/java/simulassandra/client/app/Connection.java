@@ -74,4 +74,8 @@ public class Connection {
 	public Table getTable(Integer i){
 		return this.keyspace.getTable(i);
 	}
+	
+	public KeySpace getKeyspace(){
+		return this.keyspace;
+	}
 }

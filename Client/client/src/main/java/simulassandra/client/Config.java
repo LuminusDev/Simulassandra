@@ -11,6 +11,7 @@ public class Config {
 	public static final int ACT_RESET_KEYSPACE = 4;
 	public static final int ACT_QUERIESFACTORY = 5;
 	public static final int ACT_QUIT = 6;
+	public static final int ACT_SHOW_KEYSPACE = 7;
 	
 	public static final String CMD_HELP = "help";
 	public static final String CMD_IMPORT = "import";
@@ -18,6 +19,7 @@ public class Config {
 	public static final String CMD_RESET_KEYSPACE = "reset";
 	public static final String CMD_QUERIESFACTORY = "queries";
 	public static final String CMD_QUIT = "quit";
+	public static final String CMD_SHOW_KEYSPACE = "showkeyspace";
 	
 	public static final Integer NARGS_HELP = 0;
 	public static final Integer NARGS_IMPORT = 1;
@@ -25,6 +27,7 @@ public class Config {
 	public static final Integer NARGS_RESET_KEYSPACE = 0;
 	public static final Integer NARGS_QUERIESFACTORY = 1;
 	public static final Integer NARGS_QUIT = 0;
+	public static final Integer NARGS_SHOW_KEYSPACE = 0;
 	
 	
 	public static final Integer[] ARGS = {	99, 
@@ -33,7 +36,8 @@ public class Config {
 											Config.NARGS_SWITCH_KEYSPACE,
 											Config.NARGS_RESET_KEYSPACE,
 											Config.NARGS_QUERIESFACTORY,
-											Config.NARGS_QUIT};
+											Config.NARGS_QUIT,
+											Config.NARGS_SHOW_KEYSPACE};
 		
 }
 

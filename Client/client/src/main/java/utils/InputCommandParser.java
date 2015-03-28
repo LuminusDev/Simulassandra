@@ -26,6 +26,8 @@ public class InputCommandParser {
 				return Config.ACT_QUERIESFACTORY;
 			case Config.CMD_QUIT:
 				return Config.ACT_QUIT;
+			case Config.CMD_SHOW_KEYSPACE:
+				return Config.ACT_SHOW_KEYSPACE;
 			default:
 				return Config.ACT_UNKNOWN;
 		}

@@ -36,25 +36,7 @@ public class ClientApp {
 		this.connectToCluster();
 		
 		String keyspace_name = Interactor.getKeySpaceName();
-		try {
-			this.connection = new Connection(cluster, keyspace_name);
-		} catch (KeyspaceException e) {
-			Interactor.displayException(e);
-			String replication_type = Interactor.getReplicationType();
-			Integer replication_factor = Interactor.getReplicationFactor();
-			File data_file = Interactor.getDataFile();
-			
-			try {
-				this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
-			} catch (KeyspaceException e1) {
-				// TODO Auto-generated catch block
-				Interactor.displayException(e1);
-				e1.printStackTrace();
-			}
-		}
-		
-		//String replication_type = Interactor.getReplicationType();
-		//File data_file = Interactor.getDataFile();
+		initKeyspace(keyspace_name);
 	}
 	
 	/**
@@ -68,7 +50,6 @@ public class ClientApp {
 	 * @throws IOException
 	 */
 	private void setAddress(String a) throws UnreachableHostException, IOException{
-		
 		//First, we're testing the existence of the host
 		Interactor.checkingHost(a);
 		InetAddress i = InetAddress.getByName(a);
@@ -88,6 +69,26 @@ public class ClientApp {
 	private void connectToCluster(){
 		this.cluster = Cluster.builder().addContactPoint(this.address).build();
 		Interactor.displayMetadata(cluster.getMetadata());
+	}
+	
+	
+	private void initKeyspace(String keyspace_name){
+		try {
+			this.connection = new Connection(cluster, keyspace_name);
+		} catch (KeyspaceException e) { //Le Keyspace n'existe pas
+			Interactor.displayException(e);
+			
+			String replication_type = Interactor.getReplicationType();
+			Integer replication_factor = Interactor.getReplicationFactor();
+			//File data_file = Interactor.getDataFile();
+			try {
+				this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
+			} catch (KeyspaceException e1) { //Impossible de créer le keyspace
+				// TODO Auto-generated catch block
+				Interactor.displayException(e1);
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -124,8 +125,9 @@ public class ClientApp {
 	 * 
 	 * @param cmd, commande à executer
 	 * @return
+	 * @throws ArgumentException 
 	 */
-	private Boolean execute(Command cmd){
+	private Boolean execute(Command cmd) throws ArgumentException{
 		switch(cmd.getAction()){
 			case Config.ACT_QUIT:
 				return Boolean.TRUE;
@@ -136,13 +138,17 @@ public class ClientApp {
 				//TODO
 				return Boolean.FALSE;
 			case Config.ACT_SWITCH_KEYSPACE:
-				//TODO
+				initKeyspace(cmd.getArg(0));
+				Interactor.displayKeyspaceMetadata(this.connection.getKeyspace());
 				return Boolean.FALSE;
 			case Config.ACT_RESET_KEYSPACE:
 				//TODO
 				return Boolean.FALSE;
 			case Config.ACT_QUERIESFACTORY:
 				//TODO
+				return Boolean.FALSE;
+			case Config.ACT_SHOW_KEYSPACE:
+				Interactor.displayKeyspaceMetadata(this.connection.getKeyspace());
 				return Boolean.FALSE;
 			default:
 				Interactor.displayMessage("Unknown command");
@@ -151,6 +157,7 @@ public class ClientApp {
 				
 		}
 	}
+	
 	
 	/**
 	 * Destructeur

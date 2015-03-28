@@ -1,13 +1,16 @@
 package utils;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import simulassandra.client.Config;
 import simulassandra.client.app.Command;
+import simulassandra.client.app.KeySpace;
 import simulassandra.client.exceptions.ArgumentException;
 
 import com.datastax.driver.core.Host;
+import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 
 public class Interactor {
@@ -60,6 +63,24 @@ public class Interactor {
 			System.out.printf("Datacenter: %s; Host: %s; Rack: %s\n",
 		    host.getDatacenter(), host.getAddress(), host.getRack());
 		}
+	}
+	
+	public static void displayKeyspaceMetadata(KeySpace k){
+		System.out.printf("Keyspace named %s\n", k.getName());
+		System.out.println("Replication Strategy used : ");
+		
+		String replication_class = new String();
+		String replication_factor = new String();
+		Iterator<String> i = k.getReplication().keySet().iterator();
+		 
+		while (i.hasNext())
+		{
+		    replication_class = (String)i.next();
+		    replication_factor = (String)k.getReplication().get(replication_class);
+		    System.out.printf("    Replication class : %s with replication factor : %s \n", replication_class, replication_factor);
+		}
+		
+		System.out.println(" ");
 	}
 	
 	public static void displayMessage(String msg){
