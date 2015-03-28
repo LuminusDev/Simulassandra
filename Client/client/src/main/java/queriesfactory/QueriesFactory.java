@@ -1,19 +1,33 @@
-package simulassandra.client.app;
+package queriesfactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import java.util.Locale;
+import java.util.Random;
+
+import simulassandra.client.app.Connection;
 
 
 public abstract class QueriesFactory {
 	
 	protected Connection connection;
 	private File log;
+	private Long seed;
+	protected Random generator;
 	
 	public QueriesFactory(Connection c){
 		this.connection = c;
+		this.generator = new Random();
+		this.seed = this.generator.nextLong();
+		this.generator.setSeed(seed);
+	}
+	
+	public QueriesFactory(Connection c, Long seed){
+		this.connection = c;
+		this.seed = seed;
+		this.generator = new Random();
+		this.generator.setSeed(seed);
 	}
 	
 	protected void initData(){
