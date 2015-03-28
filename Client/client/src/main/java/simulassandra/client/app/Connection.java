@@ -29,7 +29,7 @@ public class Connection {
 	 */
 	public Connection(Cluster cluster, String keyspace_name) throws KeyspaceException{
 		this.session = cluster.connect(); //voir si définition keyspace immédiate
-		this.keyspace = new KeySpace(keyspace_name, this);
+		this.keyspace = new KeySpace(cluster.getMetadata().getKeyspace(keyspace_name), this);
 		initConnection();
 	}
 	
@@ -40,12 +40,13 @@ public class Connection {
 	 * @param keyspace_name, nom du keyspace
 	 * @param replication_type, classe de réplication utilisée dans le keyspace
 	 * @param replication_factor, facteur de réplication
+	 * @throws KeyspaceException 
 	 */
 	public Connection(Cluster cluster, String keyspace_name,
-			String replication_type, Integer replication_factor) {
+			String replication_type, Integer replication_factor) throws KeyspaceException {
 		// TODO Auto-generated constructor stub
 		this.session = cluster.connect();
-		this.keyspace = new KeySpace(replication_type, replication_type, replication_factor);
+		this.keyspace = new KeySpace(cluster, keyspace_name, replication_type, replication_factor);
 	}
 
 	private void initConnection(){

@@ -21,6 +21,10 @@ public class Table {
 		return this.nb_rows;
 	}
 	
+	public String getKeyspace(){
+		return this.keyspace.getName();
+	}
+	
 	public String getName(){
 		return this.name;
 	}

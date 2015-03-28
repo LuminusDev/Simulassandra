@@ -42,7 +42,14 @@ public class ClientApp {
 			String replication_type = Interactor.getReplicationType();
 			Integer replication_factor = Interactor.getReplicationFactor();
 			File data_file = Interactor.getDataFile();
-			this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
+			
+			try {
+				this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
+			} catch (KeyspaceException e1) {
+				// TODO Auto-generated catch block
+				Interactor.displayException(e1);
+				e1.printStackTrace();
+			}
 		}
 		
 		String replication_type = Interactor.getReplicationType();

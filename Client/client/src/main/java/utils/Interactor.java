@@ -12,17 +12,15 @@ import com.datastax.driver.core.Metadata;
 
 public class Interactor {
 	
+	public static Scanner text_input = new Scanner(System.in); 
+	
 	public static void welcome(){
 		System.out.println("Simulassandra Client");
 	}
 	
 	private static String basicInput(String msg){
 		System.out.print(msg);
-		Scanner sc = new Scanner(System.in);
-		String r = new String();
-		r = sc.nextLine();
-		//sc.close();
-		return r;
+		return text_input.nextLine();
 	}
 	
 	public static String getHostAddress(){
@@ -31,10 +29,7 @@ public class Interactor {
 	
 	public static Command commandInput() throws ArgumentException{
 		System.out.print("> ");
-		Scanner sc = new Scanner(System.in);
-		Command cmd = new Command(sc.nextLine());
-		sc.close();
-		return cmd;
+		return new Command(text_input.nextLine());
 	}
 	
 	public static String getKeySpaceName(){
@@ -44,7 +39,6 @@ public class Interactor {
 	public static File getDataFile(){
 		String pathname =  basicInput("Data file name :");
 		File f = new File(pathname);
-		
 		return f;
 	}
 	
@@ -78,6 +72,7 @@ public class Interactor {
 
 	public static void end(){
 		System.out.println("End");
+		text_input.close();
 	}
 	
 	public static void showCommands(){
