@@ -56,8 +56,9 @@ public class KeySpace {
 	 * @param rf
 	 * @throws KeyspaceException 
 	 */
-	public KeySpace(Cluster cluster, String name, String replication_class, Integer replication_factor) throws KeyspaceException{
-		
+	public KeySpace(Cluster cluster, String name, String replication_class, Integer replication_factor, Connection c) throws KeyspaceException{
+		 this.connection = c;
+		 
 		 String s = "CREATE KEYSPACE ".concat(name)
 				 .concat(" WITH REPLICATION = { 'class' : '")
 				 .concat(replication_class)
@@ -71,6 +72,7 @@ public class KeySpace {
 			 throw new KeyspaceException("Impossible to create the keyspace ".concat(name));
 		 }
 		 this.keyspace = ksm;
+		 this.tables = new ArrayList<Table>();
 	}
 	
 	

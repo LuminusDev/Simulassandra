@@ -31,6 +31,7 @@ public class ClientApp {
 	 * @throws IOException, lorsuq'il est impossible de se connecter à l'adresse a.
 	 */
 	public ClientApp(String a) throws UnreachableHostException, IOException{
+		
 		this.setAddress(a);
 		this.connectToCluster();
 		
@@ -52,8 +53,8 @@ public class ClientApp {
 			}
 		}
 		
-		String replication_type = Interactor.getReplicationType();
-		File data_file = Interactor.getDataFile();
+		//String replication_type = Interactor.getReplicationType();
+		//File data_file = Interactor.getDataFile();
 	}
 	
 	/**
