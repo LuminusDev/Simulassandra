@@ -106,25 +106,6 @@ public class KeySpace {
 		return count.one().getLong("count");
 	}
 	
-	
-	/**
-	 * 
-	 * @param table
-	 * @throws KeyspaceException
-	 * @throws FileNotFoundException 
-	 */
-	public void copyDataFromFile(String table, String path) throws FileNotFoundException{
-		
-		File f = new File(path);
-		if(!f.exists()){
-			throw new FileNotFoundException("File ".concat(path).concat(" doesn't exist"));
-		}
-	
-		this.connection.execute("TRUNCATE "+this.getName()+"."+table);
-		this.connection.execute("COPY "+this.getName()+"."+table+" FROM "+f.getAbsolutePath());
-		updateTablesList();
-	}
-	
 	/**
 	 * 
 	 * @param path

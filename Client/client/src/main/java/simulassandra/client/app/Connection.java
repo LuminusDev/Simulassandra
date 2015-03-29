@@ -54,6 +54,7 @@ public class Connection {
 	 * @return
 	 */
 	public ResultSet execute(String query){
+		System.out.println("\n\n"+query+"\n\n");
 		return this.session.execute(query);
 	}
 	
@@ -82,9 +83,5 @@ public class Connection {
 	
 	public void executeFromFileQueries(String path) throws FileNotFoundException{
 		this.keyspace.executeFromFileQueries(path);
-	}
-	
-	public void copyDataFromFile(String table_name, String path) throws FileNotFoundException{
-		this.keyspace.copyDataFromFile(table_name, path);
 	}
 }

@@ -152,9 +152,6 @@ public class ClientApp {
 				initKeyspace(cmd.getArg(0));
 				Interactor.displayMessage(this.connection.getKeyspace().getMetadata());
 				return Boolean.FALSE;
-			case Config.ACT_RESET_KEYSPACE:
-				this.connection.copyDataFromFile(cmd.getArg(0), cmd.getArg(1));
-				return Boolean.FALSE;
 			case Config.ACT_QUERIESFACTORY:
 				//TODO
 				return Boolean.FALSE;
