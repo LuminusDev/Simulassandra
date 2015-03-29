@@ -111,18 +111,18 @@ public class KeySpace {
 	 * 
 	 * @param table
 	 * @throws KeyspaceException
+	 * @throws FileNotFoundException 
 	 */
-	public void copyDataFromFile(String table, String path) throws KeyspaceException{
+	public void copyDataFromFile(String table, String path) throws FileNotFoundException{
 		
 		File f = new File(path);
-		if(Validator.data_file(f)){
-			throw new KeyspaceException("File ".concat(path).concat(" doesn't exist"));
+		if(!f.exists()){
+			throw new FileNotFoundException("File ".concat(path).concat(" doesn't exist"));
 		}
 	
-		this.connection.execute("TRUNCATE ".concat(table));
-		this.connection.execute("COPY ".concat(this.getName()).concat(".").concat(table)
-									   .concat(" FROM ")
-									   .concat(f.getAbsolutePath()));
+		this.connection.execute("TRUNCATE "+this.getName()+"."+table);
+		this.connection.execute("COPY "+this.getName()+"."+table+" FROM "+f.getAbsolutePath());
+		updateTablesList();
 	}
 	
 	/**
@@ -215,8 +215,9 @@ public class KeySpace {
 
 	
 	public String getTableMetadata(String table_name){
+		table_name = table_name.replaceAll(" {1,}", "");
 		for(Table t : this.tables){
-			if(t.getName() == table_name){
+			if(t.getName().equals(table_name)){
 				return t.getMetadata();
 			}
 		}
