@@ -1,6 +1,6 @@
 package simulassandra.client.app;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 
 import simulassandra.client.exceptions.KeyspaceException;
 
@@ -66,6 +66,7 @@ public class Connection {
 		return this.session.execute(query);
 	}
 	
+	
 	/**
 	 * 
 	 * @param i
@@ -77,5 +78,9 @@ public class Connection {
 	
 	public KeySpace getKeyspace(){
 		return this.keyspace;
+	}
+	
+	public void executeFromFileQueries(String path) throws FileNotFoundException{
+		this.keyspace.executeFromFileQueries(path);
 	}
 }

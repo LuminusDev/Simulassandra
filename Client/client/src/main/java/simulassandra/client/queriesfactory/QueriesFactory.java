@@ -1,4 +1,4 @@
-package queriesfactory;
+package simulassandra.client.queriesfactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -41,7 +41,4 @@ public abstract class QueriesFactory {
 	}
 	
 	public abstract Boolean run();
-	
-	
-	
 }

@@ -1,18 +1,20 @@
 package simulassandra.client.app;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 
 import simulassandra.client.exceptions.KeyspaceException;
-import utils.Validator;
+import simulassandra.client.utils.Validator;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
@@ -25,7 +27,6 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 public class KeySpace {
 	
 	private KeyspaceMetadata keyspace;
-	private File data_file;
 	
 	private Connection connection;
 	private Collection<Table> tables;
@@ -90,24 +91,8 @@ public class KeySpace {
 	private void updateTablesList(){
 		Collection<TableMetadata> tables = this.keyspace.getTables();
 		for(TableMetadata table : tables){
-			this.tables.add(new Table(table.getName(), this));
+			this.tables.add(new Table(table.getName(), this, table));
 		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param name
-	 * @param query_args
-	 */
-	public void createTable(String name, String query_args){
-		String s = "CREATE TABLE ".concat(getName())
-								  .concat(".")
-								  .concat(name)
-								  .concat(" ")
-								  .concat(query_args);
-		this.connection.execute(s);
-		this.tables.add(new Table(name, this));
 	}
 	
 	/**
@@ -115,36 +100,55 @@ public class KeySpace {
 	 * @param table_name
 	 * @return
 	 */
-	public Integer countRowsInTable(String table_name){
+	public long countRowsInTable(String table_name){
 		Statement q = QueryBuilder.select().countAll().from(getName(),table_name);
 		ResultSet count = this.connection.execute(q);
-		return count.one().getInt(0);
+		return count.one().getLong("count");
 	}
 	
-	/**
-	 * 
-	 * @param path
-	 * @throws KeyspaceException
-	 */
-	public void setFile(String path) throws KeyspaceException {
-		File f = new File(path);
-		if(Validator.data_file(f)){
-			throw new KeyspaceException("File ".concat(path).concat(" doesn't exist"));
-		}
-		this.data_file = f;
-	}
 	
 	/**
 	 * 
 	 * @param table
 	 * @throws KeyspaceException
 	 */
-	public void copyDataFromFileQuery(String table){
+	public void copyDataFromFile(String table, String path) throws KeyspaceException{
+		
+		File f = new File(path);
+		if(Validator.data_file(f)){
+			throw new KeyspaceException("File ".concat(path).concat(" doesn't exist"));
+		}
 	
 		this.connection.execute("TRUNCATE ".concat(table));
 		this.connection.execute("COPY ".concat(this.getName()).concat(".").concat(table)
 									   .concat(" FROM ")
-									   .concat(this.data_file.getAbsolutePath()));
+									   .concat(f.getAbsolutePath()));
+	}
+	
+	/**
+	 * 
+	 * @param path
+	 * @throws KeyspaceException
+	 * @throws FileNotFoundException 
+	 */
+	public void executeFromFileQueries(String path) throws FileNotFoundException{
+		
+		File f = new File(path);
+		Scanner sc = new Scanner(f);
+		String query = new String();
+
+		while(sc.hasNext()){
+			String line = sc.nextLine();
+			
+			if( line.matches("^ {0,}-{4} {0,}$") ){
+				this.connection.execute(query);
+				query = "";
+			} else {
+				query += line;
+			}
+		}
+		updateTablesList();
+		sc.close();
 	}
 	
 	/**
@@ -154,5 +158,68 @@ public class KeySpace {
 	 */
 	public Table getTable(Integer i){
 		return ((ArrayList<Table>) this.tables).get(i%this.tables.size());
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getMetadata(){
+		String s = "Keyspace named "+getName()+"\n";
+		s += "Replication Strategy used : \n";
+		
+		String key = new String();
+		String value = new String();
+		Iterator<String> i = getReplication().keySet().iterator();
+		
+		s += "\t Replication factor ([Datacenter] => (int)[replication_factor])\n";
+		while (i.hasNext())
+		{
+		    key = (String)i.next();
+		    value = (String)getReplication().get(key);
+		    
+		    if(key == "class"){
+		    	s += "\t -------------------------------------\n";
+		    	s += "\t Replication class used ";
+		    	s += value;
+		    	s += "\n\n";
+		    } else {
+		    	s += "\t\t [";
+		    	s += String.format("%-20s", key);
+		    	s += "] => ";
+		    	s += value;
+		    	s += "\n";
+		    }
+		}
+		return s;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getTablesList(){
+		String s = new String("Keyspace ".concat(getName()).concat(" tables list : \n\n"));
+		s += String.format("%-30s", "Table name");
+		s += "Rows";
+		s += "\n";
+		
+		for(Table t : this.tables){
+			s += String.format("%-30s", t.getName());
+			s += t.getNbRows().toString();
+			s += "\n";
+		}
+		return s;
+	}
+	
+
+	
+	public String getTableMetadata(String table_name){
+		for(Table t : this.tables){
+			if(t.getName() == table_name){
+				return t.getMetadata();
+			}
+		}
+		return "This table does not exist.";
 	}
 }

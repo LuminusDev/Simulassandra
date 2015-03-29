@@ -1,6 +1,6 @@
 package simulassandra.client.app;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 
@@ -8,7 +8,7 @@ import simulassandra.client.Config;
 import simulassandra.client.exceptions.ArgumentException;
 import simulassandra.client.exceptions.KeyspaceException;
 import simulassandra.client.exceptions.UnreachableHostException;
-import utils.Interactor;
+import simulassandra.client.utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
 
@@ -80,7 +80,6 @@ public class ClientApp {
 			
 			String replication_type = Interactor.getReplicationType();
 			Integer replication_factor = Interactor.getReplicationFactor();
-			//File data_file = Interactor.getDataFile();
 			try {
 				this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
 			} catch (KeyspaceException e1) { //Impossible de créer le keyspace
@@ -111,7 +110,17 @@ public class ClientApp {
 		while(!end){
 			try {
 				Command command = Interactor.commandInput();
-				end = this.execute(command);
+				try {
+					try {
+						end = this.execute(command);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} catch (KeyspaceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} catch (ArgumentException e) {
 				Interactor.displayException(e);
 			}
@@ -126,8 +135,10 @@ public class ClientApp {
 	 * @param cmd, commande à executer
 	 * @return
 	 * @throws ArgumentException 
+	 * @throws KeyspaceException 
+	 * @throws FileNotFoundException 
 	 */
-	private Boolean execute(Command cmd) throws ArgumentException{
+	private Boolean execute(Command cmd) throws ArgumentException, KeyspaceException, FileNotFoundException{
 		switch(cmd.getAction()){
 			case Config.ACT_QUIT:
 				return Boolean.TRUE;
@@ -135,26 +146,31 @@ public class ClientApp {
 				Interactor.showCommands();
 				return Boolean.FALSE;
 			case Config.ACT_IMPORT:
-				//TODO
+				this.connection.executeFromFileQueries(cmd.getArg(0));
 				return Boolean.FALSE;
 			case Config.ACT_SWITCH_KEYSPACE:
 				initKeyspace(cmd.getArg(0));
-				Interactor.displayKeyspaceMetadata(this.connection.getKeyspace());
+				Interactor.displayMessage(this.connection.getKeyspace().getMetadata());
 				return Boolean.FALSE;
 			case Config.ACT_RESET_KEYSPACE:
-				//TODO
+				//this.connection.copyDataFromFileQuery(cmd.getArg(0), cmd.getArg(1));
 				return Boolean.FALSE;
 			case Config.ACT_QUERIESFACTORY:
 				//TODO
 				return Boolean.FALSE;
 			case Config.ACT_SHOW_KEYSPACE:
-				Interactor.displayKeyspaceMetadata(this.connection.getKeyspace());
+				Interactor.displayMessage(this.connection.getKeyspace().getMetadata());
+				return Boolean.FALSE;
+			case Config.ACT_SHOW_TABLE:
+				Interactor.displayMessage(this.connection.getKeyspace().getTableMetadata(cmd.getArg(0)));
+				return Boolean.FALSE;
+			case Config.ACT_LIST_TABLE:
+				Interactor.displayMessage(this.connection.getKeyspace().getTablesList());
 				return Boolean.FALSE;
 			default:
 				Interactor.displayMessage("Unknown command");
 				Interactor.showCommands();
 				return Boolean.FALSE;
-				
 		}
 	}
 	

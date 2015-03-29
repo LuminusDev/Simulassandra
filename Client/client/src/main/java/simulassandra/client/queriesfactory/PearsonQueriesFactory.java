@@ -1,4 +1,4 @@
-package queriesfactory;
+package simulassandra.client.queriesfactory;
 
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
@@ -46,11 +46,11 @@ public class PearsonQueriesFactory extends QueriesFactory{
 		
 		for(Integer i=0; i<nb_simul; i++){
 			Table target = this.connection.getTable(generator.nextInt());
-			Integer target_nb_rows = target.getNbRows();
+			Long target_nb_rows = target.getNbRows();
 			String target_name = target.getName();
 			String target_keyspace = target.getKeyspace();
 			for(Integer j=0; j<nb_request; j++){
-				Integer id = pearsonFunction(this.generator.nextDouble())%target_nb_rows;
+				Long id = pearsonFunction(this.generator.nextDouble())%target_nb_rows;
 				Statement query = QueryBuilder.select()
 											  .from(target_keyspace, target_name)
 											  .where(QueryBuilder.eq(id_column_name, id ));

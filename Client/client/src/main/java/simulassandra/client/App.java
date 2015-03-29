@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import simulassandra.client.app.ClientApp;
 import simulassandra.client.exceptions.UnreachableHostException;
-import utils.Interactor;
+import simulassandra.client.utils.Interactor;
 
 
 public class App 
 {
 	private static ClientApp clientApp;
 	
-    public static void main( String[] args ) throws IOException
+    public static void main( String[] args )
     {
     	Interactor.welcome(); 	
     	setAddress();
@@ -19,7 +19,6 @@ public class App
     	clientApp.run();
     	
     	Interactor.end();
-    	
     }
     
     public static void setAddress(){

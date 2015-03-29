@@ -1,4 +1,4 @@
-package queriesfactory;
+package simulassandra.client.queriesfactory;
 
 import simulassandra.client.app.Connection;
 import simulassandra.client.app.Table;
@@ -25,19 +25,17 @@ public class PseudoAleatoryQueriesFactory extends QueriesFactory {
 		
 		for(Integer i=0; i<nb_simul; i++){
 			Table target = this.connection.getTable(generator.nextInt());
-			Integer target_nb_rows = target.getNbRows();
+			Long target_nb_rows = target.getNbRows();
 			String target_name = target.getName();
 			String target_keyspace = target.getKeyspace();
 			for(Integer j=0; j<nb_request; j++){
 				Statement query = QueryBuilder.select()
 											  .from(target_keyspace, target_name)
-											  .where(QueryBuilder.eq(id_column_name, generator.nextInt(target_nb_rows) ));
+											  .where(QueryBuilder.eq(id_column_name, generator.nextLong()%target_nb_rows ));
 				this.connection.execute(query);
 			}
 		}
 		
 		return Boolean.TRUE;
-		
 	}
-	
 }

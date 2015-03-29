@@ -1,4 +1,4 @@
-package utils;
+package simulassandra.client.utils;
 
 import java.io.File;
 
