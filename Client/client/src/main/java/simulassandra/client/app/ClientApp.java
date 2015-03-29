@@ -8,6 +8,7 @@ import simulassandra.client.Config;
 import simulassandra.client.exceptions.ArgumentException;
 import simulassandra.client.exceptions.KeyspaceException;
 import simulassandra.client.exceptions.UnreachableHostException;
+import simulassandra.client.queriesfactory.QueriesFactory;
 import simulassandra.client.utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
@@ -22,6 +23,7 @@ public class ClientApp {
 	private String address;
 	private Cluster cluster;
     private Connection connection;
+    private QueriesFactory factory;
     
 	/**
 	 * Constructeur initialisant la connexion à Cassandra.
@@ -110,18 +112,9 @@ public class ClientApp {
 		while(!end){
 			try {
 				Command command = Interactor.commandInput();
-				try {
-					try {
-						end = this.execute(command);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} catch (KeyspaceException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (ArgumentException e) {
+				end = this.execute(command);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				Interactor.displayException(e);
 			}
 		}
@@ -165,8 +158,7 @@ public class ClientApp {
 				Interactor.displayMessage(this.connection.getKeyspace().getTablesList());
 				return Boolean.FALSE;
 			default:
-				Interactor.displayMessage("Unknown command");
-				Interactor.showCommands();
+				Interactor.displayUnknownCommand();
 				return Boolean.FALSE;
 		}
 	}

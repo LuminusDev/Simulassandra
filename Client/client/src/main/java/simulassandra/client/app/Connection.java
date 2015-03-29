@@ -3,6 +3,7 @@ package simulassandra.client.app;
 import java.io.FileNotFoundException;
 
 import simulassandra.client.exceptions.KeyspaceException;
+import simulassandra.client.utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
@@ -54,8 +55,13 @@ public class Connection {
 	 * @return
 	 */
 	public ResultSet execute(String query){
-		System.out.println("\n\n"+query+"\n\n");
-		return this.session.execute(query);
+		try{
+			return this.session.execute(query);
+		}catch(Exception e){
+			Interactor.displayMessage("QUERY: "+query);
+			Interactor.displayException(e);
+			return null;
+		}
 	}
 	
 	/**
@@ -64,7 +70,13 @@ public class Connection {
 	 * @return
 	 */
 	public ResultSet execute(Statement query){
-		return this.session.execute(query);
+		try{
+			return this.session.execute(query);
+		}catch(Exception e){
+			Interactor.displayMessage("QUERY: "+query.toString());
+			Interactor.displayException(e);
+			return null;
+		}
 	}
 	
 	

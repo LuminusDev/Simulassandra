@@ -19,6 +19,7 @@ public class App
     	clientApp.run();
     	
     	Interactor.end();
+    	System.exit(0);
     }
     
     public static void setAddress(){

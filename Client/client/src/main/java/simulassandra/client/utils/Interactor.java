@@ -83,4 +83,8 @@ public class Interactor {
 		System.out.println("- "+Config.CMD_SHOW_TABLE+" <t> : show table t metadata");
 		System.out.println("- "+Config.CMD_QUIT+" : quitter le programme");
 	}
+
+	public static void displayUnknownCommand() {
+		System.out.println("This command does not exist. Use help.");
+	}
 }

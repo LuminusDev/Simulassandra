@@ -20,8 +20,6 @@ public class InputCommandParser {
 				return Config.ACT_IMPORT;
 			case Config.CMD_SWITCH_KEYSPACE:
 				return Config.ACT_SWITCH_KEYSPACE;
-			case Config.CMD_RESET_KEYSPACE:
-				return Config.ACT_RESET_KEYSPACE;
 			case Config.CMD_QUERIESFACTORY:
 				return Config.ACT_QUERIESFACTORY;
 			case Config.CMD_QUIT:

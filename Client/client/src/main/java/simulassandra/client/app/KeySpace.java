@@ -89,6 +89,7 @@ public class KeySpace {
 	 * 
 	 */
 	private void updateTablesList(){
+		this.tables.clear();
 		Collection<TableMetadata> tables = this.keyspace.getTables();
 		for(TableMetadata table : tables){
 			this.tables.add(new Table(table.getName(), this, table));
@@ -180,7 +181,8 @@ public class KeySpace {
 	 * @return
 	 */
 	public String getTablesList(){
-		String s = new String("Keyspace ".concat(getName()).concat(" tables list : \n\n"));
+		String s = new String("Keyspace named "+getName()+"\n");
+		s += this.tables.size()+" table(s)\n\n";
 		s += String.format("%-30s", "Table name");
 		s += "Rows";
 		s += "\n";
