@@ -30,6 +30,8 @@ public class InputCommandParser {
 				return Config.ACT_LIST_TABLE;
 			case Config.CMD_SHOW_TABLE:
 				return Config.ACT_SHOW_TABLE;
+			case Config.CMD_CREATE_DATA_FILE:
+				return Config.ACT_CREATE_DATA_FILE;
 			default:
 				return Config.ACT_UNKNOWN;
 		}

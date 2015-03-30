@@ -12,6 +12,7 @@ import simulassandra.client.exceptions.UnreachableHostException;
 import simulassandra.client.queriesfactory.PseudoAleatoryQueriesFactory;
 import simulassandra.client.queriesfactory.QueriesFactory;
 import simulassandra.client.utils.Interactor;
+import simulassandra.data.generator.DataGenerator;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
@@ -42,6 +43,7 @@ public class ClientApp {
 		this.connectToCluster();
 		
 		initKeyspace(Interactor.getKeySpaceName());
+		Interactor.displayKeyspace(this.connection.getKeyspace().getName());
 	}
 	
 	/**
@@ -132,7 +134,6 @@ public class ClientApp {
 				Command command = Interactor.commandInput();
 				end = this.execute(command);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				Interactor.displayException(e);
 			}
 		}
@@ -147,13 +148,13 @@ public class ClientApp {
 	 * @return
 	 * @throws ArgumentException 
 	 * @throws KeyspaceException 
-	 * @throws FileNotFoundException 
 	 * @throws UnavailableKeyspaceException 
+	 * @throws IOException 
 	 */
 	private Boolean execute(Command cmd) throws ArgumentException, 
 												KeyspaceException, 
-												FileNotFoundException, 
-												UnavailableKeyspaceException{
+												UnavailableKeyspaceException, 
+												IOException{
 		switch(cmd.getAction()){
 			case Config.ACT_QUIT:
 				return Boolean.TRUE;
@@ -165,7 +166,7 @@ public class ClientApp {
 				return Boolean.FALSE;
 			case Config.ACT_SWITCH_KEYSPACE:
 				initKeyspace(cmd.getArg(0));
-				Interactor.displayMessage(this.connection.getKeyspace().getMetadata());
+				Interactor.displayKeyspace(this.connection.getKeyspace().getName());
 				return Boolean.FALSE;
 			case Config.ACT_QUERIESFACTORY:
 				execQueriesFactory(Long.parseLong(cmd.getArg(0)));
@@ -178,6 +179,15 @@ public class ClientApp {
 				return Boolean.FALSE;
 			case Config.ACT_LIST_TABLE:
 				Interactor.displayMessage(this.connection.getKeyspace().getTablesList());
+				return Boolean.FALSE;
+			case Config.ACT_CREATE_DATA_FILE:
+				Integer nb_tables = Integer.parseInt(cmd.getArg(1));
+				Integer nb_rows = Integer.parseInt(cmd.getArg(2));
+				Integer data_size = Integer.parseInt(cmd.getArg(3));
+				DataGenerator generator = new DataGenerator(this.connection.getKeyspace(), cmd.getArg(0), nb_tables, nb_rows, data_size);
+				if(generator.write()){
+					Interactor.displayMessage("Data writed.");
+				}
 				return Boolean.FALSE;
 			default:
 				Interactor.displayUnknownCommand();

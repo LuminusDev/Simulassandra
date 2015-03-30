@@ -8,6 +8,7 @@ import java.util.Random;
 
 import simulassandra.client.app.Connection;
 import simulassandra.client.utils.Chrono;
+import simulassandra.client.utils.Interactor;
 
 
 public abstract class QueriesFactory {
@@ -42,9 +43,12 @@ public abstract class QueriesFactory {
 	}
 	
 	public void run(){
+		Interactor.displayMessage("Starting quering.");
 		Chrono c = new Chrono();
 		this.queriesfactory();
 		Long time = c.time();
+		Interactor.displayMessage("End ("+time.toString()+"ms).");
+
 	}
 	
 	public abstract Boolean queriesfactory();
