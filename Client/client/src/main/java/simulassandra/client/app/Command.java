@@ -1,9 +1,7 @@
 package simulassandra.client.app;
 
-import java.util.Collection;
-
 import simulassandra.client.exceptions.ArgumentException;
-import utils.InputCommandParser;
+import simulassandra.client.utils.InputCommandParser;
 
 public class Command {
 	private Integer action;

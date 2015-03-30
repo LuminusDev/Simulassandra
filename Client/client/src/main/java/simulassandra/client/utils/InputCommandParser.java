@@ -1,4 +1,4 @@
-package utils;
+package simulassandra.client.utils;
 
 import simulassandra.client.Config;
 import simulassandra.client.exceptions.ArgumentException;
@@ -20,12 +20,16 @@ public class InputCommandParser {
 				return Config.ACT_IMPORT;
 			case Config.CMD_SWITCH_KEYSPACE:
 				return Config.ACT_SWITCH_KEYSPACE;
-			case Config.CMD_RESET_KEYSPACE:
-				return Config.ACT_SWITCH_KEYSPACE;
 			case Config.CMD_QUERIESFACTORY:
 				return Config.ACT_QUERIESFACTORY;
 			case Config.CMD_QUIT:
 				return Config.ACT_QUIT;
+			case Config.CMD_SHOW_KEYSPACE:
+				return Config.ACT_SHOW_KEYSPACE;
+			case Config.CMD_LIST_TABLE:
+				return Config.ACT_LIST_TABLE;
+			case Config.CMD_SHOW_TABLE:
+				return Config.ACT_SHOW_TABLE;
 			default:
 				return Config.ACT_UNKNOWN;
 		}
