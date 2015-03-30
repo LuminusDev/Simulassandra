@@ -39,7 +39,7 @@ public class PearsonQueriesFactory extends QueriesFactory{
 	}
 
 	@Override
-	public Boolean run() {
+	public Boolean queriesfactory() {
 		Integer nb_simul = 10000; //A modifier
 		Integer nb_request = 50;
 		String id_column_name = "id";

@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import simulassandra.client.app.Connection;
+import simulassandra.client.utils.Chrono;
 
 
 public abstract class QueriesFactory {
@@ -40,5 +41,11 @@ public abstract class QueriesFactory {
 		return Boolean.TRUE;
 	}
 	
-	public abstract Boolean run();
+	public void run(){
+		Chrono c = new Chrono();
+		this.queriesfactory();
+		Long time = c.time();
+	}
+	
+	public abstract Boolean queriesfactory();
 }

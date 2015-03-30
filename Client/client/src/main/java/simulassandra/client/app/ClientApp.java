@@ -9,6 +9,7 @@ import simulassandra.client.exceptions.ArgumentException;
 import simulassandra.client.exceptions.KeyspaceException;
 import simulassandra.client.exceptions.UnavailableKeyspaceException;
 import simulassandra.client.exceptions.UnreachableHostException;
+import simulassandra.client.queriesfactory.PseudoAleatoryQueriesFactory;
 import simulassandra.client.queriesfactory.QueriesFactory;
 import simulassandra.client.utils.Interactor;
 
@@ -99,6 +100,15 @@ public class ClientApp {
 			initKeyspace(Interactor.getKeySpaceName());
 		}
 	}
+	
+	/**
+	 * 
+	 * @param seed
+	 */
+	private void execQueriesFactory(Long seed){
+		this.factory = new PseudoAleatoryQueriesFactory(this.connection, seed);
+		this.factory.run();
+	}
 
 	/**
 	 * Getteur getAddress
@@ -158,7 +168,7 @@ public class ClientApp {
 				Interactor.displayMessage(this.connection.getKeyspace().getMetadata());
 				return Boolean.FALSE;
 			case Config.ACT_QUERIESFACTORY:
-				//TODO
+				execQueriesFactory(Long.parseLong(cmd.getArg(0)));
 				return Boolean.FALSE;
 			case Config.ACT_SHOW_KEYSPACE:
 				Interactor.displayMessage(this.connection.getKeyspace().getMetadata());

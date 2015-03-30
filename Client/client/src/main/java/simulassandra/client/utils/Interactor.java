@@ -48,7 +48,7 @@ public class Interactor {
 	}
 	
 	public static void checkingHost(String h){
-		System.out.println("Checking if "+h+" host is reachable.");
+		displayMessage("Checking if "+h+" host is reachable.");
 	}
 	
 	public static void displayMetadata(Metadata m){
@@ -65,16 +65,21 @@ public class Interactor {
 		return "y".equals(answer);
 	}
 	
+	public static void displayKeyspace(String ks_name){
+		displayMessage("You are now using keyspace "+ks_name);
+	}
+	
 	public static void displayMessage(String msg){
-		System.out.println(msg);
+		System.out.print(msg+"\n");
 	}
 	
 	public static void displayException(Exception e){
-		System.out.println("Error > "+e.getMessage());
+		displayMessage("Error > "+e.getMessage());
+		e.printStackTrace();
 	}
 	
 	public static void displayError(Error e){
-		System.out.println("Fatal Error > "+e.getMessage());
+		displayMessage("Fatal Error > "+e.getMessage());
 	}
 
 	public static void end(){
