@@ -137,11 +137,19 @@ public abstract class ReadCommand implements IReadCommand, Pageable
     {
         if (other == null) return false;
         if (other == this) return true;
-        if (!(other instanceof ReadCommand)) return false;
-        ReadCommand otherReadCommand = (ReadCommand)other;
-        return this.ksName == otherReadCommand.ksName
-            && this.cfName == otherReadCommand.cfName
-            && this.timestamp == otherReadCommand.timestamp;
+        if ((other instanceof Runnable))
+        {
+            return other.equals(this);
+        }
+        if ((other instanceof ReadCommand))
+        {
+            ReadCommand otherReadCommand = (ReadCommand)other;
+            return this.ksName.equals(otherReadCommand.ksName)
+                && this.cfName.equals(otherReadCommand.cfName)
+                && this.key.equals(otherReadCommand.key)
+                && this.timestamp == otherReadCommand.timestamp;
+        }
+        return false;
     }
 }
 

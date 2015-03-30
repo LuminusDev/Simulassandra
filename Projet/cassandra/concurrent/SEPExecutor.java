@@ -184,7 +184,13 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
     public void removeCommand(Object command)
     {
         if (tasks.remove(command))
+        {
+            long current = permits.get();
+            int taskPermits = taskPermits(current);
+            taskPermits = taskPermits > 0 ? taskPermits - 1 : 0;
+            permits.set(updateTaskPermits(current, taskPermits));
             logger.info("Remove tentative COMPLETED");
+        }
         else
             logger.info("Remove tentative NOTFOUND");
     }

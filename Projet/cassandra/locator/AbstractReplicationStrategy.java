@@ -46,7 +46,7 @@ import org.cliffc.high_scale_lib.NonBlockingHashMap;
 */
 public abstract class AbstractReplicationStrategy
 {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractReplicationStrategy.class);
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractReplicationStrategy.class);
 
     @VisibleForTesting
     final String keyspaceName;
