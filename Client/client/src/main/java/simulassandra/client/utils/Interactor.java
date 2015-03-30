@@ -27,7 +27,7 @@ public class Interactor {
 	}
 	
 	public static Command commandInput() throws ArgumentException{
-		System.out.print("> ");
+		System.out.print("\n> ");
 		return new Command(text_input.nextLine());
 	}
 	
@@ -59,12 +59,22 @@ public class Interactor {
 		}
 	}
 	
+	public static Boolean question(String q){
+		String answer = basicInput(q+" (y/n)");
+		answer.replaceAll(" {1,}", "").toLowerCase();
+		return "y".equals(answer);
+	}
+	
 	public static void displayMessage(String msg){
 		System.out.println(msg);
 	}
 	
 	public static void displayException(Exception e){
 		System.out.println("Error > "+e.getMessage());
+	}
+	
+	public static void displayError(Error e){
+		System.out.println("Fatal Error > "+e.getMessage());
 	}
 
 	public static void end(){

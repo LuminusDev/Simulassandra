@@ -1,5 +1,7 @@
 package simulassandra.client.app;
 
+import simulassandra.client.exceptions.UnavailableKeyspaceException;
+
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.TableMetadata;
 
@@ -11,14 +13,14 @@ public class Table {
 	private KeySpace keyspace;
 	private TableMetadata table_metadata;
 	
-	public Table(String name, KeySpace ks, TableMetadata td){
+	public Table(String name, KeySpace ks, TableMetadata td) throws UnavailableKeyspaceException{
 		this.name = name;
 		this.keyspace = ks;
 		this.table_metadata = td;
 		updateNbRows();
 	}
 	
-	private void updateNbRows(){
+	private void updateNbRows() throws UnavailableKeyspaceException{
 		this.nb_rows = this.keyspace.countRowsInTable(this.name);
 	}
 	

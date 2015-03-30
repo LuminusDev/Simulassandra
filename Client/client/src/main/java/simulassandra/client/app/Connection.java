@@ -3,6 +3,7 @@ package simulassandra.client.app;
 import java.io.FileNotFoundException;
 
 import simulassandra.client.exceptions.KeyspaceException;
+import simulassandra.client.exceptions.UnavailableKeyspaceException;
 import simulassandra.client.utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
@@ -27,8 +28,9 @@ public class Connection {
 	 * @param cluster, cluster sur lequel nous travaillons
 	 * @param keyspace_name, keyspace existant dans le cluster
 	 * @throws KeyspaceException, lorsque le keyspace n'existe pas
+	 * @throws UnavailableKeyspaceException 
 	 */
-	public Connection(Cluster cluster, String keyspace_name) throws KeyspaceException{
+	public Connection(Cluster cluster, String keyspace_name) throws KeyspaceException, UnavailableKeyspaceException{
 		this.session = cluster.connect();
 		this.keyspace = new KeySpace(cluster.getMetadata().getKeyspace(keyspace_name), this);
 	}
@@ -57,9 +59,9 @@ public class Connection {
 	public ResultSet execute(String query){
 		try{
 			return this.session.execute(query);
-		}catch(Exception e){
-			Interactor.displayMessage("QUERY: "+query);
+		} catch (Exception e) {
 			Interactor.displayException(e);
+			Interactor.displayMessage("Query will be ignored");
 			return null;
 		}
 	}
@@ -72,13 +74,12 @@ public class Connection {
 	public ResultSet execute(Statement query){
 		try{
 			return this.session.execute(query);
-		}catch(Exception e){
-			Interactor.displayMessage("QUERY: "+query.toString());
+		} catch (Exception e) {
 			Interactor.displayException(e);
+			Interactor.displayMessage("Query will be ignored");
 			return null;
 		}
 	}
-	
 	
 	/**
 	 * 
@@ -93,7 +94,7 @@ public class Connection {
 		return this.keyspace;
 	}
 	
-	public void executeFromFileQueries(String path) throws FileNotFoundException{
+	public void executeFromFileQueries(String path) throws FileNotFoundException, UnavailableKeyspaceException{
 		this.keyspace.executeFromFileQueries(path);
 	}
 }

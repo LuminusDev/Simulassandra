@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import simulassandra.client.exceptions.KeyspaceException;
+import simulassandra.client.exceptions.UnavailableKeyspaceException;
+import simulassandra.client.utils.Interactor;
 import simulassandra.client.utils.Validator;
 
 import com.datastax.driver.core.Cluster;
@@ -37,8 +39,9 @@ public class KeySpace {
 	 * @param n
 	 * @param c
 	 * @throws KeyspaceException
+	 * @throws UnavailableKeyspaceException 
 	 */
-	public KeySpace(KeyspaceMetadata k, Connection c) throws KeyspaceException{
+	public KeySpace(KeyspaceMetadata k, Connection c) throws KeyspaceException, UnavailableKeyspaceException{
 		
 		if(k == null){
 			throw new KeyspaceException("This keyspace doesn't exist.");
@@ -86,9 +89,10 @@ public class KeySpace {
 	}
 	
 	/**
+	 * @throws UnavailableKeyspaceException 
 	 * 
 	 */
-	private void updateTablesList(){
+	private void updateTablesList() throws UnavailableKeyspaceException{
 		this.tables.clear();
 		Collection<TableMetadata> tables = this.keyspace.getTables();
 		for(TableMetadata table : tables){
@@ -100,10 +104,14 @@ public class KeySpace {
 	 * 
 	 * @param table_name
 	 * @return
+	 * @throws UnavailableKeyspaceException 
 	 */
-	public long countRowsInTable(String table_name){
+	public long countRowsInTable(String table_name) throws UnavailableKeyspaceException{
 		Statement q = QueryBuilder.select().countAll().from(getName(),table_name);
 		ResultSet count = this.connection.execute(q);
+		if(count == null){
+			throw new UnavailableKeyspaceException("An error occurred, keypsace is not available for querying.");
+		}
 		return count.one().getLong("count");
 	}
 	
@@ -112,8 +120,9 @@ public class KeySpace {
 	 * @param path
 	 * @throws KeyspaceException
 	 * @throws FileNotFoundException 
+	 * @throws UnavailableKeyspaceException 
 	 */
-	public void executeFromFileQueries(String path) throws FileNotFoundException{
+	public void executeFromFileQueries(String path) throws FileNotFoundException, UnavailableKeyspaceException{
 		
 		File f = new File(path);
 		Scanner sc = new Scanner(f);
@@ -123,7 +132,12 @@ public class KeySpace {
 			String line = sc.nextLine();
 			
 			if( line.matches("^ {0,}-{4} {0,}$") ){
-				this.connection.execute(query);
+				try {
+					this.connection.execute(query);
+				} catch (Exception e) {
+					Interactor.displayException(e);
+					Interactor.displayMessage("Query will be ignored");
+				}
 				query = "";
 			} else {
 				query += line;

@@ -7,11 +7,13 @@ import java.net.InetAddress;
 import simulassandra.client.Config;
 import simulassandra.client.exceptions.ArgumentException;
 import simulassandra.client.exceptions.KeyspaceException;
+import simulassandra.client.exceptions.UnavailableKeyspaceException;
 import simulassandra.client.exceptions.UnreachableHostException;
 import simulassandra.client.queriesfactory.QueriesFactory;
 import simulassandra.client.utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
 
 /**
  * 
@@ -31,14 +33,14 @@ public class ClientApp {
 	 * @param a, adresse de connexion
 	 * @throws UnreachableHostException, si l'adresse a n'est pas accessible
 	 * @throws IOException, lorsuq'il est impossible de se connecter à l'adresse a.
+	 * @throws UnavailableKeyspaceException 
 	 */
-	public ClientApp(String a) throws UnreachableHostException, IOException{
+	public ClientApp(String a) throws UnreachableHostException, IOException, NoHostAvailableException{
 		
 		this.setAddress(a);
 		this.connectToCluster();
 		
-		String keyspace_name = Interactor.getKeySpaceName();
-		initKeyspace(keyspace_name);
+		initKeyspace(Interactor.getKeySpaceName());
 	}
 	
 	/**
@@ -68,27 +70,33 @@ public class ClientApp {
 	 * Méthode connectToCluster
 	 * Initialise la connexion au cluster
 	 */
-	private void connectToCluster(){
-		this.cluster = Cluster.builder().addContactPoint(this.address).build();
-		Interactor.displayMetadata(cluster.getMetadata());
+	private void connectToCluster() throws NoHostAvailableException {
+			this.cluster = Cluster.builder().addContactPoint(this.address).build();
+			Interactor.displayMetadata(cluster.getMetadata());
 	}
 	
 	
 	private void initKeyspace(String keyspace_name){
+		
 		try {
 			this.connection = new Connection(cluster, keyspace_name);
 		} catch (KeyspaceException e) { //Le Keyspace n'existe pas
 			Interactor.displayException(e);
+			if(Interactor.question("Do you want to create a new keyspace named "+keyspace_name+" ?")){
 			
-			String replication_type = Interactor.getReplicationType();
-			Integer replication_factor = Interactor.getReplicationFactor();
-			try {
-				this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
-			} catch (KeyspaceException e1) { //Impossible de créer le keyspace
-				// TODO Auto-generated catch block
-				Interactor.displayException(e1);
-				e1.printStackTrace();
+				String replication_type = Interactor.getReplicationType();
+				Integer replication_factor = Interactor.getReplicationFactor();
+				try {
+					this.connection = new Connection(cluster, keyspace_name, replication_type, replication_factor);
+				} catch (KeyspaceException f) { //Impossible de créer le keyspace
+					Interactor.displayException(f);
+				}
+			} else {
+				initKeyspace(Interactor.getKeySpaceName());
 			}
+		} catch (UnavailableKeyspaceException e) { //Le Keyspace n'est pas disponible au requetage
+			Interactor.displayException(e);
+			initKeyspace(Interactor.getKeySpaceName());
 		}
 	}
 
@@ -130,8 +138,12 @@ public class ClientApp {
 	 * @throws ArgumentException 
 	 * @throws KeyspaceException 
 	 * @throws FileNotFoundException 
+	 * @throws UnavailableKeyspaceException 
 	 */
-	private Boolean execute(Command cmd) throws ArgumentException, KeyspaceException, FileNotFoundException{
+	private Boolean execute(Command cmd) throws ArgumentException, 
+												KeyspaceException, 
+												FileNotFoundException, 
+												UnavailableKeyspaceException{
 		switch(cmd.getAction()){
 			case Config.ACT_QUIT:
 				return Boolean.TRUE;
