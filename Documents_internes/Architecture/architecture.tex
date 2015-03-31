@@ -18,6 +18,9 @@
     >{\raggedright}m{#1}
 }
 
+\newcommand{\class}[1]{\texttt{#1}}
+
+
 \title{
  \begin{minipage}\linewidth
         \centering
@@ -47,13 +50,13 @@
 
 \paragraph{} Cassandra est un projet riche et complet. Nous ne nous intéresserons qu'aux parties de son architecture sur lesquelles nous allons travailler.
 
-\paragraph{} Par ailleurs, nous ne nous intéresserons pas non plus à la représentation sous forme de diagramme de classes de Cassandra, étant donné une forte utilisation du pattern \textit{singleton} et des méthodes \textit{statiques}. Cette représentation donne peu d'information sur le fonctionnement de la base de données.
+\paragraph{} Par ailleurs, nous nous intéresserons peu à la représentation sous forme de diagramme de classes de Cassandra, étant donné une forte utilisation du pattern \textit{singleton} et des méthodes \textit{statiques}. Cette représentation donne peu d'information sur le fonctionnement de la base de données.
 
 \subsection{Staged event-driven architecture (SEDA)}
 
 \paragraph{} Cassandra est basée sur une architecture de type Staged Event Driven Architecture (SEDA). Cela permet de séparer des tâches dans différents emplacements, appelés \textit{stages}, qui sont connectés par un service de messages. Chaque stage possède une file d'attente pour les messages (un message correspondant à une tâche à traiter), ainsi qu'un ensemble de threads pour traiter les tâches (voir figure \ref{fig:stages}).
 
-\paragraph{} Dans le cas de Cassandra, la gestion des stages se fait dans le package \path{org.apache.cassandra.concurrent}. Les stages sont -pour la plupart- énumérés dans \textit{Stage}. Ils sont ensuite gérés par le \textit{StageManager} (qui a pour particularité de ne posséder que des méthodes et des attributs statiques). Nous nous intéresserons principalement aux stages :
+\paragraph{} Dans le cas de Cassandra, la gestion des stages se fait dans le package \path{org.apache.cassandra.concurrent}. Les stages sont -pour la plupart- énumérés dans \class{Stage}. Ils sont ensuite gérés par le \class{StageManager} (qui a pour particularité de ne posséder que des méthodes et des attributs statiques). Nous nous intéresserons principalement aux stages :
 
 \begin{itemize}
 	\item \textbf{READ} : lectures locales
@@ -61,19 +64,21 @@
 \end{itemize}
 \paragraph{} Ces stages permettent de répondre à différents besoins.
 
-\paragraph{} Le stage "READ" permet de répondre aux besoins des protocoles d'affectation. L'idée est de créer un nouveau stage "QUEUE\_MANAGER" pour gérer les file d'attentes du stage de lecture. Ainsi, les tâches traitées par le stage "READ" entraîneraient un message vers le stage "QUEUE\_MANAGER", envoyant un message pour supprimer un message d'une file d'attente dans les autres noeuds ayant à traiter la même tâche. Les noeuds recevant le message le transmettraient au stage "QUEUE\_MANAGER" qui s'occuperait alors de supprimer le message voulu de la file d'attente s'il y est encore présent. La figure \ref{fig:read_request} montre un exemple avec une requête de lecture arrivant sur le noeud 5, et avec les données à lire sur les noeuds 1 et 2.
+\paragraph{} Le stage "READ" permet de répondre aux besoins des protocoles d'affectation. L'idée est de créer un nouveau stage "READ\_REMOVE" pour gérer les messages de suppression de requête d'une file d'attente. Ainsi, les tâches traitées par le stage "READ" entraînent l'envoi d'un message pour supprimer un message d'une file d'attente dans les autres noeuds ayant à traiter la même tâche. Les noeuds recevant le message le transmettent au stage "READ\_REMOVE" qui s'occupe alors de supprimer le message voulu de la file d'attente s'il y est encore présent. La figure \ref{fig:read_request} montre un exemple avec une requête de lecture arrivant sur le noeud 5, et avec les données à lire sur les noeuds 1 et 2.
 
-\paragraph{} Le stage "GOSSIP" permet de répondre aux besoins qui concernent la communication des données locales d'un noeud. Les noeuds de la base de données s'échangent des informations sur leur état toutes les secondes. L'ajout de données locales entraînera la modification du stage "GOSSIP" pour permettre l'envoi de ces nouvelles données.
+\paragraph{} Le stage "GOSSIP" permet de répondre aux besoins qui concernent la communication des données locales d'un noeud. Les noeuds de la base de données s'échangent des informations sur leur état toutes les secondes. L'ajout de données locales entraîne la modification du stage "GOSSIP" pour permettre l'envoi de ces nouvelles données.
+
+\paragraph{} Une architecture fortement simplifiée de la gestion des stages est disponible sur la figure~\ref{fig:stages_diagram}. La création et l'accès d'un stage se fait par le biais du \class{StageManager} et de \class{Stage}, avec un appel sous la forme : \texttt{StageManager.getStage(Stage.READ)}.
 
 \subsection{Gossip}
 
 \paragraph{} Cassandra utilise le protocole Gossip pour les communications entres les noeuds. Chaque noeud envoie les informations qu'il possède -sur lui et sur les autres noeuds- à au plus 3 autres noeuds du réseau. Cela permet d'avoir pour chaque noeud une connaissance globale du réseau avec un minimum d'interaction.
-\paragraph{} Les classes en rapport avec Gossip se situe dans package \path{org.apache.cassandra.gms}. La classe chargée de traiter les tâches de Gossip est \path{org.apache.cassandra.gms.Gossiper}.
-\paragraph{} Gossiper maintient une liste de noeuds "vivants" et "morts" (des noeuds inatteignables). Toutes les secondes, le module démarre un tour. Un tour entier de Gossip est composé de trois messages. Un noeud X envoie un message syn à un noeud Y pour initialiser Gossip. Y, à la réception de ce message syn, renvoie un message ack à X. Pour répondre à ce message ack, X envoie un message ack2 à Y pour compléter le tour (voir la figure \ref{fig:round_gossip}).
+\paragraph{} Les classes en rapport avec Gossip se situe dans le package \path{org.apache.cassandra.gms}. La classe chargée de traiter les tâches de Gossip est \class{Gossiper}.
+\paragraph{} \class{Gossiper} maintient une liste de noeuds "vivants" et "morts" (des noeuds inatteignables). Toutes les secondes, le module démarre un tour. Un tour entier de Gossip est composé de trois messages. Un noeud X envoie un message syn à un noeud Y pour initialiser Gossip. Y, à la réception de ce message syn, renvoie un message ack à X. Pour répondre à ce message ack, X envoie un message ack2 à Y pour compléter le tour (voir la figure \ref{fig:round_gossip}).
 
 \subsection{Modèle de données}
 
-\paragraph{} Le modèle de données de Cassandra s’appuie sur un schéma dynamique, avec un modèle de données orienté colonne (voir figure \ref{fig:keyspace}). On retrouve les classes gérant la modélisation de la base de données au sein du package \path{org.apache.cassandra.db}.
+\paragraph{} Le modèle de données de Cassandra s'appuie sur un schéma dynamique, avec un modèle de données orienté colonne (voir figure \ref{fig:keyspace}). On retrouve les classes gérant la modélisation de la base de données au sein du package \path{org.apache.cassandra.db}.
 
 \begin{itemize}
 	\item \textbf{Keyspace} : le conteneur des données de l'application
@@ -83,15 +88,19 @@
 	\item \textbf{Column} : un tuple contenant un nom, une valeur et un \textit{timestamp} (la date de la mise à jour la plus récente de cette colonne)
 \end{itemize}
 
-Nous allons nous intéresser dans notre projet à la classe \textbf{ColumnFamily}, afin de pouvoir garder une trace de la popularité des objets. Les objets étant définis par un token, porté par la classe \textbf{DecoratedKey}, ColumnFamily est l'objet dont nous souhaitons connaître la popularité.
+Nous allons nous intéresser dans notre projet à la classe \class{ColumnFamily}, afin de pouvoir garder une trace de la popularité des objets. Les objets étant définis par un token, porté par la classe \class{DecoratedKey}, \class{ColumnFamily} est l'objet dont nous souhaitons connaître la popularité.
+
+\subsection{Requête de lecture}
+
+\paragraph{}Les requêtes de lecture suivent un chemin comme décrit dans la figure~\ref{fig:read_request}, avec deux possibilités au niveau de la classe \class{AbstractReadExecutor} pour gérer le traitement de la requête. On récupère tous les noeuds qui possèdent une copie de l'objet que l'on cherche. Si le noeud actuel possède une copie, alors on ne passe par le système de messagerie et on demande directement au stage de lecture de réaliser une tâche (un Runnable qui s'appelle \class{LoadReadRunnable}, une classe statique interne du \class{StorageProxy}. Sinon, on envoie une requête de lecture aux autres noeuds responsables d'une copie de l'objet requêté.
 
 \subsection{Statistiques}
 
 \paragraph{} Cassandra possède un système permettant d'exposer des mesures internes, grâce à la libraire \textbf{Metrics} \cite{Metrics2010}.
 
-\paragraph{} Les classes s'occupant de collecter les mesures se situent dans le package \path{org.apache.cassandra.metrics}. Chaque classe de Metrics est chargé de collecter des statistiques sur certaines classes de Cassandra, comme par exemple sur la classe Keyspace vue précédemment dont les données sont collectées par \path{org.apache.cassandra.metrics.KeyspaceMetrics}.
+\paragraph{} Les classes s'occupant de collecter les mesures se situent dans le package \path{org.apache.cassandra.metrics}. Chaque classe de Metrics est chargé de collecter des statistiques sur certaines classes de Cassandra, comme par exemple sur la classe \class{Keyspace} vue précédemment dont les données sont collectées par la classe \class{KeyspaceMetrics}.
 
-\paragraph{} L'intêret dans le cas de notre projet est de pouvoir exposer les mesures initiales de Cassandra, mais aussi d'ajouter des mesures sur les implémentations que nous allons faire. Il nous sera possible d'ajouter une nouvelle classe de Metrics pour répondre à ce besoin.
+\paragraph{} L'intérêt dans le cas de notre projet est de pouvoir exposer les mesures initiales de Cassandra, mais aussi d'ajouter des mesures sur les implémentations que nous faisons. Il nous est possible d'ajouter une nouvelle classe de Metrics pour répondre à ce besoin, ou modifier les classes existantes.
 
 \paragraph{} Une classe de Metrics est liée à une classe que l'on souhaite de manière bidirectionnelle. C'est à dire que la classe que l'on souhaite observée possède en attribut une instance de la classe de Metrics, à laquelle elle passe en paramètre sa propre référence. La référence n'est pas stockée par la classe de Metrics mais seulement utilisée dans des \textit{closures}.
 
@@ -243,6 +252,18 @@ Puis, \path{Graphite} affiche ces informations sous forme de graphes (courbes, h
 	\centering
 		\include{schemas/stages}
 	\caption{Schéma de deux stages dans une architecture SEDA \label{fig:stages}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{schemas/stages_diagram.png}
+	\caption{Diagramme de classe simplifié de l'architecture SEDA dans Cassandra \label{fig:stages_diagram}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{schemas/read_diagram.png}
+	\caption{Diagramme de séquence simplifié d'une requête de lecture dans Cassandra \label{fig:read_diagram}}
 \end{figure}
 
 \begin{figure}[p]
