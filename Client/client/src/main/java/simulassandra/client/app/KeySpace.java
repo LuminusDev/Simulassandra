@@ -2,7 +2,6 @@ package simulassandra.client.app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,7 +11,6 @@ import java.util.Scanner;
 import simulassandra.client.exceptions.KeyspaceException;
 import simulassandra.client.exceptions.UnavailableKeyspaceException;
 import simulassandra.client.utils.Interactor;
-import simulassandra.client.utils.Validator;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.KeyspaceMetadata;
@@ -24,15 +22,12 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 /**
  * 
  * @author Guillaume Marques <guillaume.marques33@gmail.com>
- *
  */
 public class KeySpace {
 	
 	private KeyspaceMetadata keyspace;
-	
 	private Connection connection;
 	private Collection<Table> tables;
-	
 	
 	/**
 	 * 
@@ -79,11 +74,18 @@ public class KeySpace {
 		 this.tables = new ArrayList<Table>();
 	}
 	
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getName(){
 		return this.keyspace.getName();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Map<String, String> getReplication(){
 		return this.keyspace.getReplication();
 	}
@@ -131,7 +133,7 @@ public class KeySpace {
 		while(sc.hasNext()){
 			String line = sc.nextLine();
 			
-			if( line.matches("^ {0,}-{4} {0,}$") ){
+			if( line.matches("; {0,}$") ){
 				try {
 					this.connection.execute(query);
 				} catch (Exception e) {
@@ -209,8 +211,11 @@ public class KeySpace {
 		return s;
 	}
 	
-
-	
+	/**
+	 * 
+	 * @param table_name
+	 * @return
+	 */
 	public String getTableMetadata(String table_name){
 		table_name = table_name.replaceAll(" {1,}", "");
 		for(Table t : this.tables){

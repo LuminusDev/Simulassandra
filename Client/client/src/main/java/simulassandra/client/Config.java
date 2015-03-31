@@ -3,7 +3,9 @@ package simulassandra.client;
 public class Config {
 	
 	public static final Integer TIMEOUT = 10000; //To know if a host is unreachable
-	
+	public static final Integer NB_TENTATIVES = 3;
+	public static final String LOG_DIRECTORY = "/tmp";
+	public static final String LOG_NAME = "logsimu";
 	
 	/**
 	 *  Config for available command

@@ -2,10 +2,12 @@ package simulassandra.client.queriesfactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
+import simulassandra.client.Config;
 import simulassandra.client.app.Connection;
 import simulassandra.client.utils.Chrono;
 import simulassandra.client.utils.Interactor;
@@ -13,17 +15,12 @@ import simulassandra.client.utils.Interactor;
 
 public abstract class QueriesFactory {
 	
-	protected Connection connection;
 	private File log;
+	private Collection<String> log_msg;
 	private Long seed;
-	protected Random generator;
 	
-	public QueriesFactory(Connection c){
-		this.connection = c;
-		this.generator = new Random();
-		this.seed = this.generator.nextLong();
-		this.generator.setSeed(seed);
-	}
+	protected Random generator;
+	protected Connection connection;
 	
 	public QueriesFactory(Connection c, Long seed){
 		this.connection = c;
@@ -32,10 +29,14 @@ public abstract class QueriesFactory {
 		this.generator.setSeed(seed);
 	}
 	
+	public QueriesFactory(Connection c){
+		this(c,new Random().nextLong());
+	}
+	
 	protected void initData(){
 		//Création nom fichier log  : format logsimulassandra-date
 		String date = new SimpleDateFormat("dd-MM-yyyy-hh-mm", Locale.FRANCE).format(new Date());
-		this.log = new File("logsimulassandra-".concat(date));
+		this.log = new File(Config.LOG_DIRECTORY+Config.LOG_NAME+"_"+date);
 	}
 	
 	protected Boolean write(){
@@ -48,7 +49,6 @@ public abstract class QueriesFactory {
 		this.queriesfactory();
 		Long time = c.time();
 		Interactor.displayMessage("End ("+time.toString()+"ms).");
-
 	}
 	
 	public abstract Boolean queriesfactory();

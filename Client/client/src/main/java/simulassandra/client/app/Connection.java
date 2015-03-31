@@ -14,8 +14,6 @@ import com.datastax.driver.core.Statement;
 /**
  * 
  * @author Guillaume Marques <guillaume.marques33@gmail.com>
- *
- *
  */
 public class Connection {
 	
@@ -27,7 +25,7 @@ public class Connection {
 	 * 
 	 * @param cluster, cluster sur lequel nous travaillons
 	 * @param keyspace_name, keyspace existant dans le cluster
-	 * @throws KeyspaceException, lorsque le keyspace n'existe pas
+	 * @throws KeyspaceException le keyspace n'existe pas
 	 * @throws UnavailableKeyspaceException 
 	 */
 	public Connection(Cluster cluster, String keyspace_name) throws KeyspaceException, UnavailableKeyspaceException{
@@ -90,10 +88,20 @@ public class Connection {
 		return this.keyspace.getTable(i);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public KeySpace getKeyspace(){
 		return this.keyspace;
 	}
 	
+	/**
+	 * 
+	 * @param path
+	 * @throws FileNotFoundException
+	 * @throws UnavailableKeyspaceException
+	 */
 	public void executeFromFileQueries(String path) throws FileNotFoundException, UnavailableKeyspaceException{
 		this.keyspace.executeFromFileQueries(path);
 	}

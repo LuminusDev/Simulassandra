@@ -2,13 +2,13 @@ package simulassandra.client.queriesfactory;
 
 import simulassandra.client.app.Connection;
 import simulassandra.client.app.Table;
-import simulassandra.client.utils.Interactor;
 
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 
 public class PseudoAleatoryQueriesFactory extends QueriesFactory {
+	
 	
 	public PseudoAleatoryQueriesFactory(Connection c){
 		super(c);
@@ -17,7 +17,7 @@ public class PseudoAleatoryQueriesFactory extends QueriesFactory {
 	public PseudoAleatoryQueriesFactory(Connection c, Long seed){
 		super(c,seed);
 	}
-
+	
 	@Override
 	public Boolean queriesfactory() {
 		Integer nb_simul = 10; //A modifier

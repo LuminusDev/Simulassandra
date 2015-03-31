@@ -9,26 +9,64 @@ import simulassandra.client.exceptions.ArgumentException;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 
+/**
+ * Classe Interactor
+ * Objet permettant d'afficher des messages sur la console
+ * et de lire des saisies utilisateur sur la console.
+ * 
+ * @author Guillaume Marques <guillaume.marques33@gmail.com>
+ */
 public class Interactor {
 	
 	public static Scanner text_input = new Scanner(System.in); 
 	
-	public static void welcome(){
-		System.out.println("Simulassandra Client");
+	//Affichage des piles d'execution pour le débogage.
+	private static final Boolean DEBUG = Boolean.FALSE;
+	
+	/**
+	 * Affiche le message msg puis demande à l'utilisateur de saisir une chaîne
+	 * de caractère sur la console. La méthode s'execute jusqu'à que l'utilisateur
+	 * saisisse un message.
+	 * @param msg message à afficher
+	 * @return String saisie de l'utilisateur
+	 */
+	private static String basicInput(String msg){
+		displayMessage(msg);
+		String entry = text_input.nextLine();
+		if(entry.isEmpty()){
+			displayMessage("Empty entry. Retry.");
+			basicInput(msg);
+		}
+		return entry;
 	}
 	
-	private static String basicInput(String msg){
-		System.out.print(msg);
-		return text_input.nextLine();
+	/**
+	 * Affiche un message sur la console suivi d'un retour à la ligne
+	 * @param msg message à afficher
+	 */
+	public static void displayMessage(String msg){
+		System.out.println(msg);
+	}
+	
+	/**
+	 * Affichage d'un chevron puis invite l'utilisateur à saisir
+	 * sa commande
+	 * @return Command objet contenant les informations à propos
+	 * de la commande saisie
+	 * @throws ArgumentException nombre d'argument de la commande
+	 * trop faible.
+	 */
+	public static Command commandInput() throws ArgumentException{
+		System.out.print("\n> ");
+		return new Command(text_input.nextLine());
+	}
+	
+	public static void welcome(){
+		displayMessage("Simulassandra Client");
 	}
 	
 	public static String getHostAddress(){
 		return basicInput("Please, tip the host address :");
-	}
-	
-	public static Command commandInput() throws ArgumentException{
-		System.out.print("\n> ");
-		return new Command(text_input.nextLine());
 	}
 	
 	public static String getKeySpaceName(){
@@ -44,7 +82,12 @@ public class Interactor {
 	}
 	
 	public static Integer getReplicationFactor() {
-		return Integer.parseInt(basicInput("Replication factor :"));
+		try{
+			return Integer.parseInt(basicInput("Replication factor :"));
+		} catch(Exception e){
+			displayException(e);
+			return getReplicationFactor();
+		}
 	}
 	
 	public static void checkingHost(String h){
@@ -52,7 +95,7 @@ public class Interactor {
 	}
 	
 	public static void displayMetadata(Metadata m){
-		System.out.printf("Connected to cluster: %s\n", m.getClusterName());
+		displayMessage("Connected to cluster"+m.getClusterName());
 		for ( Host host : m.getAllHosts() ) {
 			System.out.printf("Datacenter: %s; Host: %s; Rack: %s\n",
 		    host.getDatacenter(), host.getAddress(), host.getRack());
@@ -69,17 +112,18 @@ public class Interactor {
 		displayMessage("You are now using keyspace "+ks_name);
 	}
 	
-	public static void displayMessage(String msg){
-		System.out.println(msg);
-	}
-	
 	public static void displayException(Exception e){
 		displayMessage("Error > "+e.getMessage());
-		//e.printStackTrace();
+		if(DEBUG){
+			e.printStackTrace();
+		}
 	}
 	
 	public static void displayError(Error e){
 		displayMessage("Fatal Error > "+e.getMessage());
+		if(DEBUG){
+			e.printStackTrace();
+		}
 	}
 
 	public static void end(){
@@ -102,6 +146,6 @@ public class Interactor {
 	}
 
 	public static void displayUnknownCommand() {
-		System.out.println("This command does not exist. Use help.");
+		displayMessage("This command does not exist. Use help.");
 	}
 }

@@ -5,11 +5,14 @@ import simulassandra.client.exceptions.UnavailableKeyspaceException;
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.TableMetadata;
 
+/**
+ * 
+ * @author Guillaume Marques <guillaume.marques[a]gmail.com>
+ */
 public class Table {
 	
 	private String name;
 	private Long nb_rows;
-	
 	private KeySpace keyspace;
 	private TableMetadata table_metadata;
 	
@@ -50,5 +53,4 @@ public class Table {
 		}
 		return s;
 	}
-
 }
