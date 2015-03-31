@@ -34,6 +34,10 @@ public class SEPMetrics
     public final Gauge<Long> currentBlocked;
     /** Number of completed tasks. */
     public final Gauge<Long> completedTasks;
+    /** Number of tasks removed by a read remove action.*/
+    public final Gauge<Long> removedTasks;
+    /** Number of tasks assigned to this node.*/
+    public final Gauge<Long> effectiveLoad;
 
     /** Number of tasks waiting to be executed. */
     public final Gauge<Long> pendingTasks;
@@ -85,6 +89,20 @@ public class SEPMetrics
                 return executor.getCompletedTasks();
             }
         });
+        removedTasks = Metrics.newGauge(factory.createMetricName("RemovedTasks"), new Gauge<Long>()
+        {
+            public Long value()
+            {
+                return executor.getRemovedTasks();
+            }
+        });
+        effectiveLoad = Metrics.newGauge(factory.createMetricName("EffectiveLoad"), new Gauge<Long>()
+        {
+            public Long value()
+            {
+                return executor.getEffectiveLoad();
+            }
+        });
     }
 
     public void release()
@@ -94,5 +112,7 @@ public class SEPMetrics
         Metrics.defaultRegistry().removeMetric(factory.createMetricName("CompletedTasks"));
         Metrics.defaultRegistry().removeMetric(factory.createMetricName("TotalBlockedTasks"));
         Metrics.defaultRegistry().removeMetric(factory.createMetricName("CurrentlyBlockedTasks"));
+        Metrics.defaultRegistry().removeMetric(factory.createMetricName("RemovedTasks"));
+        Metrics.defaultRegistry().removeMetric(factory.createMetricName("EffectiveLoad"));
     }
 }

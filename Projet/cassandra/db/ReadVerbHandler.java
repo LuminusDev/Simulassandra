@@ -17,9 +17,6 @@
  */
 package org.apache.cassandra.db;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.cassandra.db.filter.TombstoneOverwhelmingException;
 import org.apache.cassandra.net.IVerbHandler;
 import org.apache.cassandra.net.MessageIn;
@@ -31,11 +28,8 @@ import org.apache.cassandra.service.AbstractReadExecutor;
 
 public class ReadVerbHandler implements IVerbHandler<ReadCommand>
 {
-    private static final Logger logger = LoggerFactory.getLogger( ReadVerbHandler.class );
-
     public void doVerb(MessageIn<ReadCommand> message, int id)
     {
-        logger.info("verb read");
         if (StorageService.instance.isBootstrapMode())
         {
             throw new RuntimeException("Cannot service reads while bootstrapping!");

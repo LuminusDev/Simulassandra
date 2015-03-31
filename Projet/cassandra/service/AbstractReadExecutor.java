@@ -103,12 +103,11 @@ public abstract class AbstractReadExecutor
         Keyspace keyspace = Keyspace.open(command.ksName);
         List<InetAddress> allReplicas = StorageProxy.getLiveSortedEndpoints(keyspace, command.key);
 
-        logger.info("Remove read requests with replicas : {} and key : {}", allReplicas, command.key);
         for (InetAddress endpoint : allReplicas)
         {
             if (!isLocalRequest(endpoint))
             {
-                logger.info("remove reading task from {}", endpoint);
+                logger.trace("remove read requests from {}", endpoint);
                 MessagingService.instance().sendOneWay(command.createRemoveMessage(), endpoint);
             }
         }

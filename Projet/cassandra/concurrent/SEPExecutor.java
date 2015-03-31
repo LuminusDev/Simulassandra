@@ -54,6 +54,7 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
     protected final ConcurrentLinkedQueue<FutureTask<?>> tasks = new ConcurrentLinkedQueue<>();
     
     private final AtomicLong effectiveLoad = new AtomicLong();
+    private final AtomicLong removedTasks = new AtomicLong();
 
     SEPExecutor(SharedExecutorPool pool, int maxWorkers, int maxTasksQueued)
     {
@@ -189,10 +190,11 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
             int taskPermits = taskPermits(current);
             taskPermits = taskPermits > 0 ? taskPermits - 1 : 0;
             permits.set(updateTaskPermits(current, taskPermits));
-            logger.info("Remove tentative COMPLETED");
+            removedTasks.incrementAndGet();
+            logger.info("Remove tentative SUCCESSED => {} removed", getRemovedTasks());
         }
         else
-            logger.info("Remove tentative NOTFOUND");
+            logger.info("Remove tentative FAILED => {} removed", getRemovedTasks());
     }
 
     public void maybeExecuteImmediatelyRemovable(Runnable command)
@@ -286,9 +288,19 @@ public class SEPExecutor extends AbstractTracingAwareExecutorService
         return completedTasks.get();
     }
 
+    public long getRemovedTasks()
+    {
+        return removedTasks.get();
+    }
+
     public long getNonAffectedTasks()
     {
-        return getPendingTasks() - effectiveLoad.get();
+        return getPendingTasks() - getEffectiveLoad();
+    }
+
+    public long getEffectiveLoad()
+    {
+        return effectiveLoad.get();
     }
 
     public int getActiveCount()
