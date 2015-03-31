@@ -68,18 +68,18 @@ Dans le présent document, nous considérons que le lecteur possède des notions
 
 \subsection{Utilisation d'une base de données par un client}
 
-\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des \textit{données}, : codage (une représentation sous forme binaire), propre au système de base de données, d'une information quelconque.
+\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des \textit{données}, qui sont des informations binaires utilisant des structures propres au système de base de données.
 
 \paragraph{} Dans un premier temps, le client se connecte à la base de données.
-Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, message, dont la forme dépend de la base de données et permettant de stocker, récupérer ou modifier des données.
+Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messages, dont la forme dépend de la base de données et permettant de stocker, récupérer ou modifier des données.
 
-\paragraph{}Selon les requêtes émisent par le client, la base de données envoie des resultats.
+\paragraph{}Selon les requêtes émises par le client, la base de données lui renvoie des résultats (voir la figure~\ref{fig:bd}).
 
 
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=12cm]{bd.png}
-	\caption{Intéractions client/base de données \label{fig:bd}}
+	\caption{Interactions client/base de données \label{fig:bd}}
 \end{figure}
 
 
@@ -91,22 +91,22 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
  \item Les requêtes d' \textbf{écriture} : requêtes modifiant les données contenues dans la base de données.
 \end{itemize}
 
-\paragraph{} Le client peut être une personne physique ou un logiciel. Dans notre cas, il s'agit d'un logiciel permettant l'importation de fichiers contenant des requêtes ou de génerer des requêtes pseudo-aléatoirement.
+\paragraph{} Le client peut être une personne physique ou un logiciel. Dans notre cas, il s'agit d'un logiciel permettant l'importation de fichiers contenant des requêtes ou de générer des requêtes pseudo-aléatoirement.
 
 
 \subsection{Base de données distribuée}
 
 \paragraph{} La base de données utilisée par le client est plus précisément une base de données dites \textit{distribuée}. Le client ne voit pas de différence, lorsqu'il l'utilise, entre une base de données classique et une base de données distribuée. On dit qu'une base de données est distribuée lorsque les données qu'elle stocke sont réparties sur plusieurs machines ou emplacements physiques, appelés \textit{noeuds}. Les noeuds sont capables de communiquer entre eux afin de s'échanger des informations.
 
-\paragraph{} On peut rassembler des noeuds pour former un \textit{data center}. Un rassemblement de data center correspond à un \textit{cluster} (voir la figure~\ref{fig:distributed_database}).
+\paragraph{} On peut rassembler des noeuds pour former un \textit{data center}. Un rassemblement de data center correspond à un \textit{cluster} (voir la figure~\ref{fig:distributed_database}). Dans ce projet, nous nous intéressons seulement au cas où un cluster est composé d'un seul data center.
 
 \paragraph{} La base de données va stocker les données sous forme d'\textit{objets}. Un \textit{objet} est composé d'une clé d'identification appelée \textit{token} et d'un ensemble de \textit{données}.
 
-\paragraph{} Pour savoir quel noeud doit stocker quelle donnée, on utilise une méthode de \textit{partitionnement}. Cette méthode se base sur les \textit{tokens}. Chaque noeud a un token qui lui est attribué. Un noeud prend en charge des objets dont le token est compris entre celui que le noeud possède et celui qui est le plus grand dans ses prédécesseurs (voir la figure~\ref{fig:partitionning}). Ainsi dans cet exemple, le noeud 2 a le token 25 qui lui est attribué. Il s'occupe donc des objets dont le token est compris entre 25 et 0 (qui est le token le plus grand dans ses prédécesseurs). On parle alors de l'\textit{intervalle} de tokens dont s'occupe le noeud.
+\paragraph{} En positionnant les noeuds suivant leur token, on obtient alors une forme d'anneau (ou de \textit{ring}), qui est donc la forme d'un data center.
 
-\paragraph{} En positionnant les noeuds suivant leur token, on obtient alors une forme d'anneau (ou de \textit{ring}).
+\paragraph{} Pour savoir quel noeud doit stocker quelle donnée, on utilise une méthode de \textit{partitionnement}. Cette méthode se base sur les \textit{tokens}. Chaque noeud a un token qui lui est attribué. Un noeud prend en charge des objets dont le token est compris entre celui que le noeud possède et celui de son "prédécesseur" (si on imagine un anneau orienté dans le sens du plus petit au plus grand token, sauf pour les extrêmes) dans l'anneau (voir la figure~\ref{fig:partitionning}). Ainsi dans cet exemple, le noeud 2 a le token 25 qui lui est attribué. Il s'occupe donc des objets dont le token est compris entre 25 et 0 (qui est le token le plus grand dans ses prédécesseurs). On parle alors de l'\textit{intervalle} de tokens dont s'occupe le noeud.
 
-\paragraph{} Afin de garantir une meilleure disponibilité, chaque objet possède des copies, appelées \textit{réplicas}, disposées sur d'autres noeuds que le noeud initial (le noeud qui s'occupe du token de cet objet). La méthode pour choisir l'emplacement des copies d'un objet est variable. C'est ce que l'on appelle la \textit{stratégie de réplication}.
+\paragraph{} Afin de garantir une meilleure disponibilité, chaque objet possède des copies, appelées \textit{réplicas}, disposées sur d'autres noeuds que le noeud initial (le noeud qui s'occupe du token de cet objet). La méthode pour choisir l'emplacement des copies d'un objet est variable. C'est ce que l'on appelle la \textit{stratégie de réplication}, qui est abordée plus loin dans ce document.
 
 \subsection{Gestion des requêtes dans la base de données distribuée}
 \subsubsection{Requêtes de lecture}
@@ -119,7 +119,7 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 
 \paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message pour traiter la requête de lecture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes de lecture de ces noeuds.
 
-\paragraph{} A un moment, l'un des noeuds qui possède cette requête dans sa file d'attente va la défiler et la traiter. Ce noeud s'\textit{affecte} la requête. Il avertit les autres noeuds possédant cette même requête dans leur file d'attente (c.à.d tous les autres noeuds possédant une copie de l'objet de la requête) qu'ils n'auront pas besoin de la traiter, et qu'ils peuvent la supprimer de leur file d'attente (les flèches oranges sur le schéma). Le noeud qui s'est affecté la requête la traite et renvoie le résultat au noeud coordinateur, qui peut transmettre le résultat obtenu au client (les flèches vertes sur le schéma).
+\paragraph{} A un moment, l'un des noeuds qui possède cette requête dans sa file d'attente va la défiler et la traiter. Ce noeud s'\textit{affecte} la requête. Il avertit les autres noeuds possédant cette même requête dans leur file d'attente (c.à.d tous les autres noeuds possédant une copie de l'objet de la requête) qu'ils n'auront pas besoin de la traiter, et qu'ils peuvent la supprimer de leur file d'attente (les flèches oranges sur le schéma). Si la requête à supprimer est déjà en cours d'exécution, on la laisse se dérouler normalement. Le noeud qui s'est affecté la requête la traite et renvoie le résultat au noeud coordinateur, qui peut transmettre le résultat obtenu au client (les flèches vertes sur le schéma).
 
 \subsubsection{Requêtes d'écriture}
 
@@ -141,9 +141,9 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 
 \subsection{Protocoles de réaffectation des requêtes de lecture}
 
-\paragraph{} Lorsqu'une requête de lecture est envoyée par un client, on a vu précédemment que cette requête était transmise à tous les noeuds possédant une copie de l'objet à lire. Si un nombre important de requêtes de lecture arrivent en même temps, les files d'attentes dans les noeuds pour les requêtes de lecture vont commencer à se remplir plus vite que les requêtes ne sont traitées. Les charges des files d'attentes ne seront pas forcément uniformes entre les noeuds, certains pouvant avoir plus de requêtes à traiter que d'autre.
+\paragraph{} Lorsqu'une requête de lecture est envoyée par un client, on a vu précédemment que cette requête était transmise à tous les noeuds possédant une copie de l'objet à lire. Si un nombre important de requêtes de lecture arrivent en même temps, les files d'attentes dans les noeuds pour les requêtes de lecture vont commencer à se remplir plus vite que les requêtes ne sont traitées. Le nombre de requêtes dans une file d'attente est appelée la \textit{charge}. Les charges des files d'attentes ne seront pas forcément uniformes entre les noeuds, certains pouvant avoir plus de requêtes à traiter que d'autre.
 
-\paragraph{} C'est pourquoi on met en place un système de \textit{réaffectation} des requêtes de lecture, afin de rééquilibrer la charge des noeuds. La réaffectation consiste, après chaque modification locale (une modification locale sera le traitement d'une requête dans notre cas, mais on peut imaginer d'autres moments aussi), à enclencher un processus permettant de décider de l'affectation des requêtes suivant l'état actuel du réseau.
+\paragraph{} C'est pourquoi on met en place un système de \textit{réaffectation} des requêtes de lecture, afin de rééquilibrer la charge des noeuds. La réaffectation consiste, après chaque modification locale (une modification locale sera le traitement d'une requête de lecture ou de suppression dans notre cas, mais on peut imaginer d'autres moments aussi), à enclencher un processus permettant de décider de l'affectation des requêtes suivant l'état actuel du réseau. Le nombre de requêtes affectées (donc assignées à ce noeud et avec un message de suppression pour ces requêtes envoyé aux autres noeuds) est appelé la \textit{charge effective}. Une requête affectée ne peut pas être supprimée.
 
 \paragraph{} Les algorithmes de réaffectation à implémenter, \textbf{SLVO} et \textbf{AverageDegree}, ont un comportement similaire qui se base sur la connaissance des charges de chaque noeud du réseau. L'algorithme consiste à comparer, pour tous les noeuds, sa propre charge par rapport à une certaine valeur.
 
@@ -153,7 +153,7 @@ Le client intéragit avec celle-ci en lui envoyant des \textit{requêtes}, messa
 
 \subsection{Gestion de la popularité des objets}
 
-\paragraph{} Pour mieux équilibrer la charge du réseau, nous nous intéressons à la \textit{popularité} des objets. En effet, plus un objet va recevoir de requêtes, plus il sera populaire et occasionnera une grande charge pour les noeuds qui s'en occupent. Afin de répartir cette charge, il faudra alors augmenter ou diminuer le nombre de réplicas. Si un objet est populaire, il suffira de créer de nouveaux réplicas, ce qui permettra d'envoyer une partie de la charge sur d'autres noeuds. A l'inverse, si un objet n'est pas populaire, diminuer le nombre de copies fera gagner de l'espace mémoire et du temps (quand on a besoin de contacter tous les noeuds qui gèrent un objet, le nombre de noeuds joue sur le temps nécessaire à réaliser l'action...).
+\paragraph{} Pour mieux équilibrer la charge du réseau, nous nous intéressons à la \textit{popularité} des objets. En effet, plus un objet va recevoir de requêtes, plus il sera populaire et occasionnera une grande charge pour les noeuds qui s'en occupent. Afin de répartir cette charge, il faudra alors augmenter ou diminuer le nombre de réplicas. Si un objet est populaire, il suffira de créer de nouveaux réplicas, ce qui permettra d'envoyer une partie de la charge sur d'autres noeuds. A l'inverse, si un objet n'est pas populaire, diminuer le nombre de copies fera gagner de l'espace mémoire et du temps (quand on a besoin de contacter tous les noeuds qui gèrent un objet, le nombre de noeuds influe sur le temps nécessaire à réaliser l'action...).
 
 \paragraph{} Il y a plusieurs méthodes pour calculer la popularité des objets durant un intervalle de temps $T$ défini par l'utilisateur :
 
@@ -183,7 +183,7 @@ On lui associe souvent d'autres propriétés pour équilibrer la répartition de
 
 \paragraph{} Le but est de visualiser les statistiques de fonctionnement de la base de données pour permettre une comparaison de l'efficacité des algorithmes d'équilibrage de charge.
 
-\paragraph{} On souhaite récuperer:
+\paragraph{} On souhaite récupérer:
 \begin{itemize}
  \item la charge effective de chaque noeud ou taille de la file d'attente des requêtes de lecture.
  \item une représentation de la file d'attente des requêtes de lecture
@@ -197,7 +197,7 @@ On lui associe souvent d'autres propriétés pour équilibrer la répartition de
 	\caption{Processus pour la visualisation des statistiques \label{fig:visu}}
 \end{figure}
 
-\paragraph{} On enregistre les statistiques de fonctionnement de la base de données distribuée dans des fichiers. Un outil de visualisation traite ces fichiers et affiche ensuite les statistiques.
+\paragraph{} On enregistre les statistiques de fonctionnement de la base de données distribuée dans des fichiers. Un outil de visualisation traite ces fichiers et affiche ensuite les statistiques (voir la figure~\ref{fig:visu}).
 
 
 
@@ -641,43 +641,43 @@ bar height = 0.8
 
 \bibliography{identifications_besoins}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 		\include{distributed_database}
 	\caption{Visualisation d'une base de données distribuée sous forme de cluster possédant trois data center\label{fig:distributed_database}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 		\include{partitionning}
 	\caption{Exemple de partitionnement des données dans une base de données distribuée\label{fig:partitionning}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 		\include{multi_hash_partitionning}
 	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 		\include{request}
 	\caption{Cheminement d'une requête de lecture dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 		\include{write_request}
 	\caption{Cheminement d'une requête d'écriture dans une base de données distribuée\label{fig:write_request}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 		\include{token}
 	\caption{Passage d'une répresentation des données pour le client à une représentation pour la base de données\label{fig:token}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 		\include{reaffectation}
 	\caption{Fonctionnement de l'algorithme de réaffectation des requêtes de lecture SLVO\label{fig:reaffectation}}
