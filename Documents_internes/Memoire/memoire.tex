@@ -35,7 +35,7 @@
         \centering
         Simulation d'algorithmes d'équilibrage de charge dans un environnement distribué 
         \vskip3pt
-        \large Identifications des besoins
+        \large Memoire final
     \end{minipage}
  }
  
@@ -47,10 +47,7 @@
 \maketitle
 
 \abstract
-Dans une première partie, nous présenterons le projet, le contexte et les hypothèses. Ensuite, nous développerons les besoins fonctionnels et les besoins non-fonctionnels.
-De plus, nous dégageons une première version de la plannification du projet (GANTT). Enfin, nous présenterons les livrables.
-
-
+Ce document, mémoire final de notre Projet de Programmation, décrit l'ensemble du projet et les algorithmes utilisés. Il contient aussi les besoins fonctionnels et non fonctionnels ainsi que l'architecture du produit final. Enfin, il récapitule point par point le travail effectué ainsi que sa mise en oeuvre. Le document présente les tests effectués et leurs analyses. Enfin, il conclue sur les améliorations possibles du produit.
 
 \newpage
 
@@ -199,6 +196,53 @@ On lui associe souvent d'autres propriétés pour équilibrer la répartition de
 
 \paragraph{} On enregistre les statistiques de fonctionnement de la base de données distribuée dans des fichiers. Un outil de visualisation traite ces fichiers et affiche ensuite les statistiques (voir la figure~\ref{fig:visu}).
 
+
+\subsection{Pour en savoir plus...}
+Présentations par d'autres auteurs sur le projet :
+
+\paragraph{Système distribué}
+
+\begin{itemize}
+\item Le livre \cite{Ozsu2011} apporte les principes sur les bases de données distribuée.
+
+\end{itemize}
+
+\paragraph{Algorithmes d'équilibrage de charges}
+
+
+
+\begin{itemize}
+\item L'article \cite{BalancedAlloc99} met en exergue des algorithmes d'équilibrage, sources d'inspiration pour les clients dans l'élaboration de leurs algorithmes.
+
+\item Le papier \cite{RandomChoices05}, de là même manière que le précédent, s'intéresse de plus près à des algorithmes d'allocation aléatoire.
+
+\item L'article \cite{LoadBalancingPeertoPeer14} est aussi important car il traite des algorithmes d'équilibrage des charges dans un réseau pair à pair.
+
+\end{itemize}
+
+\paragraph{Cassandra}
+
+\begin{itemize}
+\item Le livre \cite{Hewitt2010} renseigne sur la compréhension du fonctionnement de Cassandra, ainsi que les structures particulières de ce système de base de données.
+
+\item Le lien \cite{ApacheCassandra09} permet d'accéder à l'ensemble de la documentation technique et au dépôt des sources de la base de données Cassandra.
+
+\item Le papier \cite{FacebookCassandra09} apporte les explications des créateurs de Cassandra.
+
+\item Le lien \cite{DSDocCassandra15} possède la documentation la plus complète sur la dernière version de Cassandra, et sur les manières de l'utiliser.
+Les nombreux exemples et les approfondissements sont des points d'appuis importants pour le projet.
+
+\end{itemize}
+
+\paragraph{Visualisation}
+
+\begin{itemize}
+\item Le lien \cite{DSOpsCenter14} est intéressant pour le projet car il apporte un logiciel capable de montrer graphiquement des statistiques sur une base de données Cassandra opérationnelle
+Il peut être utilisé dans le projet, ou apporté des pistes pour la visualisation des données.
+
+\item L'article \cite{Tulip12} s'intéresse à un logiciel de représentation de graphe développé au Labri.
+La proximité des créateurs peut apporter une solution viable.
+\end{itemize} 
 
 
 
@@ -622,8 +666,6 @@ bar height = 0.8
  
  \vspace{1cm}
  
-\paragraph{Remarque} Il s'agit d'une première version de notre GANTT. Nous n'avons pas encore défini l'affectation des tâches aux développeurs.
-
 
 \newpage
 
