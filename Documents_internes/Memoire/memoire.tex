@@ -1,0 +1,686 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[tikz]{bclogo}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{version}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{pgfgantt}
+\usepackage{url}
+\usepackage{enumitem}
+\bibliographystyle{alpha}
+\usepackage[counterclockwise]{rotating}
+\geometry{hmargin=2.5cm,vmargin=1.5cm}
+
+\setlength{\parskip}{1ex plus 2ex minus 1ex}
+\newcolumntype{M}[1]{
+    >{\raggedright}m{#1}
+}
+
+\newenvironment{besoins}
+{ \begin{itemize}[topsep=20pt]   }
+{ \end{itemize}                  } 
+
+\newcommand{\priority}[1] {
+  (\textit{Priorité}:#1)
+}
+\newcommand{\besoin}[3]{
+	\item #1 \priority{#2} #3
+}
+
+\title{
+ \begin{minipage}\linewidth
+        \centering
+        Simulation d'algorithmes d'équilibrage de charge dans un environnement distribué 
+        \vskip3pt
+        \large Identifications des besoins
+    \end{minipage}
+ }
+ 
+\bibliographystyle{alpha}
+\author{Kevin Barreau \and Guillaume Marques \and Corentin Salingue}
+
+\begin{document}
+
+\maketitle
+
+\abstract
+Dans une première partie, nous présenterons le projet, le contexte et les hypothèses. Ensuite, nous développerons les besoins fonctionnels et les besoins non-fonctionnels.
+De plus, nous dégageons une première version de la plannification du projet (GANTT). Enfin, nous présenterons les livrables.
+
+
+
+\newpage
+
+
+\renewcommand{\contentsname}{Sommaire} 
+\tableofcontents
+
+\listoffigures
+
+\newpage
+
+\section{Présentation du projet}
+
+Dans le présent document, nous considérons que le lecteur possède des notions en informatique et que chaque mot est défini par son sens commun. Cependant, si un terme utilisé présentant une définition différente que celle admise par tous, nous ne manquerons pas de le préciser et de le définir.
+
+\subsection{Utilisation d'une base de données par un client}
+
+\paragraph{} Une \textit{base de données} est un outil permettant de stocker et récupérer des \textit{données}, qui sont des informations binaires utilisant des structures propres au système de base de données.
+
+\paragraph{} Dans un premier temps, le client se connecte à la base de données.
+Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messages, dont la forme dépend de la base de données et permettant de stocker, récupérer ou modifier des données.
+
+\paragraph{}Selon les requêtes émises par le client, la base de données lui renvoie des résultats (voir la figure~\ref{fig:bd}).
+
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{bd.png}
+	\caption{Interactions client/base de données \label{fig:bd}}
+\end{figure}
+
+
+\paragraph{} On distingue deux types de requêtes :
+\begin{itemize}
+ \item Les requêtes de \textbf{lecture}: requêtes ne modifiant pas les données contenues dans la base de données.
+ Il s'agit de récupérer des objets contenus dans la base de données.
+ 
+ \item Les requêtes d' \textbf{écriture} : requêtes modifiant les données contenues dans la base de données.
+\end{itemize}
+
+\paragraph{} Le client peut être une personne physique ou un logiciel. Dans notre cas, il s'agit d'un logiciel permettant l'importation de fichiers contenant des requêtes ou de générer des requêtes pseudo-aléatoirement.
+
+
+\subsection{Base de données distribuée}
+
+\paragraph{} La base de données utilisée par le client est plus précisément une base de données dites \textit{distribuée}. Le client ne voit pas de différence, lorsqu'il l'utilise, entre une base de données classique et une base de données distribuée. On dit qu'une base de données est distribuée lorsque les données qu'elle stocke sont réparties sur plusieurs machines ou emplacements physiques, appelés \textit{noeuds}. Les noeuds sont capables de communiquer entre eux afin de s'échanger des informations.
+
+\paragraph{} On peut rassembler des noeuds pour former un \textit{data center}. Un rassemblement de data center correspond à un \textit{cluster} (voir la figure~\ref{fig:distributed_database}). Dans ce projet, nous nous intéressons seulement au cas où un cluster est composé d'un seul data center.
+
+\paragraph{} La base de données va stocker les données sous forme d'\textit{objets}. Un \textit{objet} est composé d'une clé d'identification appelée \textit{token} et d'un ensemble de \textit{données}.
+
+\paragraph{} En positionnant les noeuds suivant leur token, on obtient alors une forme d'anneau (ou de \textit{ring}), qui est donc la forme d'un data center.
+
+\paragraph{} Pour savoir quel noeud doit stocker quelle donnée, on utilise une méthode de \textit{partitionnement}. Cette méthode se base sur les \textit{tokens}. Chaque noeud a un token qui lui est attribué. Un noeud prend en charge des objets dont le token est compris entre celui que le noeud possède et celui de son "prédécesseur" (si on imagine un anneau orienté dans le sens du plus petit au plus grand token, sauf pour les extrêmes) dans l'anneau (voir la figure~\ref{fig:partitionning}). Ainsi dans cet exemple, le noeud 2 a le token 25 qui lui est attribué. Il s'occupe donc des objets dont le token est compris entre 25 et 0 (qui est le token le plus grand dans ses prédécesseurs). On parle alors de l'\textit{intervalle} de tokens dont s'occupe le noeud.
+
+\paragraph{} Afin de garantir une meilleure disponibilité, chaque objet possède des copies, appelées \textit{réplicas}, disposées sur d'autres noeuds que le noeud initial (le noeud qui s'occupe du token de cet objet). La méthode pour choisir l'emplacement des copies d'un objet est variable. C'est ce que l'on appelle la \textit{stratégie de réplication}, qui est abordée plus loin dans ce document.
+
+\subsection{Gestion des requêtes dans la base de données distribuée}
+\subsubsection{Requêtes de lecture}
+
+\paragraph{} Il est possible de réaliser des requêtes de lecture sur un objet, ce qui consiste à vouloir récupérer une donnée contenue dans un objet. Pour expliquer le cheminement d'une requête de lecture dans la base de données, nous allons prendre un exemple (voir la figure~\ref{fig:request}).
+
+\paragraph{} Un client réalise une requête de lecture R. Il envoie la requête à n'importe quel noeud du réseau. On appelle alors ce noeud le noeud \textit{coordinateur} pour cette requête. Ce noeud ne contient pas forcément l'objet de la requête, mais il va faire la liaison entre le réseau et le client.
+
+\paragraph{} Le noeud coordinateur va avoir cette requête dans une file d'attente dédiée aux requêtes des clients. Il les traite les unes à la suite des autres. Lorsque le noeud commence à traiter cette requête, il va d'abord identifier les noeuds responsables de l'objet de la requête. Cela inclut le noeud possédant l'objet \textit{original} (dont le token est géré par ce noeud) ainsi que les noeuds possédant un réplica. Cette étape exige une connaissance complète du réseau sur chaque noeud et une connaissance de la stratégie de réplication mise en place.
+
+\paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message pour traiter la requête de lecture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes de lecture de ces noeuds.
+
+\paragraph{} A un moment, l'un des noeuds qui possède cette requête dans sa file d'attente va la défiler et la traiter. Ce noeud s'\textit{affecte} la requête. Il avertit les autres noeuds possédant cette même requête dans leur file d'attente (c.à.d tous les autres noeuds possédant une copie de l'objet de la requête) qu'ils n'auront pas besoin de la traiter, et qu'ils peuvent la supprimer de leur file d'attente (les flèches oranges sur le schéma). Si la requête à supprimer est déjà en cours d'exécution, on la laisse se dérouler normalement. Le noeud qui s'est affecté la requête la traite et renvoie le résultat au noeud coordinateur, qui peut transmettre le résultat obtenu au client (les flèches vertes sur le schéma).
+
+\subsubsection{Requêtes d'écriture}
+
+\paragraph{} Il est possible de réaliser des requêtes d'écriture d'un objet, ce qui consiste à stocker des données dans la base de données, sous forme d'objet.  Pour expliquer le cheminement d'une requête d'écriture dans la base de données, nous allons prendre un exemple (voir la figure~\ref{fig:write_request}). Le cheminement est plus simple que pour une requête de lecture car il n'y a pas le mécanisme d'affectation.
+
+\paragraph{} Un client réalise une requête d'écriture R. Il envoie la requête à n'importe quel noeud du réseau. On appelle alors ce noeud le noeud \textit{coordinateur} pour cette requête. Ce noeud n'est pas forcément celui qui va stocker les données, mais il va faire la liaison entre le réseau et le client.
+
+\paragraph{} Le noeud coordinateur va avoir cette requête dans une file d'attente dédiée aux requêtes des clients. Il les traite les unes à la suite des autres. Lorsque le noeud commence à traiter cette requête, il va d'abord identifier les noeuds responsables de l'objet de la requête. Cela inclut le noeud qui se charge de l'objet \textit{original} (dont le token est géré par ce noeud) ainsi que les noeuds devant posséder un réplica. Cette étape exige une connaissance complète du réseau sur chaque noeud et une connaissance de la stratégie de réplication mise en place.
+
+\paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message à tous pour traiter la requête d'écriture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes d'écriture de ces noeuds.
+
+\paragraph{} Tous les noeuds recevant le message vont alors stocker les données envoyées par la requête. Le noeud coordinateur peut demander un certain nombre de message de retour pour s'assurer que les requêtes d'écritures se sont bien déroulées. Dans l'exemple, le noeud coordinateur demande \textbf{1} retour. L'un des messages envoyés aux noeuds demandera donc un message de retour pour confirmer que l'écriture s'est bien passée (la flèche verte entre les noeuds sur le schéma). Dès que le noeud coordinateur reçoit le message, il indique au client que sa requête s'est terminée et bien passée.
+
+\subsection{Stockage des données}
+
+\paragraph{} Chaque base de données possède sa propre manière de stocker les données dans un espace de stockage. Pour le projet, la méthode de stockage n'est pas un problème sur lequel nous allons travailler. La seule contrainte imposée pour la base de données est qu'elle stocke les données sous la forme d'objet. C'est à dire qu'un objet est identifiable par son token, une clé d'identification générée le plus souvent par une fonction de hachage.
+
+\paragraph{} Le token est généré par la base de donnée à partir de la \textit{clé primaire} d'une table. Une clé primaire est, comme le token, une donnée permettant d'identifier un objet. Sauf que que la clé primaire est une donnée choisit par le client. Elle peut être un entier, une chaîne de caractères, toutes les représentations possibles d'une donnée au sein de la base de données (voir la figure~\ref{fig:token}).
+
+\subsection{Protocoles de réaffectation des requêtes de lecture}
+
+\paragraph{} Lorsqu'une requête de lecture est envoyée par un client, on a vu précédemment que cette requête était transmise à tous les noeuds possédant une copie de l'objet à lire. Si un nombre important de requêtes de lecture arrivent en même temps, les files d'attentes dans les noeuds pour les requêtes de lecture vont commencer à se remplir plus vite que les requêtes ne sont traitées. Le nombre de requêtes dans une file d'attente est appelée la \textit{charge}. Les charges des files d'attentes ne seront pas forcément uniformes entre les noeuds, certains pouvant avoir plus de requêtes à traiter que d'autre.
+
+\paragraph{} C'est pourquoi on met en place un système de \textit{réaffectation} des requêtes de lecture, afin de rééquilibrer la charge des noeuds. La réaffectation consiste, après chaque modification locale (une modification locale sera le traitement d'une requête de lecture ou de suppression dans notre cas, mais on peut imaginer d'autres moments aussi), à enclencher un processus permettant de décider de l'affectation des requêtes suivant l'état actuel du réseau. Le nombre de requêtes affectées (donc assignées à ce noeud et avec un message de suppression pour ces requêtes envoyé aux autres noeuds) est appelé la \textit{charge effective}. Une requête affectée ne peut pas être supprimée.
+
+\paragraph{} Les algorithmes de réaffectation à implémenter, \textbf{SLVO} et \textbf{AverageDegree}, ont un comportement similaire qui se base sur la connaissance des charges de chaque noeud du réseau. L'algorithme consiste à comparer, pour tous les noeuds, sa propre charge par rapport à une certaine valeur.
+
+\paragraph{} Pour SLVO, la valeur est la charge minimale sur le réseau. Pour AverageDegree, la valeur est la charge moyenne sur le réseau.
+
+\paragraph{} Si la valeur est inférieure ou égale (strictement égale dans le cas de SLVO), alors le noeud s'affecte toutes les requêtes de sa file d'attente et avertit tous les autres noeuds. Les noeuds possédant les requêtes qui ont été affectées les suppriment de leur file d'attente, modifiant ainsi leur charge (voir la figure~\ref{fig:reaffectation} pour un exemple avec SLVO).
+
+\subsection{Gestion de la popularité des objets}
+
+\paragraph{} Pour mieux équilibrer la charge du réseau, nous nous intéressons à la \textit{popularité} des objets. En effet, plus un objet va recevoir de requêtes, plus il sera populaire et occasionnera une grande charge pour les noeuds qui s'en occupent. Afin de répartir cette charge, il faudra alors augmenter ou diminuer le nombre de réplicas. Si un objet est populaire, il suffira de créer de nouveaux réplicas, ce qui permettra d'envoyer une partie de la charge sur d'autres noeuds. A l'inverse, si un objet n'est pas populaire, diminuer le nombre de copies fera gagner de l'espace mémoire et du temps (quand on a besoin de contacter tous les noeuds qui gèrent un objet, le nombre de noeuds influe sur le temps nécessaire à réaliser l'action...).
+
+\paragraph{} Il y a plusieurs méthodes pour calculer la popularité des objets durant un intervalle de temps $T$ défini par l'utilisateur :
+
+\begin{itemize}
+    \item La première consiste à ce que chaque noeud possède un vecteur de la taille du nombre d'objets dont il a la gestion. A chaque nouvelle requête, la case de l'objet est incrémentée. Au début de chaque période $T$, les noeuds envoient la popularité aux autres noeuds et décident du nombre de copies à faire.
+    \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}.
+\end{itemize}
+
+\subsection{Gestion des copies d'un objet}
+
+\paragraph{} Une \textit{fonction de hachage} est une fonction mathématique qui possède les propriétés suivantes :
+\begin{itemize}
+    \item Ensemble d'entrée : une clé primaire ;
+    \item Ensemble d'arrivée : Un entier ;
+\end{itemize}
+On lui associe souvent d'autres propriétés pour équilibrer la répartition des données (cf paragraphe suivant).
+
+\paragraph{} Pour fabriquer un token, qui sert à placer les données sur le réseau, une clé primaire est hachée avec une fonction de hachage. Nous obtenons une valeur (ici un entier). Chaque noeud du réseau est responsable d'un intervalle d'entiers de l'ensemble des valeurs du domaine. Avec une bonne fonction de hachage, les hash des clés primaires seront distribués uniformément dans l'ensemble des entiers.
+
+\paragraph{} Placer les copies sur le même noeud revient à n'avoir théoriquement l'équivalent d'aucune copie puisque la charge reste sur le même noeud. Il existe plusieurs stratégies de placement de copies des données et nous n'en développerons que deux ici. La première permet de comprendre les mécanismes de base d'une stratégie de placement. La seconde décrit celle que nous allons développer.
+
+\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. La base de données se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}.
+
+\paragraph{} La seconde consiste à utiliser les fonctions de hachage. En effet, dans la stratégie précédente, une seule fonction de hachage était définie pour placer la donnée et les réplicas était ensuite déterminée à partir de sa position. Ici, nous avons $n$ fonctions de hachage, toutes numérotées de $0$ à $n-1$. La fonction de hachage numéro 0 sert à placer la donnée. La fonction numéro 1 sert à placer le premier réplica et ainsi de suite...
+
+\subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
+
+\paragraph{} Le but est de visualiser les statistiques de fonctionnement de la base de données pour permettre une comparaison de l'efficacité des algorithmes d'équilibrage de charge.
+
+\paragraph{} On souhaite récupérer:
+\begin{itemize}
+ \item la charge effective de chaque noeud ou taille de la file d'attente des requêtes de lecture.
+ \item une représentation de la file d'attente des requêtes de lecture
+ \item la popularité de chaque objet
+ \item la requête en cours de traitement
+\end{itemize}
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{visu.png}
+	\caption{Processus pour la visualisation des statistiques \label{fig:visu}}
+\end{figure}
+
+\paragraph{} On enregistre les statistiques de fonctionnement de la base de données distribuée dans des fichiers. Un outil de visualisation traite ces fichiers et affiche ensuite les statistiques (voir la figure~\ref{fig:visu}).
+
+
+
+
+\newpage
+
+\section{Ordonnancement des besoins}
+
+\paragraph{} Nous avons dégagé une liste de besoins fonctionnels et non-fonctionnels. 
+Pour mieux les comparer, nous les avons ordonnés en fonction de leur priorité.
+
+\paragraph{} La priorité est un indicateur de l'ordre dans lequel nous devrons implémenter les fonctionnalités afin de satisfaire les besoins du client.
+
+\paragraph{}
+\begin{tabular}{| l | M{12cm} |}
+    \hline
+    Valeur & Signification \tabularnewline
+    \hline
+    1 & Priorité haute \tabularnewline
+    \hline
+    2 & Priorité moyenne  \tabularnewline
+    \hline
+    3 & Priorité faible  \tabularnewline
+    \hline
+ \end{tabular}
+
+
+\newpage
+
+\section{Besoins fonctionnels}
+
+\subsection{Communication entre les noeuds}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{besoins}
+\besoin{Envoyer les informations du noeud à n'importe quel autre noeud}{1}
+\besoin{Recevoir les informations provenant d'un autre noeud}{1}
+\besoin{Stocker les informations de tous les noeuds du réseau}{1}{
+Cela concerne tous les noeuds, y compris soi-même.
+}
+\end{besoins}
+
+\paragraph{} Les informations d'un noeud doivent permettre d'envoyer un message à ce dernier.
+
+
+
+\subsection{Gestion des requêtes}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+
+\subsubsection{Requêtes client}
+
+\begin{besoins}
+\besoin{Créer une file d'attente des requêtes client}{1}
+\besoin{Ajouter une requête à la file d'attente des requêtes client}{1}
+\besoin{Défiler une requête de la file d'attente des requêtes client}{1}
+\besoin{Traiter une requête client}{1}
+\end{besoins}
+
+\begin{besoins}
+\besoin{Identifier les noeuds responsables d'un objet}{1}{
+Cela nécessite de connaitre plusieurs informations :
+\begin{itemize}[noitemsep]
+	\item la stratégie de réplication
+	\item la token de chaque noeud
+	\item le nombre de copie de chaque objet
+\end{itemize}
+}
+\end{besoins}
+
+\begin{besoins}
+\besoin{Créer une requête de lecture}{1}{
+Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les supprimer. Il faut donc générer un identifiant pour chaque requête de lecture lors de sa création.
+}
+\besoin{Envoyer une requête de lecture}{1}
+\besoin{Créer une requête d'écriture}{1}
+\besoin{Envoyer une requête d'écriture}{1}
+\end{besoins}
+
+
+\subsubsection{Requêtes de lecture}
+
+\begin{besoins}
+\besoin{Créer une file d'attente des requêtes de lecture}{1}
+\besoin{Recevoir une requête de lecture}{1}
+\besoin{Ajouter une requête à la file d'attente des requêtes de lecture}{1}
+\besoin{Supprimer une requête de la file d'attente des requêtes de lecture}{1}
+\besoin{Défiler une requête de la file d'attente des requêtes de lecture}{1}
+\besoin{Traiter une requête de lecture}{1}
+\end{besoins}
+
+\begin{besoins}
+\besoin{Créer un message de suppression de requête de lecture}{1}
+\besoin{Envoyer un message de suppression de requête de lecture}{1}
+\besoin{Recevoir un message de suppression de requête de lecture}{1}
+\besoin{Traiter un message de suppression de requête de lecture}{1}
+\end{besoins}
+
+\begin{besoins}
+\besoin{Créer un message de résultat}{1}
+\besoin{Envoyer un message de résultat au noeud coordinateur}{1}
+\besoin{Recevoir un message de résultat}{1}
+\besoin{Transmettre un message de résultat au client}{1}
+\end{besoins}
+
+
+\subsubsection{Requêtes d'écriture}
+
+\begin{besoins}
+\besoin{Créer une file d'attente des requêtes d'écriture}{1}
+\besoin{Recevoir une requête d'écriture}{1}
+\besoin{Ajouter une requête à la file d'attente des requêtes d'écriture}{1}
+\besoin{Défiler une requête de la file d'attente des requêtes d'écriture}{1}
+\besoin{Traiter une requête d'écriture}{1}
+\end{besoins}
+
+\begin{besoins}
+\besoin{Créer un message de résultat}{1}
+\besoin{Envoyer un message de résultat au noeud coordinateur}{1}
+\besoin{Recevoir un message de résultat}{1}
+\besoin{Transmettre un message de résultat au client}{1}
+\end{besoins}
+
+
+
+\subsection{Réaffectation des requêtes de lecture}
+
+\paragraph{} Les besoins sur la réaffectation des requêtes de lecture se recoupent avec ceux de gestion des requêtes de lecture en ce qui concerne les messages envoyés entre les noeuds.
+
+\begin{besoins}
+\besoin{Connaître la charge des files d'attentes de requêtes de lecture de chaque noeud du réseau}{1}{Cette information fait partie des informations de chaque noeud, communiqué entre eux comme vu précédemment dans la partie \textit{Communication entre les noeuds}.}
+\besoin{Définir un protocole de réaffectation}{1}
+\besoin{Modifier le protocole de réaffectation par une configuration}{3}{La configuration est accessible par l'utilisateur, et le protocole de réaffectation doit être la même pour tous les noeuds du réseau}
+\besoin{Exécuter le code d'un protocole de réaffectation défini}{1}
+\end{besoins}
+
+
+\subsection{Gestion d'un réseau}
+
+\subsubsection{Popularité d'un objet}
+
+\paragraph{Stockage de la popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{besoins}
+        \besoin{Créer un vecteur d'entiers compatabilisant le nombre de requêtes}{1}
+        \besoin{Augmenter la taille du vecteur}{1} dans le cas où on a l'algorithme qui calcule la popularité de tous les objets
+        \besoin{Créer un identifiant permettant de relier la popularité à un objet}{1}
+\end{besoins}
+
+\paragraph{Calcul de la popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{besoins}
+        \besoin{Incrémenter la popularité de l'objet requêté dans le vecteur à chaque requête sur celui-ci}{1}
+\end{besoins}
+
+\paragraph{Communication de la popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{besoins}
+        \besoin{Identifier le noeud responsable d'un objet}{1}
+        \besoin{Créer un message de popularité}{1}
+        \besoin{Envoyer un message de popularité au noeud responsable de l'objet}{1}
+        \besoin{Recevoir un message de popularité}{1}
+        \besoin{Traiter un message de popularité (cf paragraphe suivant)}{1}
+\end{besoins}
+
+\paragraph{Traitement d'un message de popularité}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{besoins}
+        \besoin{Stocker la popularité du message dans le vecteur du noeud traitant le message}{1}
+        \besoin{Vérifier avoir reçu tous les messages concernant les objets dont le noeud a la gestion}{1}
+        \besoin{Décider de créer ou non de nouveau réplicas}{1}
+        \besoin{Réinitialiser le vecteur après la création des nouveaux objets les plus populaires}{1}
+\end{besoins}
+
+\subsubsection{Réplication d'un objet}
+
+\paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
+
+\begin{besoins}
+        \besoin{Créer une nouvelle stratégie de réplication}{2}
+        \besoin{Permettre la définition par l'utilisateur de fonctions de hachage et leur ordre d'utilisation}{2}
+        \besoin{Stocker chaque fonction de hachage et son ordre}{2}
+        \besoin{Définir un ordre dans les réplicas}{2}
+        \besoin{Utiliser la première fonction de hachage pour placer le premier réplica}{2} la seconde pour le second, et ainsi de suite...
+        \besoin{Retrouver les réplicas en fonction des fonctions de hachage}{2}
+\end{besoins}
+
+\subsection{Application cliente}
+
+\subsubsection{Intéractions avec Cassandra}
+
+
+\begin{besoins}
+  	\besoin{Se connecter à Cassandra}{1}
+  	\besoin{Se déconnecter de Cassandra}{1}
+\end{besoins}
+ 
+
+\subsubsection{Initialisation des données}
+
+\paragraph{} L'initialisation des données consiste à créer un Keyspace et à enregistrer des données dans celui-ci.
+
+\begin{besoins}
+	\besoin{Créer un Keyspace}{1}
+	\besoin{Importer des données}{1}
+	\besoin{Initialiser les données}{1} Si les données sont modifiées, le client doit pouvoir les initialiser pour revenir aux données d'origine.
+\end{besoins}
+
+\subsubsection{Gestion de requêtes}
+
+\paragraph{} Pour tester la validité des algorithmes, l'application devra posséder une fonction de génération de requêtes. 
+Si l'utilisateur ne détient pas de suites de requêtes prêtes, il pourra demander à l'application d'en créer pour lui. 
+L'application, ne connaissant pas la nature des données, ne pourra qu'effectuer un nombre restreint de requêtes différentes. 
+Elle pourra par exemple, compter le nombre de données sauvegardées, chercher si une donnée existe réellement, mais ne pourra pas en modifier une.
+
+\begin{besoins}
+  	\besoin{Récupérer le nom des tables}{1} Afin de pouvoir générer des requêtes, nous devons connaître le nom des tables contenues dans un keyspace.
+	\besoin{Générer un jeu de données pseudo-aléatoirement}{2} Il s'agit de créer une fonction $f$, qui aura pour ensemble des antécédents des suites de caractères alpha-numériques (par exemple: 5832fg4gh52 ) et pour image un jeu de données.
+	\besoin{Importer un jeu de requêtes}{1} L'utilisateur peut importer son propre jeu de requêtes.
+\end{besoins}
+
+
+\subsection{Visualisation des données}
+
+\paragraph{} Afin de suivre l'évolution des charges de chaque noeud lors de l'exécution des algorithmes, on enregistre les données locales de chaque noeud à chaque modifications de celles-ci.
+
+\subsubsection{Enregistrement des données}
+
+\paragraph{Ecriture dans un fichier} Lorsque les données locales d'un noeud sont modifiées, on les enregistre dans un fichier.
+L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du noeud; charge du noeud;}
+
+\subsubsection{Affichage des données}
+
+\paragraph{Définition} Un \textit{graphe} est un ensemble de points appelés \textit{sommets}, dont certaines paires sont directement reliées par un (ou plusieurs) lien(s) appelé(s) \textit{arêtes} \cite{graphe}. 
+
+\paragraph{Noeuds} L'application doit permettre la représentation de chaque noeud par un sommet.
+
+\paragraph{Analyse syntaxique} Lors de l'éxecution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
+Un analyseur syntaxique (un programme qui possède des règles et qui agit sur un fichier donné en entrée selon celles-ci) découpe chaque ligne du fichier pour récupérer le moment auquel a été enregistrée l'information (\texttt{itération de l'algorithme}),
+le noeud concerné ( \texttt{ identifiant du noeud} ) et la charge de ce noeud à ce moment ( \texttt{charge du noeud} ).
+
+\paragraph{Charge des noeuds} A chaque sommet est associée une valeur correspondant à la charge de ce noeud.
+Ces données sont récupérées grâce à l'analyseur syntaxique.
+
+\paragraph{Film de l'éxecution} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
+
+
+\newpage
+
+\section{Besoins non fonctionnels}
+
+\subsection{Cassandra}
+
+\paragraph{} Cassandra est une base de données distribuée.
+Nous créons notre environnement distribué à partir de la dernière version stable de Cassandra.
+
+\paragraph{} Le choix de cette solution nous a été fortement recommandé par le client.
+En effet, celui-ci dispose de connaissances sur cette application et pourra donc plus facilement intervenir s'il souhaite faire évoluer le projet en implémentant par exemple de nouveaux algorithmes.
+
+
+\subsection{Maintenabilité du projet}
+
+\paragraph{} L'envergure du projet fait qu'il est possible que d'autres personnes travaillent sur la finalité de ce projet, peu importe son état d'avancement.
+Afin de faciliter la compréhension, nous avons défini quelques normes pour que le projet puisse être repris :
+\begin{itemize}
+	\item documentation dans le code source suivant la norme du langage utilisé;
+	\item document externe spécifiant les fichiers modifiés par rapport au code source original;
+	\item guide d'installation pour utiliser le projet et pour modifier le projet.
+\end{itemize}
+
+
+\subsection{Protocole de test}
+
+\paragraph{} La conformité des algorithmes implémentés est assurée par un protocole de test suivant la démarche :
+
+\begin{itemize}
+	\item Définir un réseau $R$, un ensemble d'objets $O$ et un ensemble de requêtes $Q$
+	\item Faire tourner l'algorithme à la main avec $R$, $O$ et $Q$
+	\item Stocker l'état final du réseau
+	\item Faire valider ce processus par le client
+	\item Exécuter l'algorithme sur ordinateur avec $R$, $O$ et $Q$
+	\item Vérifier les résultats constatés avec les résultats attendus
+\end{itemize}
+	
+\paragraph{} S'il y a une différence entre les deux résultats, une vérification par le client peut être envisagée dans le cas de résultats \textit{presque} similaires. 
+La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
+
+
+\subsection{Visualisation des données}
+
+\subsubsection{Actualisation de la vue}
+
+\paragraph{} L'état du réseau doit être visible en temps réel.
+
+\paragraph{} La vue peut donc être actualisée toutes les $0.5$ secondes. 
+Un délai plus faible risquerait de ralentir le système, étant donné que l'obtention des données nécessaires à la visualisation se fait sur la même base de données que celle qui est testée.
+
+
+\newpage
+\section{Répartitions des tâches}
+
+\subsection{Diagramme de Gantt}
+
+\rotatebox{270}{
+\begin{ganttchart}[
+hgrid,
+vgrid={*6{blue,dashed}, *1{red}},
+inline = true,
+x unit=4mm,
+time slot format=isodate,
+milestone inline label node/.append style={left=3mm},
+y unit chart = 0.65cm,
+bar top shift= 0.1,
+bar height = 0.8
+]{2015-02-16}{2015-04-08}
+\gantttitlecalendar{month=name, day} \\
+
+\ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-06} \\
+\ganttbar[name=a1]{A1}{2015-02-16}{2015-02-23} \\ %Création noeuds
+\ganttbar[name=a2]{A2}{2015-02-16}{2015-02-23} \\ %Implémentation et initialisations données noeuds
+\ganttbar[name=a3]{A3}{2015-02-24}{2015-02-28} \\ %Communication entre noeuds
+\ganttbar[name=a4]{A4}{2015-02-27}{2015-03-02} \\ %Gestion des replicats
+\ganttbar{AT}{2015-03-03}{2015-03-06} \\ %Tests
+
+\ganttgroup{Simulation de requêtes (B)}{2015-03-01}{2015-03-08} \\
+\ganttbar{B1}{2015-03-01}{2015-03-06} \\ %Génération jeu de requêtes
+\ganttbar{B2}{2015-03-01}{2015-03-06} \\ %Importation jeu de requêtes
+\ganttbar{BT}{2015-03-07}{2015-03-08} \\ %Tests
+
+\ganttgroup{Gestion de la popularité (C)}{2015-03-07}{2015-03-16} \\
+\ganttbar{C1}{2015-03-07}{2015-03-10} \\ %Calcul de la popularité pour un objet
+\ganttbar{C2}{2015-03-07}{2015-03-10} \\ %Implémentation de SpaceSaving
+\ganttbar{C3}{2015-03-10}{2015-03-14} \\ %Amélioration protocole Gossip
+\ganttbar{CT}{2015-03-15}{2015-03-16} \\ %Tests
+
+
+\ganttgroup{Protocoles d'affectations (D)}{2015-03-15}{2015-03-29} \\
+\ganttbar{D1}{2015-03-15}{2015-03-24} \\ %Algorithme SLVO
+\ganttbar{D2}{2015-03-15}{2015-03-24} \\ %Algorithme AvergeDegree
+\ganttbar{DT}{2015-03-25}{2015-03-29} \\ %Tests 
+
+\ganttgroup{Visualisation de données (E)}{2015-03-29}{2015-04-08} \\
+\ganttbar{E1}{2015-03-29}{2015-04-01} \\ %Prise en main tulip
+\ganttbar{E2}{2015-03-29}{2015-04-01} \\ %Enregistrement des données
+\ganttbar{E3}{2015-04-01}{2015-04-04} \\ %Affichage réseau
+\ganttbar{E4}{2015-04-04}{2015-04-06} \\ %AFfichage informations (charges)
+
+\ganttbar{T}{2015-04-06}{2015-04-07} \\
+
+\ganttmilestone{Livrable final}{2015-04-08} 
+
+\end{ganttchart}
+}
+
+
+
+\newpage
+
+\subsection{Affectation des tâches}
+
+\paragraph{}
+\begin{tabular}{| l | M{5cm} | M{3cm} | M{5.5cm} |}
+    \hline
+    Fct & Description & Développeur(s) & Commentaire \tabularnewline
+    \hline
+    A1 & Création des noeuds &  &   \tabularnewline
+    \hline
+    A2 & Données locales des noeuds &  & Initialisation et implémentation \tabularnewline
+    \hline
+    A3 & Communication des données locales entre noeuds &  &  \tabularnewline
+    \hline
+    A4 & Gestion des replicas &  &  \tabularnewline
+    \hline
+    AT & Tests groupe A &  &  Vérification, tests, mémoire \tabularnewline
+    \hline 
+    \hline
+    B1 & Générateur de requêtes &  & A détailler  \tabularnewline
+    \hline
+    B2 & Importateur de jeu de requêtes &  & A détailler  \tabularnewline
+    \hline
+    BT & Tests groupe B &  &  Vérification, tests, mémoire \tabularnewline
+    \hline
+    \hline
+    C1 & Popularité objet sur noeud &  &  \tabularnewline
+    \hline
+    C2 & Space-Saving Algorithm &  &  \tabularnewline
+    \hline
+    C3 & Popularité d'un objet dans le réseau &  &  \tabularnewline
+    \hline
+    CT & Tests groupe C &  & Vérification, tests, mémoire \tabularnewline
+    \hline
+    \hline
+    D1 & Implémentation SLVO &  &  \tabularnewline
+    \hline
+    D2 & Implémentation AverageDegree &  &  \tabularnewline
+    \hline
+    DT & Tests groupe D &  &  Avec client \tabularnewline
+    \hline
+    \hline
+    E1 & Prise en main Tulip &  &  \tabularnewline
+    \hline
+    E2 & Ecriture des données dans un fichier &  &  (+Analyseur syntaxique) \tabularnewline
+    \hline
+    E2 & Représentation réseau &  &  \tabularnewline
+    \hline
+    E3 & Représentation données &  &  \tabularnewline
+    \hline
+    \hline
+    T & Tests finaux &  &  Vérification, tests, mémoire \tabularnewline
+    \hline
+ \end{tabular}
+ 
+ \vspace{1cm}
+ 
+\paragraph{Remarque} Il s'agit d'une première version de notre GANTT. Nous n'avons pas encore défini l'affectation des tâches aux développeurs.
+
+
+\newpage
+
+\section{Livrables}
+
+\subsection{Livrables intermédiaires}
+
+\paragraph{} Un livrable intermédiaire est une ébauche de l'application. C'est à dire que seulement quelques fonctionnalités sont implémentées.
+
+\paragraph{} Il n'a pas encore été décidé de remettre un ou plusieurs livrables intermédiaires au client.
+
+\subsection{Livrable final}
+
+\paragraph{} Il devra être remis le 8 Avril 2015. Il comportera les besoins de priorité 1 et 2.
+
+\bibliography{identifications_besoins}
+
+\begin{figure}[H]
+	\centering
+		\include{distributed_database}
+	\caption{Visualisation d'une base de données distribuée sous forme de cluster possédant trois data center\label{fig:distributed_database}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\include{partitionning}
+	\caption{Exemple de partitionnement des données dans une base de données distribuée\label{fig:partitionning}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\include{multi_hash_partitionning}
+	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\include{request}
+	\caption{Cheminement d'une requête de lecture dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\include{write_request}
+	\caption{Cheminement d'une requête d'écriture dans une base de données distribuée\label{fig:write_request}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\include{token}
+	\caption{Passage d'une répresentation des données pour le client à une représentation pour la base de données\label{fig:token}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+		\include{reaffectation}
+	\caption{Fonctionnement de l'algorithme de réaffectation des requêtes de lecture SLVO\label{fig:reaffectation}}
+\end{figure}
+
+\end{document}
