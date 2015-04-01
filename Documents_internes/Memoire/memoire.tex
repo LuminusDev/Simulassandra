@@ -61,7 +61,7 @@ Ce document, mémoire final de notre Projet de Programmation, décrit l'ensemble
 
 \section{Présentation du projet}
 
-Dans le présent document, nous considérons que le lecteur possède des notions en informatique et que chaque mot est défini par son sens commun. Cependant, si un terme utilisé présentant une définition différente que celle admise par tous, nous ne manquerons pas de le préciser et de le définir.
+Dans le présent document, nous considérons que le lecteur possède des notions en informatique et que chaque mot est défini par son sens commun. Cependant, si un terme qui est utilisé présentant une définition différente que celle admise par tous, nous ne manquerons pas de le préciser et de le définir.
 
 \subsection{Utilisation d'une base de données par un client}
 
@@ -93,7 +93,7 @@ Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messag
 
 \subsection{Base de données distribuée}
 
-\paragraph{} La base de données utilisée par le client est plus précisément une base de données dites \textit{distribuée}. Le client ne voit pas de différence, lorsqu'il l'utilise, entre une base de données classique et une base de données distribuée. On dit qu'une base de données est distribuée lorsque les données qu'elle stocke sont réparties sur plusieurs machines ou emplacements physiques, appelés \textit{noeuds}. Les noeuds sont capables de communiquer entre eux afin de s'échanger des informations.
+\paragraph{} La base de données utilisée par le client est plus précisément une base de données dite \textit{distribuée}. Le client ne voit pas de différence, lorsqu'il l'utilise, entre une base de données classique et une base de données distribuée. On dit qu'une base de données est distribuée lorsque les données qu'elle stocke sont réparties sur plusieurs machines ou emplacements physiques, appelés \textit{noeuds}. Les noeuds sont capables de communiquer entre eux afin de s'échanger des informations.
 
 \paragraph{} On peut rassembler des noeuds pour former un \textit{data center}. Un rassemblement de data center correspond à un \textit{cluster} (voir la figure~\ref{fig:distributed_database}). Dans ce projet, nous nous intéressons seulement au cas où un cluster est composé d'un seul data center.
 
@@ -110,7 +110,7 @@ Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messag
 
 \paragraph{} Il est possible de réaliser des requêtes de lecture sur un objet, ce qui consiste à vouloir récupérer une donnée contenue dans un objet. Pour expliquer le cheminement d'une requête de lecture dans la base de données, nous allons prendre un exemple (voir la figure~\ref{fig:request}).
 
-\paragraph{} Un client réalise une requête de lecture R. Il envoie la requête à n'importe quel noeud du réseau. On appelle alors ce noeud le noeud \textit{coordinateur} pour cette requête. Ce noeud ne contient pas forcément l'objet de la requête, mais il va faire la liaison entre le réseau et le client.
+\paragraph{} Un client réalise une requête de lecture R. Il envoie la requête à n'importe quel noeud du réseau. On appelle alors ce noeud : le noeud \textit{coordinateur} pour cette requête. Ce noeud ne contient pas forcément l'objet de la requête, mais il va faire la liaison entre le réseau et le client.
 
 \paragraph{} Le noeud coordinateur va avoir cette requête dans une file d'attente dédiée aux requêtes des clients. Il les traite les unes à la suite des autres. Lorsque le noeud commence à traiter cette requête, il va d'abord identifier les noeuds responsables de l'objet de la requête. Cela inclut le noeud possédant l'objet \textit{original} (dont le token est géré par ce noeud) ainsi que les noeuds possédant un réplica. Cette étape exige une connaissance complète du réseau sur chaque noeud et une connaissance de la stratégie de réplication mise en place.
 
@@ -128,7 +128,7 @@ Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messag
 
 \paragraph{} Dès que les noeuds sont identifiés, le noeud coordinateur leur envoie un message à tous pour traiter la requête d'écriture (les flèches rouges sur le schéma entre le noeud coordinateur et les autres noeuds). Ce message est mis dans la file d'attente des requêtes d'écriture de ces noeuds.
 
-\paragraph{} Tous les noeuds recevant le message vont alors stocker les données envoyées par la requête. Le noeud coordinateur peut demander un certain nombre de message de retour pour s'assurer que les requêtes d'écritures se sont bien déroulées. Dans l'exemple, le noeud coordinateur demande \textbf{1} retour. L'un des messages envoyés aux noeuds demandera donc un message de retour pour confirmer que l'écriture s'est bien passée (la flèche verte entre les noeuds sur le schéma). Dès que le noeud coordinateur reçoit le message, il indique au client que sa requête s'est terminée et bien passée.
+\paragraph{} Tous les noeuds recevant le message vont alors stocker les données envoyées par la requête. Le noeud coordinateur peut demander un certain nombre de messages de retour pour s'assurer que les requêtes d'écritures se sont bien déroulées. Dans l'exemple, le noeud coordinateur demande \textbf{1} retour. L'un des messages envoyés aux noeuds contiendra donc une demande d'un message de retour pour confirmer que l'écriture s'est bien passée (la flèche verte entre les noeuds sur le schéma). Dès que le noeud coordinateur reçoit le message, il indique au client que sa requête s'est terminée et bien passée.
 
 \subsection{Stockage des données}
 
@@ -156,8 +156,24 @@ Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messag
 
 \begin{itemize}
     \item La première consiste à ce que chaque noeud possède un vecteur de la taille du nombre d'objets dont il a la gestion. A chaque nouvelle requête, la case de l'objet est incrémentée. Au début de chaque période $T$, les noeuds envoient la popularité aux autres noeuds et décident du nombre de copies à faire.
-    \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}.
+    \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}. On choisit un vecteur de la taille du nombre de noeuds du réseau qui contient des structures de la forme \textit{( identifiant de l'objet ; nombre de requête )}. Soit $n$ le nombre de noeuds dans le reseau, l'algorithme permet de connaitre les $n$ objets les plus populaires. \newline
+          \newline
+          Soit une requête sur un objet $o$.\newline
+          Si $o$ est présent dans le vecteur, on augmente son nombre de requêtes de 1. \newline
+          Si $o$ n'est pas présent dans le vecteur et qu'il reste de la place (la taille du vecteur est inférieure à $n$), on l'ajoute au vecteur avec un nombre de requête de 1. \newline
+          Si $o$ n'est pas présent et que le vecteur est plein, on cherche l'endroit qui contient l'objet le moins populaire du vecteur et on le remplace par $o$. Cependant, on garde la popularité de l'ancien objet et on l'incrèmente de 1. \newline
+          Il est possible de consulter le pseudo code sur la figure~\ref{fig:codeSpaceSaving}
 \end{itemize}
+
+\paragraph{}Soient les paramètres suivants : \newline
+            $r$ = Nombre de requêtes total effectuées durant l'intervalle de temps $T$; \newline
+            $n$ = Nombre de noeuds dans le réseau; \newline
+            $p$ = Popularité d'un objet; \newline
+            $k$ = Nombre de copies de l'objet.
+
+\paragraph{} On augmente le nombre de copies d'un objet quand la formule suivante est respectée :  $ 2 \times \frac{r}{n} \geq \frac{p}{k} $
+
+\paragraph{} On diminue le nombre de copies d'un objet quand la formule suivante est respectée : $ \frac{r}{2n} \leq \frac{p}{k} $
 
 \subsection{Gestion des copies d'un objet}
 
@@ -172,9 +188,12 @@ On lui associe souvent d'autres propriétés pour équilibrer la répartition de
 
 \paragraph{} Placer les copies sur le même noeud revient à n'avoir théoriquement l'équivalent d'aucune copie puisque la charge reste sur le même noeud. Il existe plusieurs stratégies de placement de copies des données et nous n'en développerons que deux ici. La première permet de comprendre les mécanismes de base d'une stratégie de placement. La seconde décrit celle que nous allons développer.
 
-\paragraph{} La plus simple stratégie consiste à prendre les noeuds qui gèrent les intervalles suivants. La base de données se base sur des intervalles d'entiers. Si notre donnée est placée sur le noeud gérant les tokens [1, 25], pour placer les 3 prochaines copies, on choisira les noeuds [26, 50], [51, 75] et [76, 0] de la figure~\ref{fig:partitionning}.
+\paragraph{} On le rappelle, chaque noeud possède la gestion d'un intervalle de \textit{tokens}. La base de données se base sur des intervalles d'entiers. Si on organise ces noeuds selon l'ordre croissant des intervalles, on obtient un cercle. \newline
+La plus simple stratégie consiste à prendre les noeuds qui suivent sur ce cercle. Prenons comme exemple la figure~\ref{fig:replication}. Nous souhaitons stocker une donnée. La fonction de hachage de la clé primaire de notre donnée retourne 123. La donnée originale est donc placée sur le noeud 2. \newline
+De plus, notre stratégie va créer des réplicas qu'elle disposera sur les noeuds suivants. Ici, on a décidé que 3 réplicas suffisaient, les copies sont donc placées sur les noeuds 3, 4 et 5.
 
-\paragraph{} La seconde consiste à utiliser les fonctions de hachage. En effet, dans la stratégie précédente, une seule fonction de hachage était définie pour placer la donnée et les réplicas était ensuite déterminée à partir de sa position. Ici, nous avons $n$ fonctions de hachage, toutes numérotées de $0$ à $n-1$. La fonction de hachage numéro 0 sert à placer la donnée. La fonction numéro 1 sert à placer le premier réplica et ainsi de suite...
+\paragraph{} La seconde consiste à utiliser les fonctions de hachage. En effet, dans la stratégie précédente, une seule fonction de hachage était définie pour placer la donnée et la position des réplicas était ensuite déterminée à partir de l'emplacement de la première. \newline
+Supposons qu'on a au maximum $n$ fois la donnée présente dans le réseau (c'est à dire $n$ = nombre de copies d'une donnée + 1 pour le placement initial). Nous avons besoin de $n$ fonctions de hachage, toutes numérotées de $0$ à $n-1$. La fonction de hachage numéro 0 sert à placer la donnée. La fonction numéro 1 sert à placer le premier réplica, la fonction numéro 2 sert à placer le second réplica et ainsi de suite...
 
 \subsection{Visualisation des statistiques de fonctionnement de la base de données distribuée}
 
@@ -208,8 +227,6 @@ Présentations par d'autres auteurs sur le projet :
 \end{itemize}
 
 \paragraph{Algorithmes d'équilibrage de charges}
-
-
 
 \begin{itemize}
 \item L'article \cite{BalancedAlloc99} met en exergue des algorithmes d'équilibrage, sources d'inspiration pour les clients dans l'élaboration de leurs algorithmes.
@@ -423,6 +440,7 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
         \besoin{Stocker la popularité du message dans le vecteur du noeud traitant le message}{1}
         \besoin{Vérifier avoir reçu tous les messages concernant les objets dont le noeud a la gestion}{1}
         \besoin{Décider de créer ou non de nouveau réplicas}{1}
+        \besoin{Décider de supprimer ou non des réplicas}{1}
         \besoin{Réinitialiser le vecteur après la création des nouveaux objets les plus populaires}{1}
 \end{besoins}
 
@@ -431,12 +449,12 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
 \begin{besoins}
-        \besoin{Créer une nouvelle stratégie de réplication}{2}
-        \besoin{Permettre la définition par l'utilisateur de fonctions de hachage et leur ordre d'utilisation}{2}
-        \besoin{Stocker chaque fonction de hachage et son ordre}{2}
-        \besoin{Définir un ordre dans les réplicas}{2}
-        \besoin{Utiliser la première fonction de hachage pour placer le premier réplica}{2} la seconde pour le second, et ainsi de suite...
-        \besoin{Retrouver les réplicas en fonction des fonctions de hachage}{2}
+        \besoin{Créer une nouvelle stratégie de réplication}{1}
+        \besoin{Permettre la définition par l'utilisateur de fonctions de hachage et leur ordre d'utilisation}{1}
+        \besoin{Stocker chaque fonction de hachage et son ordre}{1}
+        \besoin{Définir un ordre dans les réplicas}{1}
+        \besoin{Utiliser la première fonction de hachage pour placer le premier réplica}{1} la seconde pour le second, et ainsi de suite...
+        \besoin{Retrouver les réplicas en fonction des fonctions de hachage}{1}
 \end{besoins}
 
 \subsection{Application cliente}
@@ -723,6 +741,18 @@ bar height = 0.8
 	\centering
 		\include{reaffectation}
 	\caption{Fonctionnement de l'algorithme de réaffectation des requêtes de lecture SLVO\label{fig:reaffectation}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+        \includegraphics[width=12cm]{code_spaceSaving.jpg}
+    \caption{Pseudo-code de l'algorithme SpaceSaving (Source : voir \cite{SpaceSaving2}) \label{fig:codeSpaceSaving}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+        \includegraphics[width=12cm]{replication.png}
+    \caption{Répartition des copies sur les noeuds dans une base de données distribuée \label{fig:replication}}
 \end{figure}
 
 \end{document}
