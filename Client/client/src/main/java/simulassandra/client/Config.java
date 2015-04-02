@@ -1,9 +1,16 @@
 package simulassandra.client;
 
+/**
+ * 
+ * @author Guillaume Marques <guillaume.marques33@gmail.com>
+ *
+ */
 public class Config {
 	
 	public static final Integer TIMEOUT = 10000; //To know if a host is unreachable
-	
+	public static final Integer NB_TENTATIVES = 3;
+	public static final String LOG_DIRECTORY = "/tmp";
+	public static final String LOG_NAME = "logsimu";
 	
 	/**
 	 *  Config for available command
@@ -23,6 +30,7 @@ public class Config {
 	public static final int ACT_QUIT = 6;
 	public static final int ACT_SHOW_KEYSPACE = 7;
 	public static final int ACT_LIST_TABLE = 8;
+	public static final int ACT_CREATE_DATA_FILE = 9;
 
 	
 	public static final String CMD_HELP = "help";
@@ -33,15 +41,17 @@ public class Config {
 	public static final String CMD_SHOW_KEYSPACE = "showksdata";
 	public static final String CMD_LIST_TABLE = "lstable";
 	public static final String CMD_SHOW_TABLE = "showtabledata";
+	public static final String CMD_CREATE_DATA_FILE = "createdatafile";
 	
 	public static final Integer NARGS_HELP = 0;
 	public static final Integer NARGS_IMPORT = 1;
 	public static final Integer NARGS_SWITCH_KEYSPACE = 1;
-	public static final Integer NARGS_QUERIESFACTORY = 1;
+	public static final Integer NARGS_QUERIESFACTORY = 4;
 	public static final Integer NARGS_QUIT = 0;
 	public static final Integer NARGS_SHOW_KEYSPACE = 0;
 	public static final Integer NARGS_LIST_TABLE = 0;
 	public static final Integer NARGS_SHOW_TABLE = 1;
+	public static final Integer NARGS_CREATE_DATA_FILE = 4;
 	
 	
 	public static final Integer[] ARGS = {	0, 
@@ -52,7 +62,8 @@ public class Config {
 											Config.NARGS_QUERIESFACTORY,
 											Config.NARGS_QUIT,
 											Config.NARGS_SHOW_KEYSPACE,
-											Config.NARGS_LIST_TABLE};
+											Config.NARGS_LIST_TABLE,
+											Config.NARGS_CREATE_DATA_FILE};
 		
 }
 
