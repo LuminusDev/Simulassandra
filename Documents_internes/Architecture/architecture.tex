@@ -92,7 +92,15 @@ Nous allons nous intéresser dans notre projet à la classe \class{ColumnFamily}
 
 \subsection{Requête de lecture}
 
-\paragraph{}Les requêtes de lecture suivent un chemin comme décrit dans la figure~\ref{fig:read_request}, avec deux possibilités au niveau de la classe \class{AbstractReadExecutor} pour gérer le traitement de la requête. On récupère tous les noeuds qui possèdent une copie de l'objet que l'on cherche. Si le noeud actuel possède une copie, alors on ne passe par le système de messagerie et on demande directement au stage de lecture de réaliser une tâche (un Runnable qui s'appelle \class{LoadReadRunnable}, une classe statique interne du \class{StorageProxy}. Sinon, on envoie une requête de lecture aux autres noeuds responsables d'une copie de l'objet requêté.
+\paragraph{}Les requêtes de lecture suivent un chemin comme décrit dans la figure~\ref{fig:read_diagram}, avec deux possibilités au niveau de la classe \class{AbstractReadExecutor} pour gérer le traitement de la requête. On récupère tous les noeuds qui possèdent une copie de l'objet que l'on cherche. Si le noeud actuel possède une copie, alors on ne passe par le système de messagerie et on demande directement au stage de lecture de réaliser une tâche (un Runnable qui s'appelle \class{LoadReadRunnable}, une classe statique interne du \class{StorageProxy}. Sinon, on envoie une requête de lecture aux autres noeuds responsables d'une copie de l'objet requêté.
+
+\paragraph{}Le diagramme de séquence est simplifié afin de ne me montrer que ce qui nous intéresse. Ce qui est important à retenir est que la requête suit un trajet différent suivant si elle doit être traitée en interne ou externe (un autre noeud). De plus, la récupération des données est asynchrone. Le \class{StorageProxy} attend les réponses avec la méthode \texttt{get} de \class{AbstractreadExecutor}. Il n'attend pas toutes les réponses, mais seulement un certain nombre dépendant du niveau de consistance, paramétrable.
+
+\subsection{Réplication des données}
+
+\paragraph{}Le système de réplication dans Cassandra (voir figure~\ref{fig:replication_diagram}), permettant de savoir quels sont les noeuds responsables du stockage des copies d'un objet, est un mécanisme simple. Il autorise à ajouter soi-même des stratégies de réplication facilement, seulement en créant une nouvelle classe (possible grâce à la réflexion) héritant de \class{AbstractReplicationStrategy}. Il existe déjà des stratégies implémentées dans Cassandra, comme \class{SimpleStrategy} qui positionne les copies sur les noeuds suivant le noeud original, ou alors \class{NetworkTopologyStrategy} qui utilise les informations sur la topologie du réseau (data center, rack) pour placer les copies.
+
+\paragraph{}Afin d'obtenir une nouvelle stratégie de réplication correspondant aux besoins du projet, il suffit ainsi d'ajouter une nouvelle classe \class{MultiHashStrategy}, et de passer son nom en paramètre lors de la création d'un keyspace. La classe doit implémenter la fonction abstraite \texttt{calculateNaturalEndpoints}.
 
 \subsection{Statistiques}
 
@@ -256,20 +264,14 @@ Puis, \path{Graphite} affiche ces informations sous forme de graphes (courbes, h
 
 \begin{figure}[p]
 	\centering
+		\includegraphics[width=15cm]{schemas/read_request.png}
+	\caption{Exemple simplifié d'une requête de lecture au niveau des stages, avec l'ajout d'un stage "READ\_REMOVE" \label{fig:read_request}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
 		\includegraphics[width=15cm]{schemas/stages_diagram.png}
 	\caption{Diagramme de classe simplifié de l'architecture SEDA dans Cassandra \label{fig:stages_diagram}}
-\end{figure}
-
-\begin{figure}[p]
-	\centering
-		\includegraphics[width=15cm]{schemas/read_diagram.png}
-	\caption{Diagramme de séquence simplifié d'une requête de lecture dans Cassandra \label{fig:read_diagram}}
-\end{figure}
-
-\begin{figure}[p]
-	\centering
-		\include{schemas/read_request}
-	\caption{Exemple simplifié d'une requête de lecture au niveau des stages, avec l'ajout d'un stage "QUEUE\_MANAGER" \label{fig:read_request}}
 \end{figure}
 
 \begin{figure}[p]
@@ -282,6 +284,18 @@ Puis, \path{Graphite} affiche ces informations sous forme de graphes (courbes, h
 	\centering
 		\include{schemas/keyspace}
 	\caption{Modèle de données de Cassandra \label{fig:keyspace}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{schemas/read_diagram.png}
+	\caption{Diagramme de séquence simplifié d'une requête de lecture dans Cassandra \label{fig:read_diagram}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{schemas/replication_diagram.png}
+	\caption{Diagramme de classes simplifié des stratégies de réplication dans Cassandra \label{fig:replication_diagram}}
 \end{figure}
 
 \end{document}
