@@ -1,5 +1,10 @@
 package simulassandra.client;
 
+/**
+ * 
+ * @author Guillaume Marques <guillaume.marques33@gmail.com>
+ *
+ */
 public class Config {
 	
 	public static final Integer TIMEOUT = 10000; //To know if a host is unreachable
@@ -41,7 +46,7 @@ public class Config {
 	public static final Integer NARGS_HELP = 0;
 	public static final Integer NARGS_IMPORT = 1;
 	public static final Integer NARGS_SWITCH_KEYSPACE = 1;
-	public static final Integer NARGS_QUERIESFACTORY = 1;
+	public static final Integer NARGS_QUERIESFACTORY = 4;
 	public static final Integer NARGS_QUIT = 0;
 	public static final Integer NARGS_SHOW_KEYSPACE = 0;
 	public static final Integer NARGS_LIST_TABLE = 0;

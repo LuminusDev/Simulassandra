@@ -7,6 +7,10 @@ import java.util.Random;
 
 import simulassandra.client.app.KeySpace;
 
+/**
+ * Exemple de générateur de données
+ * @author Guillaume Marques <guillaume.marques33@gmail.com>
+ */
 public class SimpleDataGenerator extends DataGenerator {
 	
 	private final Integer ecart = 500;
@@ -42,8 +46,6 @@ public class SimpleDataGenerator extends DataGenerator {
 	private Long get_nb_rows(Integer ecart){
 		Random r = new Random();
         Float epsilon = (float) ((r.nextInt(ecart) - ecart/2)/100);
-        return (long) Math.round(epsilon); 
+        return (long) this.get_average_nb_rows() +  Math.round(epsilon); 
 	}
-	
-	
 }

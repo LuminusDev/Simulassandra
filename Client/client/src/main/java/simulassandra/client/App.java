@@ -19,9 +19,6 @@ public class App
 {
 	private static ClientApp clientApp;
 	
-	/**
-	 * Main
-	 */
     public static void main(String[] args)
     {
     	Interactor.welcome();
