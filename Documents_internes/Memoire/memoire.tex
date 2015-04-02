@@ -728,13 +728,72 @@ Les besoins fonctionnels sont répartis selon les 3 gros thèmes suivant :
 
 TODO : Insérer l'architecture
 
-\section{Travail réalisé}
 
-TODO : Décrire ce qu'on a fait et pourquoi :)
 
-\section{Travail non réalisé}
+\section{Réalisation du projet}
 
-TODO : Décrire ce qui n'est pas fait, comment on l'aurait fait.
+
+
+\subsection{Modification de Cassandra}
+
+\subsubsection{Affectation des requêtes de lecture}
+
+\subsubsection*{Solution implémentée}
+
+\paragraph{}Reprise du diagramme de l'architecture avec les méthodes et attributs ajoutés (en couleur). Explication de AbstractReadExecutor qui envoie à tout le monde. Consistance de 1 pour s'arrêter au premier résultat. Identification d'une requête (timestamp, key, keyspace, columnFamily).
+Message de suppression (stage READ\_REMOVE, verb READ\_REMOVE, override equals, tasks removable).
+
+\subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}File d'attente de Runnable : grosse complication pour la suppression. Environnement multi threadé : faire attention à la concurrence. Gérer local et distant.
+
+\subsubsection*{Travail restant à réaliser}
+
+\paragraph{}Amélioration de la suppression pour un code plus clair.
+
+\subsubsection{Réaffectation des requêtes de lecture}
+
+\subsubsection*{Solution implémentée}
+
+\paragraph{}Charge des files d'attente des requêtes de lecture (avec gestion de la décrémentation lorsqu'une requête est traitée) grâce à un compteur. Communication de la charge à tous les autres noeuds du réseau (Gossiper, ApplicationState, LoadReadBroadcaster, versionedValue).
+
+\subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}Mélange dans les requêtes de lecture (slice, précis...) peut fausser peut être. Manque de temps.
+
+\subsubsection*{Travail restant à réaliser}
+
+\paragraph{}Exécuter le protocole de réaffectation (lorsqu'on traite une requête de lecture et lorsqu'on traite une requête de suppression). Parcours de la file d'attente pour envoyer les messages de suppression. Indiquer aux messages assignés de ne pas envoyer de message de suppression (empecher à une requête d'envoyer à nouveau une requête de suppression alors que l'on en a déjà envoyé une plus tôt avec le protocole). Configuration du choix du protocole de la même façon que pour la réplication (réflexion).
+
+\subsubsection{Réplication des objets}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+\subsubsection{Popularité des objets}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+
+
+\subsection{Création d'une application cliente}
+
+\subsubsection{Gestion de Cassandra}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+\subsubsection{Gestion des requêtes}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+\subsection{Création d'une application de visualisation de données}
 
 \section{Tests et résultats}
 
