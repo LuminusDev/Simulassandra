@@ -801,7 +801,30 @@ TODO : Mettre les tests et les expliquer
 
 \section{Bonus - Un simulateur}
 
-TODO : Parler en quelques lignes du simulateur
+\subsection{introduction}
+
+\paragraph{}Derrière ce nom peu évocateur, se cache un prototype d'une base de données distribuée. Il porte le nom de simulateur car, bien évidemment, durant le temps imparti, nous n'aurions pas pu coder une base de données distribuée complète avec l'ensemble des mécanismes de traitements des données. Nous avons repris les fonctions les plus essentielles :
+
+\begin{itemize}
+    \item Le stockage des données de manière distribuée selon différentes stratégies.
+    \item Le concept de distribution : Les données sont réparties et traitées par différents noeuds.
+    \item La possibilité de faire des requêtes qui ont un coût de traitement.
+    \item Les requêtes sont stockées sous forme de files. Il suffit de prendre la tête pour pouvoir la traiter.
+    \item Un système de communication intra-noeuds.
+\end{itemize}
+
+\paragraph{}Le simulateur a pour objectif d'afficher des résultats et d'affiner la première approche des fonctions à implémenter (en particulier pour la popularité, fonction complexe à créer dans Cassandra du fait de sa distributivité).
+
+\subsection{Etat des lieux}
+
+\paragraph{}Le logiciel est capable de créer des grappes de \textit{noeuds} (nommées \textit{clusters}). Il est capable de créer des \textit{requêtes}. Chaque noeud est capable de traiter des requêtes qui sont dans sa \textit{file d'exécution}. Il est possible de changer de \textit{stratégie de réplication et de positionnement} des données. Actuellement, deux stratégies ont été implémentées :
+
+\begin{itemize}
+    \item On hash l'identifiant de la donnée, on obtient un noeud et on prend les 3 suivants.
+    \item Même que précédemment avec augmentation en fonction de la popularité. Les 2 objets les plus populaires sont augmentés.
+\end{itemize}
+
+\paragraph{}Le schéma permet de mieux comprendre son fonctionnement.
 
 \section{Conclusion et Remerciements}
 
