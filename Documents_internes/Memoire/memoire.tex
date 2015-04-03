@@ -30,6 +30,8 @@
 	\item #1 \priority{#2} #3
 }
 
+\newcommand{\shellcmd}[1]{\\\indent\indent\texttt{\footnotesize\# #1}\\}
+
 \title{
  \begin{minipage}\linewidth
         \centering
@@ -38,8 +40,7 @@
         \large Memoire final
     \end{minipage}
  }
- 
-\bibliographystyle{alpha}
+
 \author{Kevin Barreau \and Guillaume Marques \and Corentin Salingue}
 
 \begin{document}
@@ -692,9 +693,9 @@ bar height = 0.8
 
 \subsubsection{Flowdock}
 
-\paragraph{}Flowdock est un outil de travail d'équipe. Il permet un dialogue entre les membres grâce au Chat intégré, un partage facile de fichiers et il affiche les dernières modifications réalisées sur des outils annexes (comme les derniers commits sur Git ou les derniers post-it de Trello). Il est également disponible sur mobile avec une application dédiée.
+\paragraph{}Flowdock est un outil de travail d'équipe. Il permet un dialogue entre les membres grâce au Chat intégré, un partage facile de fichiers et il affiche les dernières modifications réalisées sur des outils annexes (comme les derniers commits sur le dépôt GitHub ou les derniers post-it de Trello). Il est également disponible sur mobile avec une application dédiée.
 
-\paragraph{}Bien pratique, Flowdock a permi de concentrer en un unique endroit les avancées du projet et permet un énorme gain de temps, sur la recherche et la gestion des informations.
+\paragraph{}Bien pratique, Flowdock a permis de concentrer en un unique endroit les avancées du projet et permet un énorme gain de temps, sur la recherche et la gestion des informations.
 
 \subsubsection{Trello}
 
@@ -704,21 +705,7 @@ bar height = 0.8
 
 \subsubsection{Git - Svn}
 
-\paragraph{}Git et Svn sont deux gestionnaires de version largement connus. Nous avons utilisé Git pour sa facilité de mise en oeuvre (avec GitHub) et sa possibilité de travailler en local.Les liens ont été faits à chaque fois entre le dépôt Git et Svn (à chaque rendez avec le chargé de TD par exemple).
-
-\subsubsection{Class Visualizer}
-
-\paragraph{}Un outil de création automatisée de diagramme UML à partir du code JAVA. Dans l'ensemble, l'outil ne nous a pas trop été utile à cause de la structure particulière de Cassandra.
-
-\subsection{Rendez-vous avec le client et le chargé de TD}
-
-\subsubsection{Client}
-
-\paragraph{}Le projet s'inscrit dans un but de validation d'un résultat de recherche. Aussi, dans l'aspect de bien comprendre l'étendu de notre projet de programmation, une réunion avec le client a été définie chaque semaine qui permettait d'obtenir des précisions sur les modifications à apporter.
-
-\subsubsection{Chargé de TD}
-
-\paragraph{}Les réunions avec le chargé de TD ont été effectuées selon le planning établi par M. Narbel.
+\paragraph{}Git et Svn sont deux gestionnaires de version largement connus. Nous avons utilisé Git pour sa facilité de mise en oeuvre (avec GitHub) et sa possibilité de travailler en local. Les liens ont été faits à chaque fois entre le dépôt Git et Svn (à chaque rendez avec le chargé de TD par exemple).
 
 \newpage
 
@@ -732,9 +719,37 @@ TODO : Insérer l'architecture
 
 \section{Réalisation du projet}
 
-
-
 \subsection{Modification de Cassandra}
+
+
+\subsubsection{Outils utilisés}
+
+\subsubsection*{CCM}
+
+\paragraph{}CCM (Cassandra Cluster Management) est un script/bibliothèque écrit en Python permettant de gérer facilement un cluster de Cassandra sur une machine locale. Il a été développé par Sylvain Lebresne, développeur chez Datastax (entreprise spécialisée dans Cassandra), et est dynamique dans son évolution avec des mises à jour constantes depuis plusieurs années. C'est pourquoi nous avons choisi cet outil pour nous aider dans notre développement.
+
+\paragraph{}Il faut savoir que chaque instance de Cassandra correspond à un noeud, et qu'une instance est faite pour fonctionner sur chaque machine du réseau (un noeud équivaut à une machine). Mais en phase de développement et de tests, on souhaite pouvoir lancer un cluster entier sur une seule machine, ce qui n'est pas aisé à faire. C'est ici que CCM intervient en automatisant la création/gestion/suppression d'un cluster Cassandra en local.
+
+\paragraph{}Son installation est peu triviale et son utilisation n'est pas dénuée de bugs, mais dans l'ensemble, CCM nous a apporté un gain de temps très important dans la réalisation de ce projet.
+
+\paragraph{}Ainsi, la création, le lancement et la destruction d'un cluster se déroule de la manière suivante. Tout d'abord, on crée un cluster à partir des fichiers sources de Cassandra.
+\shellcmd{py ccm create nom\_cluster --install-dir=<chemin\_de\_cassandra>}
+
+Ensuite, on ajoute des noeuds à ce cluster. Ici on décide d'en créer 3. C'est à ce moment que toute la configuration de noeuds se fait de manière automatique, une étape longue et critique lorsqu'elle est réalisée à la main.
+\shellcmd{py ccm populate -n 3}
+
+On peut alors lancer le cluster, qui va se charger des créer les instances de Cassandra pour chaque noeud du réseau.
+\shellcmd{py ccm start}
+
+Lorsqu'on a fini de réaliser nos tests, on peut ensuite arrêter les instances de Cassandra tournant en fond de tâche.
+\shellcmd{py ccm stop}
+
+Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire la commande de lancement sans repasser par les étapes précédentes. Le cluster ainsi que les données qu'il possède ne sont pas supprimé. Mais si on veut le faire, alors il suffit d'une commande.
+\shellcmd{py ccm remove}
+
+\subsubsection*{Class Visualizer}
+
+\paragraph{}Class Visualizer est un outil de visualisation de code Java sous la forme d'un diagramme de classes UML. Il est très utile pour comprendre les relations entre les classes dans un projet. Cependant, la structure particulière de Cassandra (nombreux singletons statiques) ne permet pas d'utiliser toute la puissance de cet outil car il n'arrive pas à retrouver les liens de dépendances entre les classes. Nous nous sommes donc peu servi de cet outil.
 
 \subsubsection{Affectation des requêtes de lecture}
 
@@ -830,7 +845,7 @@ TODO : Mettre les tests et les expliquer
 
 TODO : C'est la fin.
 
-\bibliography{identifications_besoins}
+\bibliography{memoire}
 
 \begin{figure}[H]
 	\centering
