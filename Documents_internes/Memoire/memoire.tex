@@ -832,6 +832,9 @@ TODO : Mettre les tests et les expliquer
 
 \subsection{Etat des lieux}
 
+\paragraph{} Le simulateur est écrit en C. Il fait environs 1300 lignes de code (commentaires Doxygen compris) pour 19 fichiers. La compilation du logiciel s'effectue dans \textit{src} en tapant la commande  : \shellcmd{make}
+La compilation de la documentation Doxygen s'effectue dans \textit{data} et en tapant la commande : \shellcmd{make}.
+
 \paragraph{}Le logiciel est capable de créer des grappes de \textit{noeuds} (nommées \textit{clusters}). Il est capable de créer des \textit{requêtes}. Chaque noeud est capable de traiter des requêtes qui sont dans sa \textit{file d'exécution}. Il est possible de changer de \textit{stratégie de réplication et de positionnement} des données. Actuellement, deux stratégies ont été implémentées :
 
 \begin{itemize}
@@ -839,7 +842,28 @@ TODO : Mettre les tests et les expliquer
     \item Même que précédemment avec augmentation en fonction de la popularité. Les 2 objets les plus populaires sont augmentés.
 \end{itemize}
 
-\paragraph{}Le schéma permet de mieux comprendre son fonctionnement.
+\paragraph{}Le schéma de la figure~\ref{fig:archisimulateur} permet de mieux comprendre son fonctionnement. Nous allons le détailler. \newline
+Tout d'abord, nous créons des données. Ensuite, nous créons des requêtes sur des données. On demande ensuite au Cluster de transmettre ces requêtes au noeud souhaité. Quand le noeud aura du temps, il traitera la requête. Si celle-ci est sur une donnée dont il a la gestion, il la traitera. Sinon, il demandera à la stratégie de lui fournir les noeuds responsables, et il transmettra.
+
+\subsection{Inconvénients de cette approche}
+
+\paragraph{}Premièrement, l'architecture telle qu'elle est pensée n'est pas distribuée : elle est centralisée. En effet, l'objet cluster, est un élément central du réseau. Mais dans une première approche, cela suffisait.
+
+\paragraph{}Les noeuds sont synchrones. En effet, cette partie est omise dans la description précédente. Afin de pouvoir "simuler" totalement tous les paramètres, le cluster dispose d'une horloge appelée \textit{pas\_de\_calcul} qui consiste à donner du crédit temps à intervalle régulier aux noeuds. Les effets sont donc différents sur une base de données totalement distribuée et non synchrone que sur notre simulateur.
+
+\subsection{Améliorations possibles}
+
+\paragraph{}Pour obtenir un bon simulateur, il faudrait commencer par corriger les problèmes ci-dessus. Pour enlever le problème de centralisation, les noeuds devraient connaître une partie de leurs voisins, qu'il faudrait réactualiser de temps en temps. La stratégie de réplication devrait être répliquée sur tous les noeuds. Pour corriger le problème de synchronisation, et devenir asynchrone, on pourrait jouer avec un thread / noeud. Le départ serait donné par un mutex et la fin par un signal par exemple. Cependant, on perd la possiblité d'exécuter pas à pas le calcul.
+
+\paragraph{}D'autres fonctionnalités et besoins pourraient ou devraient être implémentés : 
+
+\begin{itemize}
+    \item Possibilité de générer des requêtes sur des données aléatoires (relativement facile, créer un générateur à objets requête...)
+    \item Placer les requêtes sur les noeuds de façon aléatoire (facile aussi, choisir aléatoirement les noeuds sur lequels seront poussées les requêtes dans le générateur)
+    \item Travailler sur les besoins concernant les requêtes. (modification du traitement au niveau d'un noeud, moins trivial...)
+\end{itemize}
+
+\paragraph{}
 
 \section{Conclusion et Remerciements}
 
@@ -899,6 +923,12 @@ TODO : C'est la fin.
 	\centering
         \includegraphics[width=12cm]{replication.png}
     \caption{Répartition des copies sur les noeuds dans une base de données distribuée \label{fig:replication}}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+        \includegraphics[width=12cm]{archiSimulateur.png}
+    \caption{Architecture des objets du simulateur \label{fig:archisimulateur}}
 \end{figure}
 
 \end{document}
