@@ -571,9 +571,11 @@ Un délai plus faible risquerait de ralentir le système, étant donné que l'ob
 
 
 \newpage
-\section{Répartitions des tâches}
+\section{Gestion de projet}
 
-\subsection{Diagramme de Gantt}
+\subsection{Répartition des tâches}
+
+\subsubsection{Diagramme de Gantt}
 
 \rotatebox{270}{
 \begin{ganttchart}[
@@ -630,7 +632,7 @@ bar height = 0.8
 
 \newpage
 
-\subsection{Affectation des tâches}
+\subsubsection{Affectation des tâches}
 
 \paragraph{}
 \begin{tabular}{| l | M{5cm} | M{3cm} | M{5.5cm} |}
@@ -682,10 +684,41 @@ bar height = 0.8
     \hline
     T & Tests finaux &  &  Vérification, tests, mémoire \tabularnewline
     \hline
- \end{tabular}
+\end{tabular}
  
- \vspace{1cm}
+\vspace{1cm}
  
+\subsection{Outils utilisés}
+
+\subsubsection{Flowdock}
+
+\paragraph{}Flowdock est un outil de travail d'équipe. Il permet un dialogue entre les membres grâce au Chat intégré, un partage facile de fichiers et il affiche les dernières modifications réalisées sur des outils annexes (comme les derniers commits sur Git ou les derniers post-it de Trello). Il est également disponible sur mobile avec une application dédiée.
+
+\paragraph{}Bien pratique, Flowdock a permi de concentrer en un unique endroit les avancées du projet et permet un énorme gain de temps, sur la recherche et la gestion des informations.
+
+\subsubsection{Trello}
+
+\paragraph{}Trello est une sorte de grand mur à post-it. L'organisation des tâches, des rendez-vous, le partage des documents, tout est facilité. Classés en différentes catégories, les fiches de Trello permettent en un clin d'oeil de voir le travail effectué, en cours ou restant à faire. Il possède une gestion de label qui permet de chercher rapidement ce que l'on souhaite.
+
+\paragraph{}Nous avons utilisé Trello pour la répartition du travail et le découpage des tâches. Disponible également sur mobile, nous avons délégué à la plateforme la gestion des plannings du projet.
+
+\subsubsection{Git - Svn}
+
+\paragraph{}Git et Svn sont deux gestionnaires de version largement connus. Nous avons utilisé Git pour sa facilité de mise en oeuvre (avec GitHub) et sa possibilité de travailler en local.Les liens ont été faits à chaque fois entre le dépôt Git et Svn (à chaque rendez avec le chargé de TD par exemple).
+
+\subsubsection{Class Visualizer}
+
+\paragraph{}Un outil de création automatisée de diagramme UML à partir du code JAVA. Dans l'ensemble, l'outil ne nous a pas trop été utile à cause de la structure particulière de Cassandra.
+
+\subsection{Rendez-vous avec le client et le chargé de TD}
+
+\subsubsection{Client}
+
+\paragraph{}Le projet s'inscrit dans un but de validation d'un résultat de recherche. Aussi, dans l'aspect de bien comprendre l'étendu de notre projet de programmation, une réunion avec le client a été définie chaque semaine qui permettait d'obtenir des précisions sur les modifications à apporter.
+
+\subsubsection{Chargé de TD}
+
+\paragraph{}Les réunions avec le chargé de TD ont été effectuées selon le planning établi par M. Narbel.
 
 \newpage
 
@@ -695,13 +728,72 @@ Les besoins fonctionnels sont répartis selon les 3 gros thèmes suivant :
 
 TODO : Insérer l'architecture
 
-\section{Travail réalisé}
 
-TODO : Décrire ce qu'on a fait et pourquoi :)
 
-\section{Travail non réalisé}
+\section{Réalisation du projet}
 
-TODO : Décrire ce qui n'est pas fait, comment on l'aurait fait.
+
+
+\subsection{Modification de Cassandra}
+
+\subsubsection{Affectation des requêtes de lecture}
+
+\subsubsection*{Solution implémentée}
+
+\paragraph{}Reprise du diagramme de l'architecture avec les méthodes et attributs ajoutés (en couleur). Explication de AbstractReadExecutor qui envoie à tout le monde. Consistance de 1 pour s'arrêter au premier résultat. Identification d'une requête (timestamp, key, keyspace, columnFamily).
+Message de suppression (stage READ\_REMOVE, verb READ\_REMOVE, override equals, tasks removable).
+
+\subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}File d'attente de Runnable : grosse complication pour la suppression. Environnement multi threadé : faire attention à la concurrence. Gérer local et distant.
+
+\subsubsection*{Travail restant à réaliser}
+
+\paragraph{}Amélioration de la suppression pour un code plus clair.
+
+\subsubsection{Réaffectation des requêtes de lecture}
+
+\subsubsection*{Solution implémentée}
+
+\paragraph{}Charge des files d'attente des requêtes de lecture (avec gestion de la décrémentation lorsqu'une requête est traitée) grâce à un compteur. Communication de la charge à tous les autres noeuds du réseau (Gossiper, ApplicationState, LoadReadBroadcaster, versionedValue).
+
+\subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}Mélange dans les requêtes de lecture (slice, précis...) peut fausser peut être. Manque de temps.
+
+\subsubsection*{Travail restant à réaliser}
+
+\paragraph{}Exécuter le protocole de réaffectation (lorsqu'on traite une requête de lecture et lorsqu'on traite une requête de suppression). Parcours de la file d'attente pour envoyer les messages de suppression. Indiquer aux messages assignés de ne pas envoyer de message de suppression (empecher à une requête d'envoyer à nouveau une requête de suppression alors que l'on en a déjà envoyé une plus tôt avec le protocole). Configuration du choix du protocole de la même façon que pour la réplication (réflexion).
+
+\subsubsection{Réplication des objets}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+\subsubsection{Popularité des objets}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+
+
+\subsection{Création d'une application cliente}
+
+\subsubsection{Gestion de Cassandra}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+\subsubsection{Gestion des requêtes}
+
+\subsubsection*{Solution implémentée}
+\subsubsection*{Problèmes et limites rencontrés}
+\subsubsection*{Travail restant à réaliser}
+
+\subsection{Création d'une application de visualisation de données}
 
 \section{Tests et résultats}
 
