@@ -38,7 +38,7 @@ public class SimpleDataGenerator extends DataGenerator {
 			for(Integer r=0; r<nb_rows; r++){
 				writer.print("INSERT INTO "+get_keyspace_name()+"."+this.table_name+"_"+i.toString());
 				writer.print(" ("+this.column_key_name+","+this.column_data_name+") VALUES ");
-				writer.println("("+r.toString()+", '"+new BigInteger(130, generator).toString(get_data_size())+"');");
+				writer.println("("+r.toString()+", '"+new BigInteger(get_data_size(), generator).toString(get_data_size())+"');");
 			}
 		}
 	}
