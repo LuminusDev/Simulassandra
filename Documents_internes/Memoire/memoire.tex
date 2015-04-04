@@ -30,6 +30,7 @@
 	\item #1 \priority{#2} #3
 }
 
+\newcommand{\class}[1]{\texttt{#1}}
 \newcommand{\shellcmd}[1]{\\\indent\indent\texttt{\footnotesize\# #1}\\}
 
 \title{
@@ -78,7 +79,7 @@ Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messag
 
 \begin{figure}[h]
 	\centering
-		\includegraphics[width=12cm]{bd.png}
+		\includegraphics[width=12cm]{images/besoins/bd.png}
 	\caption{Interactions client/base de données \label{fig:bd}}
 \end{figure}
 
@@ -212,7 +213,7 @@ Supposons qu'on a au maximum $n$ fois la donnée présente dans le réseau (c'es
 
 \begin{figure}[h]
 	\centering
-		\includegraphics[width=12cm]{visu.png}
+		\includegraphics[width=12cm]{images/besoins/visu.png}
 	\caption{Processus pour la visualisation des statistiques \label{fig:visu}}
 \end{figure}
 
@@ -410,7 +411,7 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
 \paragraph{} Tous les besoins concernent un seul noeud. Tous les noeuds du réseau doivent répondre à ces besoins.
 
 \begin{besoins}
-        \besoin{Créer un vecteur d'entiers compatabilisant le nombre de requêtes}{1}
+        \besoin{Créer un vecteur d'entiers comptabilisant le nombre de requêtes}{1}
         \besoin{Augmenter la taille du vecteur}{1} dans le cas où on a l'algorithme qui calcule la popularité de tous les objets
         \besoin{Créer un identifiant permettant de relier la popularité à un objet}{1}
 \end{besoins}
@@ -510,14 +511,14 @@ L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du n
 
 \paragraph{Noeuds} L'application doit permettre la représentation de chaque noeud par un sommet.
 
-\paragraph{Analyse syntaxique} Lors de l'éxecution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
+\paragraph{Analyse syntaxique} Lors de l'exécution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
 Un analyseur syntaxique (un programme qui possède des règles et qui agit sur un fichier donné en entrée selon celles-ci) découpe chaque ligne du fichier pour récupérer le moment auquel a été enregistrée l'information (\texttt{itération de l'algorithme}),
 le noeud concerné ( \texttt{ identifiant du noeud} ) et la charge de ce noeud à ce moment ( \texttt{charge du noeud} ).
 
 \paragraph{Charge des noeuds} A chaque sommet est associée une valeur correspondant à la charge de ce noeud.
 Ces données sont récupérées grâce à l'analyseur syntaxique.
 
-\paragraph{Film de l'éxecution} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
+\paragraph{Film de l'exécution} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
 
 
 \newpage
@@ -760,8 +761,19 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \subsubsection*{Solution implémentée}
 
-\paragraph{}Reprise du diagramme de l'architecture avec les méthodes et attributs ajoutés (en couleur). Explication de AbstractReadExecutor qui envoie à tout le monde. Consistance de 1 pour s'arrêter au premier résultat. Identification d'une requête (timestamp, key, keyspace, columnFamily).
-Message de suppression (stage READ\_REMOVE, verb READ\_REMOVE, override equals, tasks removable).
+\paragraph{}Lors d'une requête de lecture, le comportement par défaut de Cassandra est d'envoyer la requête de lecture au noeud possédant l'objet \textit{"le plus proche"} (défini suivant la configuration) qui doit renvoyer la donnée, et d'envoyer la requête de lecture à plusieurs autres noeuds possédant une copie de l'objet qui doivent renvoyer un \textit{digest}, correspondant à un hash MD5 de la donnée demandée. Le nombre de noeuds auquel on envoie une requête de type \textit{digest} est paramétrable grâce au niveau de consistance. Ainsi, une consistance de 1 ne demandera pas de \textit{digest} et sera donc plus rapide, mais la donnée ne sera pas forcément la plus récente. Car l'intérêt du \textit{digest} est de pouvoir comparer la valeur de l'objet demandé sur plusieurs noeuds pour essayer au maximum de donner la valeur la plus récente. Mais envoyer la donnée est plus gourmand sur le réseau qu'envoyer un valeur de hash, c'est pourquoi cette technique est utilisée. On attend une réponse de chaque noeud concerné pour pouvoir répondre à la requête.
+
+\paragraph{}Dans notre cas, nous voulons comme comportement envoyer une requête de lecture à \textbf{tous} les noeuds possédant une copie, quelque soit le niveau de consistance, et en leur demandant de renvoyer la \textbf{donnée complète}, donc sans \textit{digest}. On répond ensuite à la requête dès qu'\textbf{un} noeud à répondu.
+
+\paragraph{}Pour implémenter ce comportement, nous avons modifier la classe \class{AbstractReadExecutor} pour qu'elle nous renvoie une instance qui n'utilise pas de \textit{digest}, instance de la classe \class{NoDigestReadExecutor} que nous avons créé (voir figure~\ref{fig:read_diagram_modified}). De plus, elle envoie une requête à tous les noeuds, peu importe le niveau de consistance. Pour créer des \class{NoDigestReadExecutor}, il a fallu empêcher la création des autres classes (ce sont toutes des classes privées statiques contenues dans \class{AbstractReadExecutor}), créées à partir de la méthode \texttt{getReadExecutor}. Seule notre nouvelle classe peut maintenant être instanciée.
+
+\paragraph{}Un autre point important concerne la suppression d'une requête de lecture. Par défaut, c'est un comportement qui n'existe pas dans Cassandra, et qui n'a certainement pas été imaginé possible au vu de l'implémentation. La première chose que nous avons réalisé est d'envoyer des requêtes pouvant être supprimées dans les files d'attentes, avec des méthodes différentes de celles pouvant être supprimées. Si l'on reprend la figure~\ref{fig:read_diagram_modified}, on peut remarquer un changement dans les messages envoyés au stage de lecture. On a réutilisé les fonctions précédentes mais en ajoutant "Removable" à la fin de leur nom pour les différentier.
+
+\paragraph{}Pour comprendre comment supprimer une requête de la file d'attente, il faut comprendre ce qu'il y a dans une file d'attente. Si l'on regarde l'architecture d'un stage (voir figure~\ref{fig:stages_diagram}), on s'aperçoit qu'une requête dans la file d'attente sera représenté par une instance de \class{FutureTask}. Or, ce que l'on souhaite supprimer correspond à une instance de \class{ReadCommand} (la classe gérant la requête de lecture). Il a donc fallu trouver un système pour comparer ces deux classes. La première chose a été d'ajouter une classe \class{RemovableFutureTask} pour gérer les requêtes pouvant être supprimées de la file d'attente (voir figure~\ref{fig:stages_diagram_modified}). Cette classe possède la particularité de laisser la vérification de l'égalité de la classe à son attribut \textit{runnable} (qui correspond au \textit{callable} de \class{FutureTask} avant sa transformation). Ainsi, si l'on cherche à supprimer une requête de la file d'attente en envoyant une instance de \class{ReadCommand}, on compare cette instance au objet de la file d'attente, qui eux-même passeront par leur attribut \textit{runnable}, et ainsi de suite jusqu'à retrouver l'objet de \class{ReadCommand} original (il y a plusieurs niveaux encore après, et différent suivant si c'est une requête locale ou externe).
+
+\paragraph{}Les instances de \class{ReadCommand} sont identifiées et comparées grâce à leur attribut "timestamp" et "key".
+
+\paragraph{}TODO : Message de suppression (stage READ\_REMOVE, verb READ\_REMOVE).
 
 \subsubsection*{Problèmes et limites rencontrés}
 
@@ -819,7 +831,7 @@ Message de suppression (stage READ\_REMOVE, verb READ\_REMOVE, override equals, 
 
 TODO : Mettre les tests et les expliquer
 
-\section{Bonus - Un simulateur}
+\section{Annexe - Un simulateur}
 
 \subsection{introduction}
 
@@ -876,64 +888,89 @@ TODO : C'est la fin.
 
 \bibliography{memoire}
 
+
+%%%%%%%%%%%%% BESOINS %%%%%%%%%%%%%%
+
 \begin{figure}[H]
 	\centering
-		\include{distributed_database}
+		\include{images/besoins/distributed_database}
 	\caption{Visualisation d'une base de données distribuée sous forme de cluster possédant trois data center\label{fig:distributed_database}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-		\include{partitionning}
+		\include{images/besoins/partitionning}
 	\caption{Exemple de partitionnement des données dans une base de données distribuée\label{fig:partitionning}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-		\include{multi_hash_partitionning}
+		\include{images/besoins/multi_hash_partitionning}
 	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-		\include{request}
+		\include{images/besoins/request}
 	\caption{Cheminement d'une requête de lecture dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-		\include{write_request}
+		\include{images/besoins/write_request}
 	\caption{Cheminement d'une requête d'écriture dans une base de données distribuée\label{fig:write_request}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-		\include{token}
+		\include{images/besoins/token}
 	\caption{Passage d'une répresentation des données pour le client à une représentation pour la base de données\label{fig:token}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-		\include{reaffectation}
+		\include{images/besoins/reaffectation}
 	\caption{Fonctionnement de l'algorithme de réaffectation des requêtes de lecture SLVO\label{fig:reaffectation}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-        \includegraphics[width=12cm]{code_spaceSaving.jpg}
+        \includegraphics[width=12cm]{images/besoins/code_spaceSaving.jpg}
     \caption{Pseudo-code de l'algorithme SpaceSaving (Source : voir \cite{SpaceSaving2}) \label{fig:codeSpaceSaving}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-        \includegraphics[width=12cm]{replication.png}
+        \includegraphics[width=12cm]{images/besoins/replication.png}
     \caption{Répartition des copies sur les noeuds dans une base de données distribuée \label{fig:replication}}
+\end{figure}
+
+%%%%%%%%%%% ARCHITECTURE %%%%%%%%%%%
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{images/architecture/stages_diagram.png}
+	\caption{Diagramme de classe simplifié de l'architecture SEDA dans Cassandra \label{fig:stages_diagram}}
+\end{figure}
+
+%%%%%%%%%% IMPLEMENTATION %%%%%%%%%%
+
+\begin{figure}[H]
+	\centering
+        \includegraphics[width=12cm]{images/implementation/archiSimulateur.png}
+    \caption{Architecture des objets du simulateur \label{fig:archisimulateur}}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-        \includegraphics[width=12cm]{archiSimulateur.png}
-    \caption{Architecture des objets du simulateur \label{fig:archisimulateur}}
+        \includegraphics[width=12cm]{images/implementation/read_diagram_modified.png}
+    \caption{Diagramme de séquence simplifié d'une requête de lecture dans Cassandra après modification \label{fig:read_diagram_modified}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{images/implementation/stages_diagram_modified.png}
+	\caption{Diagramme de classe simplifié de l'architecture SEDA dans Cassandra après modification \label{fig:stages_diagram_modified}}
 \end{figure}
 
 \end{document}
