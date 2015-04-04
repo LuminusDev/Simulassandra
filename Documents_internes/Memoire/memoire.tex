@@ -721,6 +721,11 @@ TODO : Insérer l'architecture
 
 \subsection{Modification de Cassandra}
 
+\paragraph{}Une partie importante du projet consiste à adapter le comportement de la base de données Cassandra afin de répondre aux besoins. La modification du code source de Cassandra demande, outre la création de code, des compétences de lecture et de compréhension de code. En effet, il n'existe pas de documentation officielle concernant le code source de Cassandra. On peut tout de même retrouver des explications sur l'architecture interne dans le wiki officiel hébergé par la fondation Apache \cite{CassArchi13} ainsi que d'autres détails sur la documentation réalisée par Datastax \cite{DatastaxDoc15}.
+
+\paragraph{}Dans la mesure du possible, nous avons respecté les conventions de codage de Cassandra \cite{CassCodeStyle14}, elles mêmes découlant des conventions de codage Java créées par Sun.
+
+\paragraph{}La majeur partie du projet, pour la modification de Cassandra, a consisté en sa compréhension, car pour modifier un comportement, il faut d'abord connaître celui qui existe. C'est pourquoi l'architecture du projet s'est construite en même temps que son implémentation (l'architecture représentant bien 4 ou 5 fois plus de temps que l'implémentation). Pour trouver les points d'intérêt dans le code (cheminement d'une requête de lecture par exemple), l'utilisation des \textit{logs} est primordiale. Couplé à un environnement de travail (IDE) permettant l'usage du \textit{"Go To Definition"} (permet de retrouver instantanément, à partir d'un endroit où une fonction est utilisée, l'endroit où elle est définie), nous avons alors pu retracer efficacement différentes parties de Cassandra sur lesquels nous avons travaillé. Les diagrammes de classes et de séquences de l'architecture ont été créé à partir de cette méthode (mais ils sont fortement simplifiés pour faciliter leur compréhension).
 
 \subsubsection{Outils utilisés}
 
