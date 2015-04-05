@@ -853,7 +853,25 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Un autre aspect (mineur dans notre projet) est que cette fonctionnalité entraîne une perte de la capacité de Cassandra à s'adapter à son réseau. En effet, Cassandra est conçu pour se reconfigurer facilement lors d'ajout ou de suppresion de noeuds dans son réseau. Cependant, dans notre projet, nous nous intéressons à un réseau de taille fixe qui n'évoluera pas dans le temps.
 
-\paragraph{}Et enfin, il est important de mesurer la différence entre les deux solutions. Effectivement, si les deux solutions se ressemblent, nous devons noter que le risque de collision est plus fort sur la notre que celle initiale. Une \textit{collision} est lorsqu'une donnée et sa copie (ou deux copies) sont situées sur le même noeud. On augmente le risque de collision car on utilise deux fois la fonction $ H_0 (x) $ lors du calcul du premier réplica. Soit $ H_0 (c) = k $, si $ H_0 (k) = k $ alors on a collision sur le premier réplica.
+\paragraph{}Et enfin, il est important de mesurer les différences entre les deux solutions. Effectivement, si elles se ressemblent sur leur principe, un point important est à noter : une différence forte au niveau des collisions. Une \textit{collision} est lorsqu'une donnée et sa copie (ou deux copies ou deux données) sont situées sur le même noeud. \newline
+Prenons par exemple, le cas de deux objets ayant pour clé primaire $c1$ et $c2$ et avec $ H_0 (c1) = k $ et $ H_0 (c2) = k $.
+\begin{itemize}
+    \item \underline{Solution initiale :} \newline
+        Placement initial : $ H_0 (c1) = k $ et $ H_0 (c2) = k $ \newline
+        Premier réplica : $ H_1 (c1) = k1 $ et $ H_1 (c2) = k2 $ avec $ k1 \neq k2 $ sauf si $ H_1 (c1) = H_1 (c2) $ \newline 
+        Avec une collision sur le placement de la donnée initiale, la probabilité d'avoir les premiers réplicas sur le même noeud dépend du domaine de collision de la fonction $ H_1 $.
+
+
+    \item \underline{Solution implémentée :} \newline
+        Placement initial : $ H_0 (c1) = k $ et $ H_0 (c2) = k $ \newline
+        Premier réplica : $ H_0 (H_0 (c1)) = H_0(k) = k3 $ et $ H_0 (H_0 (c2)) = H_0(k) = k3 $ \newline
+        Second réplica : $ H_1 (H_0 (c1)) = H_1 (k) = k4 $ et $ H_1 (H_0 (c2)) = H_1 (k) = k4 $ \newline
+        Avec une collision sur le placement de la donnée initiale, toutes les copies seront placées sur le même noeud deux à deux. \newline
+        Autrement dit, toutes les données qui ont leur placement initial sur un même noeud $X$, auront leur premier réplica sur le même noeud $Y$ et ainsi de suite...
+
+\end{itemize}
+
+On a une mauvaise répartition des données car si on pouvait avoir le placement initial de deux données sur le même noeud, on souhaitait que le premier réplica ne soit pas sur le même noeud que le premier réplica de l'autre donnée.
 
 \subsubsection*{Travail restant à réaliser}
 
