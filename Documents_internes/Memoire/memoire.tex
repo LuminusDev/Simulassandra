@@ -841,7 +841,7 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \subsubsection*{Solution implémentée}
 
-\paragraph{}Après discussion avec la communauté de développeurs de Cassandra, une solution de placement a été implémentée. En effet, pour rappeler le besoin sur le placement des copies, il a été souhaité que le placement de l'objet initial se face avec une fonction de hachage $ H_0 (c) $ avec $c$ la clé primaire de l'objet. Le placement des réplicas devait s'effectuer à l'aide de la fonction $ H_1 (c) $ pour la première copie, $H_2 (c) $ pour la deuxième copie et ainsi de suite.
+\paragraph{}Après discussion avec la communauté de développeurs de Cassandra, une solution de placement a été implémentée. En effet, pour rappeler le besoin sur le placement des copies, il a été souhaité que le placement de l'objet initial se fasse avec une fonction de hachage $ H_0 (c) $ avec $c$ la clé primaire de l'objet. Le placement des réplicas devait s'effectuer à l'aide de la fonction $ H_1 (c) $ pour la première copie, $H_2 (c) $ pour la deuxième copie et ainsi de suite.
 
 \paragraph{}La méthode implémentée consiste à utiliser la fonction $ H_0 (c) $ pour le placement initial. Le premier réplica est placé grâce à $ H_0 (H_0 (c)) $, le second grâce à $ H_1 (H_0 (c)) $ et ainsi de suite.
 
@@ -852,6 +852,8 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 \paragraph{}Outre la difficulté à comprendre les mécanismes de Cassandra, plusieurs problèmes se sont posés à nous. En effet, la communication de la clé primaire d'un objet n'est pas possible immédiatement dans le développement de nouvelles strategies. Il faudrait modifier le comportement de plusieurs autres classes (et donc à comprendre leur fonctionnement), ce qui nous était difficile durant le temps imparti. Le comportement a légèrement été modifié comme décrit ci-dessus.
 
 \paragraph{}Un autre aspect (mineur dans notre projet) est que cette fonctionnalité entraîne une perte de la capacité de Cassandra à s'adapter à son réseau. En effet, Cassandra est conçu pour se reconfigurer facilement lors d'ajout ou de suppresion de noeuds dans son réseau. Cependant, dans notre projet, nous nous intéressons à un réseau de taille fixe qui n'évoluera pas dans le temps.
+
+\paragraph{}Et enfin, il est important de mesurer la différence entre les deux solutions. Effectivement, si les deux solutions se ressemblent, nous devons noter que le risque de collision est plus fort sur la notre que celle initiale. Une \textit{collision} est lorsqu'une donnée et sa copie (ou deux copies) sont situées sur le même noeud. On augmente le risque de collision car on utilise deux fois la fonction $ H_0 (x) $ lors du calcul du premier réplica. Soit $ H_0 (c) = k $, si $ H_0 (k) = k $ alors on a collision sur le premier réplica.
 
 \subsubsection*{Travail restant à réaliser}
 
@@ -865,15 +867,15 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \subsubsection*{Problèmes et limites rencontrés}
 
-\paragraph{}Créer un mécanisme de popularité est un gros ajout dans Cassandra qui nécessite la modification (et donc la compréhension) d'un ensemble de mécanismes. En effet, nous intervenons au niveau des requêtes pour compter leur nombre et savoir quel objet elles vont utiliser. S'ajoutent ensuite la communication réseau pour transmettre la popularité et la décision de créer ou non ainsi que de supprimer ou non des copies.
+\paragraph{}Créer un mécanisme de popularité est un gros ajout dans Cassandra qui nécessite la modification (et donc la compréhension) d'un ensemble de mécanismes. En effet, nous intervenons au niveau des requêtes pour compter leur nombre et savoir quel objet elles vont utiliser. S'ajoutent ensuite la communication réseau pour transmettre le nombre total de requêtes et la décision de créer ou non ainsi que de supprimer ou non des copies.
 
 \subsubsection*{Travail restant à réaliser}
 
-\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requête totale reçues. Il faut aussi ajouter $n$ compteurs (si on a $n$ données différentes ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes pour chaque objet.
+\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requêtes totale reçues. Chaque noeud ajoutera $n$ compteurs (s'il possède la gestion de $n$ données ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes de chaque objet.
 
-\paragraph{}Puis, un mécanisme à part, qui à chaque période de temps prédéfini par l'utilisateur, enverrait la popularité au noeud responsable de l'objet. La reflexion n'est pas claire ici car on a besoin de créer une synchronisation entre tous les noeuds pour l'envoi du message.
+\paragraph{}Puis, un mécanisme à part, qui à chaque période de temps prédéfini par l'utilisateur, enverrait le nombre total de requêtes reçues à ses voisins. La reflexion n'est pas claire ici car on a besoin de créer une synchronisation entre tous les noeuds pour le calcul du nombre.
 
-\paragraph{}Le noeud responsable choisit de créer, de supprimer ou de ne rien faire à propos des objets dont il en a la gestion.
+\paragraph{}Les noeuds choisissent de créer, de supprimer ou de ne rien faire à propos des objets dont ils ont la gestion.
 
 \paragraph{}Il faut penser aussi que les stratégies (et d'autres mécanismes) vont chercher le nombre de copies des objets dans les fichiers de configuration de Cassandra. Ici, le nombre de copies variant en fonction de la popularité, il faut ajouter en plus, un mécanisme de transmission du nombre de copies. L'étendu de cette modification n'est pas encore au point car cela peut, peut-être fausser d'autres mécanismes de Cassandra (comme la répartion des requêtes aux réplicas...).
 
