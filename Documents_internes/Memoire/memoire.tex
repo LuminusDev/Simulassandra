@@ -816,16 +816,46 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 \subsubsection{Réplication des objets}
 
 \subsubsection*{Solution implémentée}
+
+\paragraph{}Après discussion avec la communauté de développeurs de Cassandra, une solution de placement a été implémentée. En effet, pour rappeler le besoin sur le placement des copies, il a été souhaité que le placement de l'objet initial se face avec une fonction de hachage $ H_0 (c) $ avec $c$ la clé primaire de l'objet. Le placement des réplicas devait s'effectuer à l'aide de la fonction $ H_1 (c) $ pour la première copie, $H_2 (c) $ pour la deuxième copie et ainsi de suite.
+
+\paragraph{}La méthode implémentée consiste à utiliser la fonction $ H_0 (c) $ pour le placement initial. Le premier réplica est placé grâce à $ H_0 (H_0 (c)) $, le second grâce à $ H_1 (H_0 (c)) $ et ainsi de suite.
+
+\paragraph{}La création de cette implémentation a necessité la création d'une nouvelle stratégie de réplication nommée MultiHashStrategy.
+
 \subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}Outre la difficulté à comprendre les mécanismes de Cassandra, plusieurs problèmes se sont posés à nous. En effet, la communication de la clé primaire d'un objet n'est pas possible immédiatement dans le développement de nouvelles strategies. Il faudrait modifier le comportement de plusieurs autres classes (et donc à comprendre leur fonctionnement), ce qui nous était difficile durant le temps imparti. Le comportement a légèrement été modifié comme décrit ci-dessus.
+
+\paragraph{}Un autre aspect (mineur dans notre projet) est que cette fonctionnalité entraîne une perte de la capacité de Cassandra à s'adapter à son réseau. En effet, Cassandra est conçu pour se reconfigurer facilement lors d'ajout ou de suppresion de noeuds dans son réseau. Cependant, dans notre projet, nous nous intéressons à un réseau de taille fixe qui n'évoluera pas dans le temps.
+
 \subsubsection*{Travail restant à réaliser}
+
+\paragraph{}Bien que l'ensemble de la partie ait été réalisée, il n'est pas aisé de changer de fonction de hachage. En effet, si l'utilisateur souhaite utiliser de nouvelles fonctions de hachage, il doit recréer une nouvelle stratégie de réplication et recompiler l'ensemble. On pourrait alors imaginer une stratégie de réplication qui charge des fonctions de hachage grâce à des paramètres fournis à l'exécution.
 
 \subsubsection{Popularité des objets}
 
 \subsubsection*{Solution implémentée}
+
+\paragraph{}Aucune solution technique n'a été implémentée. Cependant, les réflexions sur le développement ont avancé. Le point est fait dans la partie \textit{Travail restant à réaliser}.
+
 \subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}Créer un mécanisme de popularité est un gros ajout dans Cassandra qui nécessite la modification (et donc la compréhension) d'un ensemble de mécanismes. En effet, nous intervenons au niveau des requêtes pour compter leur nombre et savoir quel objet elles vont utiliser. S'ajoutent ensuite la communication réseau pour transmettre la popularité et la décision de créer ou non ainsi que de supprimer ou non des copies.
+
 \subsubsection*{Travail restant à réaliser}
 
+\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requête totale reçues. Il faut aussi ajouter $n$ compteurs (si on a $n$ données différentes ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes pour chaque objet.
 
+\paragraph{}Puis, un mécanisme à part, qui à chaque période de temps prédéfini par l'utilisateur, enverrait la popularité au noeud responsable de l'objet. La reflexion n'est pas claire ici car on a besoin de créer une synchronisation entre tous les noeuds pour l'envoi du message.
+
+\paragraph{}Le noeud responsable choisit de créer, de supprimer ou de ne rien faire à propos des objets dont il en a la gestion.
+
+\paragraph{}Il faut penser aussi que les stratégies (et d'autres mécanismes) vont chercher le nombre de copies des objets dans les fichiers de configuration de Cassandra. Ici, le nombre de copies variant en fonction de la popularité, il faut ajouter en plus, un mécanisme de transmission du nombre de copies. L'étendu de cette modification n'est pas encore au point car cela peut, peut-être fausser d'autres mécanismes de Cassandra (comme la répartion des requêtes aux réplicas...).
+
+\paragraph{}A la fin de chaque période de temps défini, il faut remettre à zéro les calculs de popularité. Cela doit s'effectuer aussi par un message commun au noeud.
+
+\paragraph{}Après la création d'une copie, celle-ci doit être attribuée à un noeud, cela nécessite donc de comprendre comment un noeud assimile de nouveaux objets. De même, lors de la suppression, que se passe-t-il des requêtes présentes dans la file d'attente du noeud ?
 
 \subsection{Création d'une application cliente}
 
@@ -849,7 +879,7 @@ TODO : Mettre les tests et les expliquer
 
 \section{Annexe - Un simulateur}
 
-\subsection{introduction}
+\subsection{Introduction}
 
 \paragraph{}Derrière ce nom peu évocateur, se cache un prototype d'une base de données distribuée. Il porte le nom de simulateur car, bien évidemment, durant le temps imparti, nous n'aurions pas pu coder une base de données distribuée complète avec l'ensemble des mécanismes de traitements des données. Nous avons repris les fonctions les plus essentielles :
 
@@ -866,7 +896,7 @@ TODO : Mettre les tests et les expliquer
 \subsection{Etat des lieux}
 
 \paragraph{} Le simulateur est écrit en C. Il fait environs 1300 lignes de code (commentaires Doxygen compris) pour 19 fichiers. La compilation du logiciel s'effectue dans \textit{src} en tapant la commande  : \shellcmd{make}
-La compilation de la documentation Doxygen s'effectue dans \textit{data} et en tapant la commande : \shellcmd{make}.
+La compilation de la documentation Doxygen s'effectue dans \textit{data} et en tapant la commande : \shellcmd{make}
 
 \paragraph{}Le logiciel est capable de créer des grappes de \textit{noeuds} (nommées \textit{clusters}). Il est capable de créer des \textit{requêtes}. Chaque noeud est capable de traiter des requêtes qui sont dans sa \textit{file d'exécution}. Il est possible de changer de \textit{stratégie de réplication et de positionnement} des données. Actuellement, deux stratégies ont été implémentées :
 
