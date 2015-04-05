@@ -10,6 +10,7 @@
 \usepackage{pgfgantt}
 \usepackage{url}
 \usepackage{enumitem}
+\usepackage{hyperref}
 \bibliographystyle{alpha}
 \usepackage[counterclockwise]{rotating}
 \geometry{hmargin=2.5cm,vmargin=1.5cm}
@@ -711,6 +712,7 @@ bar height = 0.8
 \newpage
 
 \section{Architecture}
+\label{sec:Architecture}
 
 Les besoins fonctionnels sont répartis selon les 3 gros thèmes suivant :
 
@@ -805,13 +807,35 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Charge des files d'attente des requêtes de lecture (avec gestion de la décrémentation lorsqu'une requête est traitée) grâce à un compteur. Communication de la charge à tous les autres noeuds du réseau (Gossiper, ApplicationState, LoadReadBroadcaster, versionedValue).
 
+\paragraph{}Dans le projet, nous devons implémenter un système permettant, pour chaque noeud, de s'affecter toutes les requêtes de lecture de sa file d'attente. Cette décision se prend suivant un protocole de réaffectation, qui doit être modifiable facilement.
+
+\paragraph{}Pour prendre cette décision, il est nécessaire d'avoir comme information la \textit{charge} de chaque noeud du réseau pour la file d'attente des requêtes de lecture. Cela implique d'avoir cette donnée localement, de pouvoir la modifier, et de pouvoir la transmettre aux autres noeuds.
+
+\paragraph{}Cette donnée se situe dans la classe \class{SEPExecutor} sous l'attribut \texttt{effectiveLoad}. Chaque fin de traitement de requête de lecture entraîne la décrémentation du compteur (si la valeur actuelle du compteur est supérieure à 0). Le point important est d'utiliser un type permettant de gérer la concurrence (environnement multi-threadé). C'est pourquoi nous utilisons le type \class{AtomicLong} spécialement prévu pour cet effet.
+
+\paragraph{}Maintenant que nous possédons un compteur du nombre de tâches affectées, il est facile de retrouver le nombre de tâches non affectées (un compteur de tâches en attentes existe déjà). Il faut alors communiquer cette donnée. Pour ça, nous avons ajouté cette information à celle déjà présente dans les communications Gossip (voir la section~\ref{sec:Architecture}) entre les noeuds.
+
+\paragraph{}Cet ajout se déroule en plusieurs étapes. Tout d'abord, nous avons ajouté la donnée \textbf{READ\_LOAD} dans \class{ApplicationState}, permettant de dire ce qu'on transmet entre les noeuds. Le \class{Gossiper} transmettra l'information contenu dans \textbf{READ\_LOAD}.
+
+\paragraph{}Ensuite, nous avons créé une classe qui gère la relation entre le \class{Gossiper} et le reste de l'application : \class{LoadReadBroadcaster}. Son rôle est, à intervalle régulier, de mettre à jour l'information de \textbf{READ\_LOAD} à partir de l'information du \class{SEPExecutor} du stage de lecture. C'est aussi à partir de lui que l'on peut récupérer les informations de la charge de tous les autres noeuds du réseau à partir de sa méthode \texttt{getLoadInfo}.
+
 \subsubsection*{Problèmes et limites rencontrés}
 
-\paragraph{}Mélange dans les requêtes de lecture (slice, précis...) peut fausser peut être. Manque de temps.
+\paragraph{}La solution actuelle se base sur un compteur pour déterminer les requêtes qui ont été affectées dans la file d'attente. Cependant, l'aspect multi-threadé peut, plus tard, poser des problèmes. En effet, il se peut que le compteur ne soit pas parfaitement en adéquation avec les requêtes que nous nous sommes assignées, et pour lesquels nous avons envoyé des requêtes de suppression aux autres noeuds. On enverrai alors des requêtes de suppression lors du traitement de la requête de lecture alors qu'on avait déjà envoyé ces requêtes auparavant lors de l'affectation.
+
+\paragraph{}Le risque est alors d'envoyer des messages inutiles dans le réseau. Le contraire n'est pas possible si on modifie la charge avant de parcourir la file d'attente pour envoyer les messages de suppressions (cela aurait été plus problématique car il n'y aurait pas eu de réponse à la requête du client du coup).
+
+\paragraph{}Une autre solution, plus couteuse en terme de temps de développement, serait de créer une nouvelle file d'attente pour les requêtes affectées, et de basculer les requêtes dans cette file lorsque l'on veut l'assigner à ce noeud.
 
 \subsubsection*{Travail restant à réaliser}
 
-\paragraph{}Exécuter le protocole de réaffectation (lorsqu'on traite une requête de lecture et lorsqu'on traite une requête de suppression). Parcours de la file d'attente pour envoyer les messages de suppression. Indiquer aux messages assignés de ne pas envoyer de message de suppression (empecher à une requête d'envoyer à nouveau une requête de suppression alors que l'on en a déjà envoyé une plus tôt avec le protocole). Configuration du choix du protocole de la même façon que pour la réplication (réflexion).
+\paragraph{}Nous n'avons pas réalisé tous les objectifs dans cette partie par manque de temps. Il reste de nombreux points à aborder pour achever ce travail, mais ils ont été tout de même réfléchi.
+
+\paragraph{}Il faut encore exécuter le protocole de réaffectation, qui doit être  lancé dès que l'on traite une requête de lecture ou de suppression. Ce protocole doit vérifier les conditions d'exécution qui lui sont propres (SLVO ou AverageDegree ne possèdent pas les mêmes conditions), et si elles passent, doit modifier la charge et parcourir la file d'attente pour envoyer un message de suppression à tous les autres noeuds possédant ces mêmes requêtes.
+
+\paragraph{}Une requête affectée ne doit pas entrainer de message de suppression lors de son traitement car ils ont été réalisés plus tôt par le système de réaffectation. L'idée serait de marquer les requêtes (un booléen par exemple) pour indiquer si elles sont affectées ou non.
+
+\paragraph{}Le dernier point concerne la configuration du protocole de réaffectation. Il est nécessaire de pouvoir le modifier facilement afin de comparer les résultats sur les performances des différents protocoles. La solution envisagée est d'utiliser le même système qui est actuellement en place pour configurer la réplication : un système de réflexion paramétrable pour chaque Keyspace, où il suffit de rentrer le nom de la classe du protocole de réaffectation lors de la création d'un Keyspace.
 
 \subsubsection{Réplication des objets}
 
