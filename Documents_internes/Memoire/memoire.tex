@@ -10,6 +10,7 @@
 \usepackage{pgfgantt}
 \usepackage{url}
 \usepackage{enumitem}
+\usepackage{hyperref}
 \bibliographystyle{alpha}
 \usepackage[counterclockwise]{rotating}
 \geometry{hmargin=2.5cm,vmargin=1.5cm}
@@ -711,6 +712,7 @@ bar height = 0.8
 \newpage
 
 \section{Architecture}
+\label{sec:Architecture}
 
 Les besoins fonctionnels sont répartis selon les 3 gros thèmes suivant :
 
@@ -805,27 +807,99 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Charge des files d'attente des requêtes de lecture (avec gestion de la décrémentation lorsqu'une requête est traitée) grâce à un compteur. Communication de la charge à tous les autres noeuds du réseau (Gossiper, ApplicationState, LoadReadBroadcaster, versionedValue).
 
+\paragraph{}Dans le projet, nous devons implémenter un système permettant, pour chaque noeud, de s'affecter toutes les requêtes de lecture de sa file d'attente. Cette décision se prend suivant un protocole de réaffectation, qui doit être modifiable facilement.
+
+\paragraph{}Pour prendre cette décision, il est nécessaire d'avoir comme information la \textit{charge} de chaque noeud du réseau pour la file d'attente des requêtes de lecture. Cela implique d'avoir cette donnée localement, de pouvoir la modifier, et de pouvoir la transmettre aux autres noeuds.
+
+\paragraph{}Cette donnée se situe dans la classe \class{SEPExecutor} sous l'attribut \texttt{effectiveLoad}. Chaque fin de traitement de requête de lecture entraîne la décrémentation du compteur (si la valeur actuelle du compteur est supérieure à 0). Le point important est d'utiliser un type permettant de gérer la concurrence (environnement multi-threadé). C'est pourquoi nous utilisons le type \class{AtomicLong} spécialement prévu pour cet effet.
+
+\paragraph{}Maintenant que nous possédons un compteur du nombre de tâches affectées, il est facile de retrouver le nombre de tâches non affectées (un compteur de tâches en attentes existe déjà). Il faut alors communiquer cette donnée. Pour ça, nous avons ajouté cette information à celle déjà présente dans les communications Gossip (voir la section~\ref{sec:Architecture}) entre les noeuds.
+
+\paragraph{}Cet ajout se déroule en plusieurs étapes. Tout d'abord, nous avons ajouté la donnée \textbf{READ\_LOAD} dans \class{ApplicationState}, permettant de dire ce qu'on transmet entre les noeuds. Le \class{Gossiper} transmettra l'information contenu dans \textbf{READ\_LOAD}.
+
+\paragraph{}Ensuite, nous avons créé une classe qui gère la relation entre le \class{Gossiper} et le reste de l'application : \class{LoadReadBroadcaster}. Son rôle est, à intervalle régulier, de mettre à jour l'information de \textbf{READ\_LOAD} à partir de l'information du \class{SEPExecutor} du stage de lecture. C'est aussi à partir de lui que l'on peut récupérer les informations de la charge de tous les autres noeuds du réseau à partir de sa méthode \texttt{getLoadInfo}.
+
 \subsubsection*{Problèmes et limites rencontrés}
 
-\paragraph{}Mélange dans les requêtes de lecture (slice, précis...) peut fausser peut être. Manque de temps.
+\paragraph{}La solution actuelle se base sur un compteur pour déterminer les requêtes qui ont été affectées dans la file d'attente. Cependant, l'aspect multi-threadé peut, plus tard, poser des problèmes. En effet, il se peut que le compteur ne soit pas parfaitement en adéquation avec les requêtes que nous nous sommes assignées, et pour lesquels nous avons envoyé des requêtes de suppression aux autres noeuds. On enverrai alors des requêtes de suppression lors du traitement de la requête de lecture alors qu'on avait déjà envoyé ces requêtes auparavant lors de l'affectation.
+
+\paragraph{}Le risque est alors d'envoyer des messages inutiles dans le réseau. Le contraire n'est pas possible si on modifie la charge avant de parcourir la file d'attente pour envoyer les messages de suppressions (cela aurait été plus problématique car il n'y aurait pas eu de réponse à la requête du client du coup).
+
+\paragraph{}Une autre solution, plus couteuse en terme de temps de développement, serait de créer une nouvelle file d'attente pour les requêtes affectées, et de basculer les requêtes dans cette file lorsque l'on veut l'assigner à ce noeud.
 
 \subsubsection*{Travail restant à réaliser}
 
-\paragraph{}Exécuter le protocole de réaffectation (lorsqu'on traite une requête de lecture et lorsqu'on traite une requête de suppression). Parcours de la file d'attente pour envoyer les messages de suppression. Indiquer aux messages assignés de ne pas envoyer de message de suppression (empecher à une requête d'envoyer à nouveau une requête de suppression alors que l'on en a déjà envoyé une plus tôt avec le protocole). Configuration du choix du protocole de la même façon que pour la réplication (réflexion).
+\paragraph{}Nous n'avons pas réalisé tous les objectifs dans cette partie par manque de temps. Il reste de nombreux points à aborder pour achever ce travail, mais ils ont été tout de même réfléchi.
+
+\paragraph{}Il faut encore exécuter le protocole de réaffectation, qui doit être  lancé dès que l'on traite une requête de lecture ou de suppression. Ce protocole doit vérifier les conditions d'exécution qui lui sont propres (SLVO ou AverageDegree ne possèdent pas les mêmes conditions), et si elles passent, doit modifier la charge et parcourir la file d'attente pour envoyer un message de suppression à tous les autres noeuds possédant ces mêmes requêtes.
+
+\paragraph{}Une requête affectée ne doit pas entrainer de message de suppression lors de son traitement car ils ont été réalisés plus tôt par le système de réaffectation. L'idée serait de marquer les requêtes (un booléen par exemple) pour indiquer si elles sont affectées ou non.
+
+\paragraph{}Le dernier point concerne la configuration du protocole de réaffectation. Il est nécessaire de pouvoir le modifier facilement afin de comparer les résultats sur les performances des différents protocoles. La solution envisagée est d'utiliser le même système qui est actuellement en place pour configurer la réplication : un système de réflexion paramétrable pour chaque Keyspace, où il suffit de rentrer le nom de la classe du protocole de réaffectation lors de la création d'un Keyspace.
 
 \subsubsection{Réplication des objets}
 
 \subsubsection*{Solution implémentée}
+
+\paragraph{}Après discussion avec la communauté de développeurs de Cassandra, une solution de placement a été implémentée. En effet, pour rappeler le besoin sur le placement des copies, il a été souhaité que le placement de l'objet initial se fasse avec une fonction de hachage $ H_0 (c) $ avec $c$ la clé primaire de l'objet. Le placement des réplicas devait s'effectuer à l'aide de la fonction $ H_1 (c) $ pour la première copie, $H_2 (c) $ pour la deuxième copie et ainsi de suite.
+
+\paragraph{}La méthode implémentée consiste à utiliser la fonction $ H_0 (c) $ pour le placement initial. Le premier réplica est placé grâce à $ H_0 (H_0 (c)) $, le second grâce à $ H_1 (H_0 (c)) $ et ainsi de suite.
+
+\paragraph{}La création de cette implémentation a necessité la création d'une nouvelle stratégie de réplication nommée MultiHashStrategy.
+
 \subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}Outre la difficulté à comprendre les mécanismes de Cassandra, plusieurs problèmes se sont posés à nous. En effet, la communication de la clé primaire d'un objet n'est pas possible immédiatement dans le développement de nouvelles strategies. Il faudrait modifier le comportement de plusieurs autres classes (et donc à comprendre leur fonctionnement), ce qui nous était difficile durant le temps imparti. Le comportement a légèrement été modifié comme décrit ci-dessus.
+
+\paragraph{}Un autre aspect (mineur dans notre projet) est que cette fonctionnalité entraîne une perte de la capacité de Cassandra à s'adapter à son réseau. En effet, Cassandra est conçu pour se reconfigurer facilement lors d'ajout ou de suppresion de noeuds dans son réseau. Cependant, dans notre projet, nous nous intéressons à un réseau de taille fixe qui n'évoluera pas dans le temps.
+
+\paragraph{}Et enfin, il est important de mesurer les différences entre les deux solutions. Effectivement, si elles se ressemblent sur leur principe, un point important est à noter : une différence forte au niveau des collisions. Une \textit{collision} est lorsqu'une donnée et sa copie (ou deux copies ou deux données) sont situées sur le même noeud. \newline
+Prenons par exemple, le cas de deux objets ayant pour clé primaire $c1$ et $c2$ et avec $ H_0 (c1) = k $ et $ H_0 (c2) = k $.
+\begin{itemize}
+    \item \underline{Solution initiale :} \newline
+        Placement initial : $ H_0 (c1) = k $ et $ H_0 (c2) = k $ \newline
+        Premier réplica : $ H_1 (c1) = k1 $ et $ H_1 (c2) = k2 $ avec $ k1 \neq k2 $ sauf si $ H_1 (c1) = H_1 (c2) $ \newline 
+        Avec une collision sur le placement de la donnée initiale, la probabilité d'avoir les premiers réplicas sur le même noeud dépend du domaine de collision de la fonction $ H_1 $.
+
+
+    \item \underline{Solution implémentée :} \newline
+        Placement initial : $ H_0 (c1) = k $ et $ H_0 (c2) = k $ \newline
+        Premier réplica : $ H_0 (H_0 (c1)) = H_0(k) = k3 $ et $ H_0 (H_0 (c2)) = H_0(k) = k3 $ \newline
+        Second réplica : $ H_1 (H_0 (c1)) = H_1 (k) = k4 $ et $ H_1 (H_0 (c2)) = H_1 (k) = k4 $ \newline
+        Avec une collision sur le placement de la donnée initiale, toutes les copies seront placées sur le même noeud deux à deux. \newline
+        Autrement dit, toutes les données qui ont leur placement initial sur un même noeud $X$, auront leur premier réplica sur le même noeud $Y$ et ainsi de suite...
+
+\end{itemize}
+
+On a une mauvaise répartition des données car si on pouvait avoir le placement initial de deux données sur le même noeud, on souhaitait que le premier réplica ne soit pas sur le même noeud que le premier réplica de l'autre donnée.
+
 \subsubsection*{Travail restant à réaliser}
+
+\paragraph{}Bien que l'ensemble de la partie ait été réalisée, il n'est pas aisé de changer de fonction de hachage. En effet, si l'utilisateur souhaite utiliser de nouvelles fonctions de hachage, il doit recréer une nouvelle stratégie de réplication et recompiler l'ensemble. On pourrait alors imaginer une stratégie de réplication qui charge des fonctions de hachage grâce à des paramètres fournis à l'exécution.
 
 \subsubsection{Popularité des objets}
 
 \subsubsection*{Solution implémentée}
+
+\paragraph{}Aucune solution technique n'a été implémentée. Cependant, les réflexions sur le développement ont avancé. Le point est fait dans la partie \textit{Travail restant à réaliser}.
+
 \subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{}Créer un mécanisme de popularité est un gros ajout dans Cassandra qui nécessite la modification (et donc la compréhension) d'un ensemble de mécanismes. En effet, nous intervenons au niveau des requêtes pour compter leur nombre et savoir quel objet elles vont utiliser. S'ajoutent ensuite la communication réseau pour transmettre le nombre total de requêtes et la décision de créer ou non ainsi que de supprimer ou non des copies.
+
 \subsubsection*{Travail restant à réaliser}
 
+\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requêtes totale reçues. Chaque noeud ajoutera $n$ compteurs (s'il possède la gestion de $n$ données ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes de chaque objet.
 
+\paragraph{}Puis, un mécanisme à part, qui à chaque période de temps prédéfini par l'utilisateur, enverrait le nombre total de requêtes reçues à ses voisins. La reflexion n'est pas claire ici car on a besoin de créer une synchronisation entre tous les noeuds pour le calcul du nombre.
+
+\paragraph{}Les noeuds choisissent de créer, de supprimer ou de ne rien faire à propos des objets dont ils ont la gestion.
+
+\paragraph{}Il faut penser aussi que les stratégies (et d'autres mécanismes) vont chercher le nombre de copies des objets dans les fichiers de configuration de Cassandra. Ici, le nombre de copies variant en fonction de la popularité, il faut ajouter en plus, un mécanisme de transmission du nombre de copies. L'étendu de cette modification n'est pas encore au point car cela peut, peut-être fausser d'autres mécanismes de Cassandra (comme la répartion des requêtes aux réplicas...).
+
+\paragraph{}A la fin de chaque période de temps défini, il faut remettre à zéro les calculs de popularité. Cela doit s'effectuer aussi par un message commun au noeud.
+
+\paragraph{}Après la création d'une copie, celle-ci doit être attribuée à un noeud, cela nécessite donc de comprendre comment un noeud assimile de nouveaux objets. De même, lors de la suppression, que se passe-t-il des requêtes présentes dans la file d'attente du noeud ?
 
 \subsection{Création d'une application cliente}
 
@@ -941,7 +1015,7 @@ TODO : Mettre les tests et les expliquer
 
 \section{Annexe - Un simulateur}
 
-\subsection{introduction}
+\subsection{Introduction}
 
 \paragraph{}Derrière ce nom peu évocateur, se cache un prototype d'une base de données distribuée. Il porte le nom de simulateur car, bien évidemment, durant le temps imparti, nous n'aurions pas pu coder une base de données distribuée complète avec l'ensemble des mécanismes de traitements des données. Nous avons repris les fonctions les plus essentielles :
 
@@ -958,7 +1032,7 @@ TODO : Mettre les tests et les expliquer
 \subsection{Etat des lieux}
 
 \paragraph{} Le simulateur est écrit en C. Il fait environs 1300 lignes de code (commentaires Doxygen compris) pour 19 fichiers. La compilation du logiciel s'effectue dans \textit{src} en tapant la commande  : \shellcmd{make}
-La compilation de la documentation Doxygen s'effectue dans \textit{data} et en tapant la commande : \shellcmd{make}.
+La compilation de la documentation Doxygen s'effectue dans \textit{data} et en tapant la commande : \shellcmd{make}
 
 \paragraph{}Le logiciel est capable de créer des grappes de \textit{noeuds} (nommées \textit{clusters}). Il est capable de créer des \textit{requêtes}. Chaque noeud est capable de traiter des requêtes qui sont dans sa \textit{file d'exécution}. Il est possible de changer de \textit{stratégie de réplication et de positionnement} des données. Actuellement, deux stratégies ont été implémentées :
 
