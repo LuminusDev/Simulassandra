@@ -769,19 +769,35 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Un autre point important concerne la suppression d'une requête de lecture. Par défaut, c'est un comportement qui n'existe pas dans Cassandra, et qui n'a certainement pas été imaginé possible au vu de l'implémentation. La première chose que nous avons réalisé est d'envoyer des requêtes pouvant être supprimées dans les files d'attentes, avec des méthodes différentes de celles pouvant être supprimées. Si l'on reprend la figure~\ref{fig:read_diagram_modified}, on peut remarquer un changement dans les messages envoyés au stage de lecture. On a réutilisé les fonctions précédentes mais en ajoutant "Removable" à la fin de leur nom pour les différentier.
 
-\paragraph{}Pour comprendre comment supprimer une requête de la file d'attente, il faut comprendre ce qu'il y a dans une file d'attente. Si l'on regarde l'architecture d'un stage (voir figure~\ref{fig:stages_diagram}), on s'aperçoit qu'une requête dans la file d'attente sera représenté par une instance de \class{FutureTask}. Or, ce que l'on souhaite supprimer correspond à une instance de \class{ReadCommand} (la classe gérant la requête de lecture). Il a donc fallu trouver un système pour comparer ces deux classes. La première chose a été d'ajouter une classe \class{RemovableFutureTask} pour gérer les requêtes pouvant être supprimées de la file d'attente (voir figure~\ref{fig:stages_diagram_modified}). Cette classe possède la particularité de laisser la vérification de l'égalité de la classe à son attribut \textit{runnable} (qui correspond au \textit{callable} de \class{FutureTask} avant sa transformation). Ainsi, si l'on cherche à supprimer une requête de la file d'attente en envoyant une instance de \class{ReadCommand}, on compare cette instance au objet de la file d'attente, qui eux-même passeront par leur attribut \textit{runnable}, et ainsi de suite jusqu'à retrouver l'objet de \class{ReadCommand} original (il y a plusieurs niveaux encore après, et différent suivant si c'est une requête locale ou externe).
+\paragraph{}Pour comprendre comment supprimer une requête de la file d'attente, il faut comprendre ce qu'il y a dans une file d'attente. Si l'on regarde l'architecture d'un stage (voir figure~\ref{fig:stages_diagram}), on s'aperçoit qu'une requête dans la file d'attente sera représenté par une instance de \class{FutureTask}. Or, ce que l'on souhaite supprimer correspond à une instance de \class{ReadCommand} (la classe gérant la requête de lecture). Il a donc fallu trouver un système pour comparer ces deux classes. La première chose a été d'ajouter une classe \class{RemovableFutureTask} pour gérer les requêtes pouvant être supprimées de la file d'attente (voir figure~\ref{fig:stages_diagram_modified}). Cette classe possède la particularité de laisser la vérification de l'égalité de la classe à son attribut \textit{runnable} (qui correspond au \textit{callable} de \class{FutureTask} avant sa transformation). Ainsi, si l'on cherche à supprimer une requête de la file d'attente en envoyant une instance de \class{ReadCommand}, on compare cette instance au objet de la file d'attente, qui eux-même passeront par leur attribut \textit{runnable}, et ainsi de suite jusqu'à retrouver l'objet de \class{ReadCommand} original (voir figure~\ref{fig:remove_request_diagram}).
+
+\begin{figure}[!h]
+	\centering
+        \includegraphics[width=13cm]{images/implementation/remove_request_diagram.png}
+    \caption{Classes redéfinissant la méthode \textit{equals} pour pouvoir comparer et supprimer des requêtes de lectures \label{fig:remove_request_diagram}}
+\end{figure}
 
 \paragraph{}Les instances de \class{ReadCommand} sont identifiées et comparées grâce à leur attribut "timestamp" et "key".
 
-\paragraph{}TODO : Message de suppression (stage READ\_REMOVE, verb READ\_REMOVE).
+\paragraph{}Maintenant qu'il est possible de supprimer une requête de lecture d'une file d'attente, il faut s'intéresser à l'envoi/réception d'un message de suppression, ainsi qu'à son traitement. Nous avons donc créer un nouveau stage pour gérer ces messages : le stage \textbf{READ\_REMOVE}. Il est mono-threadé, contrairement au stage de lecture qui est multi-threadé (32 threads par défaut).
+
+\paragraph{}Les messages qu'il traite sont les verbes \textbf{READ\_REMOVE} dont le traitement se fait dans la classe \class{ReadRemoveVerbHandler}. La création d'un message se fait à partir de \class{ReadCommand} avec la méthode \texttt{createRemoveMessage}, qu'il suffit alors d'envoyer aux autres noeuds par le biais du \class{MessagingService}. Cette tâche est donnée à la classe \class{AsbtractReadExecutor} et sa méthode \texttt{makeRemoveRequests}.
 
 \subsubsection*{Problèmes et limites rencontrés}
 
-\paragraph{}File d'attente de Runnable : grosse complication pour la suppression. Environnement multi threadé : faire attention à la concurrence. Gérer local et distant.
+\paragraph{}La suppression d'une requête de la file d'attente de lecture a été une partie compliquée, car les relations entre les objets dans une file d'attente et les objets que l'on cherche à comparer ne sont pas évidentes à retrouver.
+
+\paragraph{}Il a aussi fallu faire attention à la concurrence étant donné que nous travaillons dans un environnement multi-threadé. C'est pourquoi nous utilisons la méthode native de suppression d'une file (représentée en interne par une \class{ConcurrentLinkedQueue}) pour assurer une meilleure sécurité. C'est ce qui nous a conduit à choisir comme solution de redéfinir les méthodes \textit{equals}.
+
+\paragraph{}Le dernier point qu'il a fallu prendre en compte est qu'il y a deux manières de faire une requête : local et externe. Il faut donc s'assurer que les deux manières de faire sont traitées. Le fait d'avoir ces deux manières est un gain de temps en production, mais complexifie cependant la compréhension et la lisibilité du code.
 
 \subsubsection*{Travail restant à réaliser}
 
-\paragraph{}Amélioration de la suppression pour un code plus clair.
+\paragraph{}Cette partie du projet a été réalisé entièrement. On peut malgré tout s'interroger sur une méthode plus efficace (en terme de lisibilité) pour traiter la suppression d'une requête. Mais cela nécessiterait de chambouler un peu plus le code original, et un travail beaucoup plus important pour s'assurer que le comportement de Cassandra n'est pas altéré.
+
+\paragraph{}Des tests sur le nombre de threads accordés au stage de suppression de requête seraient aussi intéressant. L'augmentation de threads provoquerait une diminution du traitement des autres stages, mais augmenterait la vitesse de suppression des requêtes, permettant alors d'en traiter moins en plusieurs exemplaires.
+
+\paragraph{}Les attributs permettant d'identifier les requêtes sont aussi à revoir. Actuellement, le \textit{timestamp} n'est pas la valeur la plus sûre car il est toujours possible que deux requêtes identiques soient lancées au même moment par deux clients différents. Une possibilité seraient de générer un identifiant aléatoirement pour chaque instance de \class{ReadCommand}. Le risque de collision avec cet identifiant couplé au timestamp serait alors quasiment nul. Cela demanderait alors de modifier les \textit{serializer} pour être capable de transmettre cette donnée dans un message.
 
 \subsubsection{Réaffectation des requêtes de lecture}
 
