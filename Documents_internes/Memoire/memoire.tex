@@ -829,9 +829,101 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \subsection{Création d'une application cliente}
 
+\paragraph{} L'application cliente permet à l'utilisateur d'intéragir avec la base de données Cassandra.
+
 \subsubsection{Gestion de Cassandra}
 
+\paragraph{} Pour communiquer avec la base de données, nous utilisons un \textit{pilote}, programme informatique permettant à un programme d'intéragir avec un autre programme.
+Il s'agit de Java Driver 2.0 for Apache Cassandra développé par l'entreprise Datastax, distributeur de Cassandra. Le pilote est sous licence Apache.
+
+\paragraph{} L'entreprise Datastax étant très spécialisé dans le développement de logiciels centrés sur Cassandra, son pilote est le plus complet. Il propose
+toutes les fonctionnalités dont nous avons besoin. C'est pourquoi nous l'avons choisi.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{images/client/acteurs.png}
+	\caption{Interactions du client \label{fig:client_acteurs}}
+\end{figure}
+
+\paragraph{} Sur la figure \ref{fig:client_acteurs}, l'application cliente est représentée par le rectangle bleu nommé client.
+Le client exécute les actions souhaitées par l'utilisateur. Les communications entre l'application cliente et la base de données Cassandra passent par le java-driver.
+Le client peut lire et écrire des fichiers dans l'espace de stockage.
+
 \subsubsection*{Solution implémentée}
+
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{images/client/diagumlclient.png}
+	\caption{Diagramme UML simplifié de l'application \label{fig:client_uml}}
+\end{figure}
+
+\paragraph{} 
+
+\paragraph{} Les classes du java-driver sont bleues dans la figure \ref{fig:client_uml}.
+\begin{itemize}
+ \item La classe \class{Cluster} crée des objets permettant la connexion à la base de données Cassandra.
+ \item La class \class{Session} crée des objets permettant d'envoyer des requêtes au format Cassandra Query Language, CQL, à Cassandra. 
+ \item La class \class{KeyspaceMetadata} crée des objets permettant de récuperer les informations principales concernant un keyspace.
+ Par exemple, le nom du keyspace, les tables stockées, la classe pour la stratégie de replication utilisée...
+ \item La class \class{TableMetadata} crée des objets permettant de récupérer les informations principales concernant une table.
+ Par exemple, le nom de la table, les colonnes composant la table...
+\end{itemize}
+
+\paragraph{} Les constantes: nom des commandes, temps avant un timout ... sont configurables dans  \class{simulassandra.client.Config}.
+
+\paragraph{}L'application cliente fonctionne grâce à l'objet \class{App} créant un objet \class{ClientApp}.
+Cet objet receptionne les commandes saisies par l'utilisateur dans une console (ou terminal) et exécute les actions correspondant à chaque commande.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=13cm]{images/client/vie.png}
+	\caption{États de l'application \label{fig:vie}}
+\end{figure}
+
+\paragraph{} Le schéma \ref{fig:vie} décrit les différents états de l'application.
+
+\paragraph{Connexion Cassandra} Dans un premier temps, l'utilisateur doit entrer l'adresse à laquelle se situe la base de données Cassandra à laquelle il souhaite se connecter.
+L'utilisateur a trois essais, sinon l'application se ferme. Le nombre d'essais est configurable. L'adresse entrée étant valide, 
+l'objet \class{ClientApp} crée un objet \class{Cluster} initialisant la connexion à la base de données.
+
+\paragraph{Choix du keyspace} Une fois connecté, l'utilisateur est invité à entrer le keyspace dans lequel il souhaite travailler. Si le keyspace entré n'existe pas, l'application
+lui propose de le créer. Il doit alors choisir une stratégie de réplication et un facteur de réplication.
+L'objet \class{ClientApp} crée alors un objet \class{KeySpace} contenant les informations du keyspace et l'objet \class{Session} permettant d'envoyer des requêtes à la base de données.
+
+
+\paragraph{Exécution des commandes} Le keyspace étant choisi, l'utilisateur est libre d'exécuter les commandes proposées par l'application.
+\paragraph{} On distingue deux types de commandes. Les commandes permettant de consulter l'état du logiciel et de la base de données. 
+C'est-à-dire, les données du keyspace courant (celui auquel nous sommes connectés), les tables stockées dans le keyspace...
+\begin{itemize}
+ \item \texttt{help} affichant une liste des commandes proposées par l'application accompagnée d'une brêve description de chaque commande.
+ \item \texttt{showksdata} affichant les méta-données du keyspace courant, le nom du keyspace, le facteur de réplication et la stratégie de réplication utilisée.
+ \item \texttt{showtabledata <table>} affichant les méta-données de la table \texttt{<table>}: le nombre d'enregistrements, le nom des colonnes de la table et leur type.
+ \item \texttt{lstable} la liste des tables stockées dans le keyspace courant.
+ \item \texttt{quit} pour quitter l'application cliente, on arrive donc sur l'état \textbf{Fin}.
+\end{itemize} 
+
+\paragraph{} Ainsi que les commandes permettant de modifier le contenu de la base de données, d'effectuer des requêtes, de modifier le keyspace courant.
+\begin{itemize}
+ \item \texttt{import <file>} exécutant les requête au format CQL contenues dans le fichier \texttt{<file>}.
+ \item \texttt{switch <ks>} permettant de changer de keyspace. Passage sur le keyspace \texttt{<ks>} avec création du keyspace s'il n'existe pas.
+ On retourne sur l'état \textbf{Choix du Keyspace}
+ \item \texttt{queries <qf> <s> <ns> <nq>} exécutant une suite de requête générée alétoirement selon le seed \texttt{<s>} et la classe \texttt{<qf>}.
+ Le nombre de simulation est définie par \texttt{<ns>} et le nombre de requêtes par simulation par \texttt{<nq>}. Cette commande est détaillée dans la partie suivante.
+ \item \texttt{createdatafile  <file> <nb\_tables> <nb\_rows> <data\_length>} écrivant dans un fichier \texttt{<file>} la suite de requête CQL permettant de créer \texttt{<nb\_tables>} 
+ et d'insérer \texttt{<nb\_rows>} enregistrements par table. Les données crées sont de longueur \texttt{<data\_length>}.
+\end{itemize}
+ 
+\paragraph{Ajout de commandes} Il est aisé d'ajouter des commandes à l'application cliente.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=10cm]{images/client/command.png}
+	\caption{États de l'application \label{fig:commande}}
+\end{figure}
+
+
+
 \subsubsection*{Problèmes et limites rencontrés}
 \subsubsection*{Travail restant à réaliser}
 

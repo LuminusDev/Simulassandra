@@ -1,16 +1,12 @@
 package simulassandra.client.app;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Scanner;
 
 import simulassandra.client.exceptions.KeyspaceException;
 import simulassandra.client.exceptions.UnavailableKeyspaceException;
-import simulassandra.client.utils.Interactor;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.KeyspaceMetadata;
@@ -99,7 +95,7 @@ public class KeySpace {
 	 * @throws UnavailableKeyspaceException Impossibilité d'effectuer des requêtes 
 	 * dans le keyspace
 	 */
-	private void updateTablesList() throws UnavailableKeyspaceException{
+	public void updateTablesList() throws UnavailableKeyspaceException{
 		this.tables.clear();
 		Collection<TableMetadata> tables = this.keyspace.getTables();
 		for(TableMetadata table : tables){
@@ -121,40 +117,6 @@ public class KeySpace {
 			throw new UnavailableKeyspaceException("An error occurred, keypsace is not available for querying.");
 		}
 		return count.one().getLong("count");
-	}
-	
-	
-	/**
-	 * Exécute les requêtes contenues dans le fichier situé à l'adresse path
-	 * @param path adresse du fichier
-	 * @throws FileNotFoundException Le fichier n'existe pas
-	 * @throws UnavailableKeyspaceException Impossiblité d'effectuer des requetes dans
-	 * le keyspace
-	 */
-	public void executeFromFileQueries(String path) throws FileNotFoundException, UnavailableKeyspaceException{
-		
-		File f = new File(path);
-		Scanner sc = new Scanner(f);
-		String query = new String();
-
-		while(sc.hasNext()){
-			String line = sc.nextLine();
-			
-			if( line.matches(".*; {0,}") ){
-				query += line;
-				try {
-					this.connection.execute(query);
-				} catch (Exception e) {
-					Interactor.displayException(e);
-					Interactor.displayMessage("Query will be ignored");
-				}
-				query = "";
-			} else {
-				query += line;
-			}
-		}
-		updateTablesList();
-		sc.close();
 	}
 	
 	/**

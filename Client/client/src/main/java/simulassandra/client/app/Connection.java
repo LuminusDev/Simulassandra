@@ -1,6 +1,8 @@
 package simulassandra.client.app;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import simulassandra.client.exceptions.KeyspaceException;
 import simulassandra.client.exceptions.UnavailableKeyspaceException;
@@ -96,13 +98,37 @@ public class Connection {
 		return this.keyspace;
 	}
 	
+
 	/**
 	 * Exécute les requêtes contenues dans le fichier situé à l'adresse path
 	 * @param path adresse du fichier
-	 * @throws FileNotFoundException, le fichier n'existe pas
-	 * @throws UnavailableKeyspaceException, impossibilité d'exécuter des requêtes sur le keyspace courant
+	 * @throws FileNotFoundException Le fichier n'existe pas
+	 * @throws UnavailableKeyspaceException Impossiblité d'effectuer des requetes dans
+	 * le keyspace
 	 */
 	public void executeFromFileQueries(String path) throws FileNotFoundException, UnavailableKeyspaceException{
-		this.keyspace.executeFromFileQueries(path);
+		
+		File f = new File(path);
+		Scanner sc = new Scanner(f);
+		String query = new String();
+
+		while(sc.hasNext()){
+			String line = sc.nextLine();
+			
+			if( line.matches(".*; {0,}") ){
+				query += line;
+				try {
+					this.execute(query);
+				} catch (Exception e) {
+					Interactor.displayException(e);
+					Interactor.displayMessage("Query will be ignored");
+				}
+				query = "";
+			} else {
+				query += line;
+			}
+		}
+		this.keyspace.updateTablesList();
+		sc.close();
 	}
 }
