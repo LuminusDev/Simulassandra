@@ -587,17 +587,17 @@ bar height = 0.8
 \ganttbar{B4}{2015-03-15}{2015-03-24} \\ %Algorithme AvergeDegree
 \ganttbar{BT}{2015-03-25}{2015-03-29} \\ %Tests
 
-\ganttgroup{Gestion de la réplication (C)}{2015-03-07}{2015-03-16} \\
-\ganttbar{C1}{2015-03-07}{2015-03-10} \\ %Calcul de la popularité pour un objet
-\ganttbar{C2}{2015-03-07}{2015-03-10} \\ %Implémentation de SpaceSaving
-\ganttbar{C3}{2015-03-10}{2015-03-14} \\ %Amélioration protocole Gossip
-\ganttbar{CT}{2015-03-15}{2015-03-16} \\ %Tests
+\ganttgroup{Gestion de la réplication (C)}{2015-02-16}{2015-03-07} \\
+\ganttbar{C1}{2015-02-16}{2015-02-19} \\ %Créer une nouvelle stratégie de réplication
+\ganttbar{C2}{2015-02-20}{2015-03-02} \\ %Chaque fonction de hachage pour les réplicas
+\ganttbar{C3}{2015-02-20}{2015-03-02} \\ %Retrouver chaque réplica grâce aux fonctions de hachage
+\ganttbar{CT}{2015-03-03}{2015-03-07} \\ %Tests
 
-\ganttgroup{Gestion de la popularité (D)}{2015-03-07}{2015-03-16} \\
-\ganttbar{D1}{2015-03-07}{2015-03-10} \\ %Calcul de la popularité pour un objet
-\ganttbar{D2}{2015-03-07}{2015-03-10} \\ %Implémentation de SpaceSaving
-\ganttbar{D3}{2015-03-10}{2015-03-14} \\ %Amélioration protocole Gossip
-\ganttbar{DT}{2015-03-15}{2015-03-16} \\ %Tests
+\ganttgroup{Gestion de la popularité (D)}{2015-03-08}{2015-03-29} \\
+\ganttbar{D1}{2015-03-08}{2015-03-15} \\ %Calcul de la popularité pour un objet
+\ganttbar{D2}{2015-03-16}{2015-03-20} \\ %Implémentation de SpaceSaving
+\ganttbar{D3}{2015-03-21}{2015-03-27} \\ %Simulateur
+\ganttbar{DT}{2015-03-28}{2015-03-29} \\ %Tests
 
 \ganttgroup{Application cliente (E)}{2015-03-01}{2015-03-08} \\
 \ganttbar{E1}{2015-03-01}{2015-03-06} \\ %Génération jeu de requêtes
@@ -648,20 +648,22 @@ bar height = 0.8
     BT & Tests groupe B & Kévin &  Vérification, tests, mémoire \tabularnewline
     \hline
     \hline
-    C1 & Popularité objet sur noeud &  &  \tabularnewline
+    C1 & Stratégie de réplication & Corentin  & Nouvelle stratégie \tabularnewline
     \hline
-    C2 & Space-Saving Algorithm &  &  \tabularnewline
+    C2 & 1 fonction de hachage par niveau de réplica & Corentin  &  \tabularnewline
     \hline
-    C3 & Popularité d'un objet dans le réseau &  &  \tabularnewline
+    C3 & Retrouver les réplicas grâce aux fonction de hachage & Corentin  &  \tabularnewline
     \hline
-    CT & Tests groupe C &  & Vérification, tests, mémoire \tabularnewline
+    CT & Tests groupe C & Corentin & Vérification, tests, mémoire \tabularnewline
     \hline
     \hline
-    D1 & Implémentation SLVO &  &  \tabularnewline
+    D1 & Calcul de la popularité d'un objet & Corentin & Temps de recherche et exploration des mécanismes  \tabularnewline
     \hline
-    D2 & Implémentation AverageDegree &  &  \tabularnewline
+    D2 & SpaceSaving Algorithm & Corentin & Temps de recherche et exploration des mécanismes \tabularnewline
     \hline
-    DT & Tests groupe D &  &  Avec client \tabularnewline
+    D3 & Simulateur & Corentin & Développement Simulateur \tabularnewline
+    \hline
+    DT & Tests groupe D & Corentin & Sur Simulateur \tabularnewline
     \hline
     \hline
     E1 & Prise en main Tulip &  &  \tabularnewline
