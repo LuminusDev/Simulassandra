@@ -462,7 +462,7 @@ Les requêtes de lecture doivent être identifiable, ceci afin de pouvoir les su
 
 \subsection{Application cliente}
 
-\subsubsection{Intéractions avec Cassandra}
+\subsubsection{Interactions avec Cassandra}
 
 
 \begin{besoins}
@@ -543,24 +543,6 @@ Afin de faciliter la compréhension, nous avons défini quelques normes pour que
 	\item guide d'installation pour utiliser le projet et pour modifier le projet.
 \end{itemize}
 
-
-\subsection{Protocole de test}
-
-\paragraph{} La conformité des algorithmes implémentés est assurée par un protocole de test suivant la démarche :
-
-\begin{itemize}
-	\item Définir un réseau $R$, un ensemble d'objets $O$ et un ensemble de requêtes $Q$
-	\item Faire tourner l'algorithme à la main avec $R$, $O$ et $Q$
-	\item Stocker l'état final du réseau
-	\item Faire valider ce processus par le client
-	\item Exécuter l'algorithme sur ordinateur avec $R$, $O$ et $Q$
-	\item Vérifier les résultats constatés avec les résultats attendus
-\end{itemize}
-	
-\paragraph{} S'il y a une différence entre les deux résultats, une vérification par le client peut être envisagée dans le cas de résultats \textit{presque} similaires. 
-La notion de similitude est laissée à l'appréciation de l'équipe en charge du projet, lors de la vérification.
-
-
 \subsection{Visualisation des données}
 
 \subsubsection{Actualisation de la vue}
@@ -586,41 +568,47 @@ inline = true,
 x unit=4mm,
 time slot format=isodate,
 milestone inline label node/.append style={left=3mm},
-y unit chart = 0.65cm,
+y unit chart = 0.45cm,
 bar top shift= 0.1,
 bar height = 0.8
 ]{2015-02-16}{2015-04-08}
 \gantttitlecalendar{month=name, day} \\
 
-\ganttgroup{Gestion du réseau (A)}{2015-02-16}{2015-03-06} \\
-\ganttbar[name=a1]{A1}{2015-02-16}{2015-02-23} \\ %Création noeuds
-\ganttbar[name=a2]{A2}{2015-02-16}{2015-02-23} \\ %Implémentation et initialisations données noeuds
-\ganttbar[name=a3]{A3}{2015-02-24}{2015-02-28} \\ %Communication entre noeuds
-\ganttbar[name=a4]{A4}{2015-02-27}{2015-03-02} \\ %Gestion des replicats
+\ganttgroup{Gestion des requêtes (A)}{2015-02-16}{2015-03-06} \\
+\ganttbar[name=a1]{A1}{2015-02-16}{2015-02-18} \\ %Envoi des requêtes de lecture
+\ganttbar[name=a2]{A2}{2015-02-19}{2015-02-25} \\ %Suppression des requêtes de lecture
+\ganttbar[name=a3]{A3}{2015-02-26}{2015-03-02} \\ %Gestion des messages de suppression d'une requête
 \ganttbar{AT}{2015-03-03}{2015-03-06} \\ %Tests
 
-\ganttgroup{Simulation de requêtes (B)}{2015-03-01}{2015-03-08} \\
-\ganttbar{B1}{2015-03-01}{2015-03-06} \\ %Génération jeu de requêtes
-\ganttbar{B2}{2015-03-01}{2015-03-06} \\ %Importation jeu de requêtes
-\ganttbar{BT}{2015-03-07}{2015-03-08} \\ %Tests
+\ganttgroup{Réaffectation des requêtes de lecture (B)}{2015-03-07}{2015-03-29} \\
+\ganttbar{B1}{2015-03-07}{2015-03-14} \\ %Système d'assignation d'une requête
+\ganttbar{B2}{2015-03-07}{2015-03-14} \\ %Communication charge file d'attente
+\ganttbar{B3}{2015-03-15}{2015-03-24} \\ %Algorithme SLVO
+\ganttbar{B4}{2015-03-15}{2015-03-24} \\ %Algorithme AvergeDegree
+\ganttbar{BT}{2015-03-25}{2015-03-29} \\ %Tests
 
-\ganttgroup{Gestion de la popularité (C)}{2015-03-07}{2015-03-16} \\
+\ganttgroup{Gestion de la réplication (C)}{2015-03-07}{2015-03-16} \\
 \ganttbar{C1}{2015-03-07}{2015-03-10} \\ %Calcul de la popularité pour un objet
 \ganttbar{C2}{2015-03-07}{2015-03-10} \\ %Implémentation de SpaceSaving
 \ganttbar{C3}{2015-03-10}{2015-03-14} \\ %Amélioration protocole Gossip
 \ganttbar{CT}{2015-03-15}{2015-03-16} \\ %Tests
 
+\ganttgroup{Gestion de la popularité (D)}{2015-03-07}{2015-03-16} \\
+\ganttbar{D1}{2015-03-07}{2015-03-10} \\ %Calcul de la popularité pour un objet
+\ganttbar{D2}{2015-03-07}{2015-03-10} \\ %Implémentation de SpaceSaving
+\ganttbar{D3}{2015-03-10}{2015-03-14} \\ %Amélioration protocole Gossip
+\ganttbar{DT}{2015-03-15}{2015-03-16} \\ %Tests
 
-\ganttgroup{Protocoles d'affectations (D)}{2015-03-15}{2015-03-29} \\
-\ganttbar{D1}{2015-03-15}{2015-03-24} \\ %Algorithme SLVO
-\ganttbar{D2}{2015-03-15}{2015-03-24} \\ %Algorithme AvergeDegree
-\ganttbar{DT}{2015-03-25}{2015-03-29} \\ %Tests 
+\ganttgroup{Application cliente (E)}{2015-03-01}{2015-03-08} \\
+\ganttbar{E1}{2015-03-01}{2015-03-06} \\ %Génération jeu de requêtes
+\ganttbar{E2}{2015-03-01}{2015-03-06} \\ %Importation jeu de requêtes
+\ganttbar{ET}{2015-03-07}{2015-03-08} \\ %Tests
 
-\ganttgroup{Visualisation de données (E)}{2015-03-29}{2015-04-08} \\
-\ganttbar{E1}{2015-03-29}{2015-04-01} \\ %Prise en main tulip
-\ganttbar{E2}{2015-03-29}{2015-04-01} \\ %Enregistrement des données
-\ganttbar{E3}{2015-04-01}{2015-04-04} \\ %Affichage réseau
-\ganttbar{E4}{2015-04-04}{2015-04-06} \\ %AFfichage informations (charges)
+\ganttgroup{Visualisation des données (F)}{2015-03-29}{2015-04-08} \\
+\ganttbar{F1}{2015-03-29}{2015-04-01} \\ %Prise en main tulip
+\ganttbar{F2}{2015-03-29}{2015-04-01} \\ %Enregistrement des données
+\ganttbar{F3}{2015-04-01}{2015-04-04} \\ %Affichage réseau
+\ganttbar{F4}{2015-04-04}{2015-04-06} \\ %AFfichage informations (charges)
 
 \ganttbar{T}{2015-04-06}{2015-04-07} \\
 
@@ -640,22 +628,24 @@ bar height = 0.8
     \hline
     Fct & Description & Développeur(s) & Commentaire \tabularnewline
     \hline
-    A1 & Création des noeuds &  &   \tabularnewline
+    A1 & Envoi des requêtes de lecture & Kévin & Court-circuitage du système de digest de Cassandra  \tabularnewline
     \hline
-    A2 & Données locales des noeuds &  & Initialisation et implémentation \tabularnewline
+    A2 & Suppression des requêtes de lecture & Kévin &  \tabularnewline
     \hline
-    A3 & Communication des données locales entre noeuds &  &  \tabularnewline
+    A3 & Gestion des messages de suppression d'une requête & Kévin & Envoi/réception/traitement \tabularnewline
     \hline
-    A4 & Gestion des replicas &  &  \tabularnewline
-    \hline
-    AT & Tests groupe A &  &  Vérification, tests, mémoire \tabularnewline
+    AT & Tests groupe A & Kévin &  Vérification, tests, mémoire \tabularnewline
     \hline 
     \hline
-    B1 & Générateur de requêtes &  & A détailler  \tabularnewline
+    B1 & Système d'assignation d'une requête & Kévin & Ne pas envoyer les messages de suppression plusieurs fois  \tabularnewline
     \hline
-    B2 & Importateur de jeu de requêtes &  & A détailler  \tabularnewline
+    B2 & Communication charge file d'attente & Kévin & Voir Gossip \tabularnewline
     \hline
-    BT & Tests groupe B &  &  Vérification, tests, mémoire \tabularnewline
+    B3 & Algorithme SLVO & Kévin & Base modulaire  \tabularnewline
+    \hline
+    B4 & Algorithme AvergeDegree & Kévin & Base modulaire  \tabularnewline
+    \hline
+    BT & Tests groupe B & Kévin &  Vérification, tests, mémoire \tabularnewline
     \hline
     \hline
     C1 & Popularité objet sur noeud &  &  \tabularnewline
