@@ -843,18 +843,18 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Après discussion avec la communauté de développeurs de Cassandra, une solution de placement a été implémentée. En effet, pour rappeler le besoin sur le placement des copies, il a été souhaité que le placement de l'objet initial se fasse avec une fonction de hachage $ H_0 (c) $ avec $c$ la clé primaire de l'objet. Le placement des réplicas devait s'effectuer à l'aide de la fonction $ H_1 (c) $ pour la première copie, $H_2 (c) $ pour la deuxième copie et ainsi de suite.
 
-\paragraph{}La méthode implémentée consiste à utiliser la fonction $ H_0 (c) $ pour le placement initial. Le premier réplica est placé grâce à $ H_0 (H_0 (c)) $, le second grâce à $ H_1 (H_0 (c)) $ et ainsi de suite.
+\paragraph{}La méthode implémentée consiste à utiliser la fonction $ H_0 (c) $ pour le placement initial. Le premier réplica est placé grâce à $ H_1 (H_0 (c)) $, le second grâce à $ H_2 (H_0 (c)) $ et ainsi de suite.
 
-\paragraph{}La création de cette implémentation a necessité la création d'une nouvelle stratégie de réplication nommée MultiHashStrategy.
+\paragraph{}La création de cette implémentation a nécessité la création d'une nouvelle stratégie de réplication nommée \class{MultiHashStrategy}. Elle peut être utilisée comme n'importe quelle stratégie de réplication, c'est à dire qu'il suffit d'indiquer son nom lors de la création d'une keyspace. Il est a noté que cette stratégie ne fonctionne correctement qu'avec la méthode de répartition en \textbf{Murmur3}, car cette stratégie utilise des fonctions de hachages Murmur3. Si on utilise une autre méthode de répartition, la distribution des copies ne sera plus uniforme.
 
 \subsubsection*{Problèmes et limites rencontrés}
 
-\paragraph{}Outre la difficulté à comprendre les mécanismes de Cassandra, plusieurs problèmes se sont posés à nous. En effet, la communication de la clé primaire d'un objet n'est pas possible immédiatement dans le développement de nouvelles strategies. Il faudrait modifier le comportement de plusieurs autres classes (et donc à comprendre leur fonctionnement), ce qui nous était difficile durant le temps imparti. Le comportement a légèrement été modifié comme décrit ci-dessus.
+\paragraph{}Outre la difficulté à comprendre les mécanismes de Cassandra, plusieurs problèmes se sont posés à nous. En effet, la communication de la clé primaire d'un objet n'est pas possible immédiatement dans le développement de nouvelles stratégies. Il faudrait modifier le comportement de plusieurs autres classes, ce qui nous était difficile durant le temps imparti. Le comportement a légèrement été modifié comme décrit ci-dessus.
 
 \paragraph{}Un autre aspect (mineur dans notre projet) est que cette fonctionnalité entraîne une perte de la capacité de Cassandra à s'adapter à son réseau. En effet, Cassandra est conçu pour se reconfigurer facilement lors d'ajout ou de suppresion de noeuds dans son réseau. Cependant, dans notre projet, nous nous intéressons à un réseau de taille fixe qui n'évoluera pas dans le temps.
 
-\paragraph{}Et enfin, il est important de mesurer les différences entre les deux solutions. Effectivement, si elles se ressemblent sur leur principe, un point important est à noter : une différence forte au niveau des collisions. Une \textit{collision} est lorsqu'une donnée et sa copie (ou deux copies ou deux données) sont situées sur le même noeud. \newline
-Prenons par exemple, le cas de deux objets ayant pour clé primaire $c1$ et $c2$ et avec $ H_0 (c1) = k $ et $ H_0 (c2) = k $.
+\paragraph{}Et enfin, il est important de mesurer les différences entre les deux solutions. Effectivement, si elles se ressemblent sur leur principe, un point important est à noter : une différence forte au niveau des collisions. Une \textit{collision} est lorsqu'une fonction de hachage retourne la même valeur pour deux entrées différentes. \newline
+Prenons par exemple, le cas de deux objets ayant pour clé primaire $c1$ et $c2$ et avec $ H_0 (c1) = k $ et $ H_0 (c2) = k $ (nous avons donc une collision).
 \begin{itemize}
     \item \underline{Solution initiale :} \newline
         Placement initial : $ H_0 (c1) = k $ et $ H_0 (c2) = k $ \newline
@@ -864,14 +864,14 @@ Prenons par exemple, le cas de deux objets ayant pour clé primaire $c1$ et $c2$
 
     \item \underline{Solution implémentée :} \newline
         Placement initial : $ H_0 (c1) = k $ et $ H_0 (c2) = k $ \newline
-        Premier réplica : $ H_0 (H_0 (c1)) = H_0(k) = k3 $ et $ H_0 (H_0 (c2)) = H_0(k) = k3 $ \newline
-        Second réplica : $ H_1 (H_0 (c1)) = H_1 (k) = k4 $ et $ H_1 (H_0 (c2)) = H_1 (k) = k4 $ \newline
+        Premier réplica : $ H_1 (H_0 (c1)) = H_1(k) = k3 $ et $ H_1 (H_0 (c2)) = H_1(k) = k3 $ \newline
+        Second réplica : $ H_2 (H_0 (c1)) = H_2 (k) = k4 $ et $ H_2 (H_0 (c2)) = H_2 (k) = k4 $ \newline
         Avec une collision sur le placement de la donnée initiale, toutes les copies seront placées sur le même noeud deux à deux. \newline
-        Autrement dit, toutes les données qui ont leur placement initial sur un même noeud $X$, auront leur premier réplica sur le même noeud $Y$ et ainsi de suite...
+        Autrement dit, toutes les données qui entrent en collision pour la première fonction de hachage, auront leur premier réplica sur le même noeud $Y$ et ainsi de suite.
 
 \end{itemize}
 
-On a une mauvaise répartition des données car si on pouvait avoir le placement initial de deux données sur le même noeud, on souhaitait que le premier réplica ne soit pas sur le même noeud que le premier réplica de l'autre donnée.
+On a une donc une répartition des données moins efficace car si on avait une collision, on souhaitait que les réplicas ne soit pas sur les mêmes noeuds pour ces données. Toutefois, le risque de collision reste assez faible car la fonction de hachage Murmur3 donne des résultats codés sur 64 bits (le type \textit{Long} en Java), soit $2^{64}-1$ solutions possibles.
 
 \subsubsection*{Travail restant à réaliser}
 
@@ -889,13 +889,13 @@ On a une mauvaise répartition des données car si on pouvait avoir le placement
 
 \subsubsection*{Travail restant à réaliser}
 
-\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requêtes totale reçues. Chaque noeud ajoutera $n$ compteurs (s'il possède la gestion de $n$ données ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes de chaque objet.
+\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requêtes totale reçues (déjà existant dans Cassandra). Chaque noeud ajoutera $n$ compteurs (s'il possède la gestion de $n$ données ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes de chaque objet.
 
-\paragraph{}Puis, un mécanisme à part, qui à chaque période de temps prédéfini par l'utilisateur, enverrait le nombre total de requêtes reçues à ses voisins. La reflexion n'est pas claire ici car on a besoin de créer une synchronisation entre tous les noeuds pour le calcul du nombre.
+\paragraph{}Puis, un mécanisme à part, qui à chaque période de temps prédéfini par l'utilisateur, enverrait le nombre total de requêtes reçues à ses voisins. La réflexion n'est pas claire ici car on a besoin de créer une synchronisation entre tous les noeuds pour le calcul du nombre.
 
 \paragraph{}Les noeuds choisissent de créer, de supprimer ou de ne rien faire à propos des objets dont ils ont la gestion.
 
-\paragraph{}Il faut penser aussi que les stratégies (et d'autres mécanismes) vont chercher le nombre de copies des objets dans les fichiers de configuration de Cassandra. Ici, le nombre de copies variant en fonction de la popularité, il faut ajouter en plus, un mécanisme de transmission du nombre de copies. L'étendu de cette modification n'est pas encore au point car cela peut, peut-être fausser d'autres mécanismes de Cassandra (comme la répartion des requêtes aux réplicas...).
+\paragraph{}Il faut penser aussi que les stratégies de réplication (et d'autres mécanismes) vont chercher le nombre de copies des objets dans les fichiers de configuration de Cassandra. Ici, le nombre de copies variant en fonction de la popularité, il faut ajouter en plus, un mécanisme de transmission du nombre de copies. L'étendu de cette modification n'est pas encore au point car cela peut éventuellement fausser d'autres mécanismes de Cassandra (comme la répartition des requêtes aux réplicas...).
 
 \paragraph{}A la fin de chaque période de temps défini, il faut remettre à zéro les calculs de popularité. Cela doit s'effectuer aussi par un message commun au noeud.
 
@@ -903,7 +903,7 @@ On a une mauvaise répartition des données car si on pouvait avoir le placement
 
 \subsection{Création d'une application cliente}
 
-\paragraph{} L'application cliente permet à l'utilisateur d'intéragir avec la base de données Cassandra.
+\paragraph{} L'application cliente permet à l'utilisateur d'interagir avec la base de données Cassandra.
 
 \subsubsection{Gestion de Cassandra}
 
@@ -919,7 +919,7 @@ toutes les fonctionnalités dont nous avons besoin. C'est pourquoi nous l'avons 
 	\caption{Interactions du client \label{fig:client_acteurs}}
 \end{figure}
 
-\paragraph{} Sur la figure \ref{fig:client_acteurs}, l'application cliente est représentée par le rectangle bleu nommé client.
+\paragraph{} Sur la figure~\ref{fig:client_acteurs}, l'application cliente est représentée par le rectangle bleu nommé client.
 Le client exécute les actions souhaitées par l'utilisateur. Les communications entre l'application cliente et la base de données Cassandra passent par le java-driver.
 Le client peut lire et écrire des fichiers dans l'espace de stockage.
 
@@ -929,64 +929,67 @@ Le client peut lire et écrire des fichiers dans l'espace de stockage.
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=12cm]{images/client/diagumlclient.png}
-	\caption{Diagramme UML simplifié de l'application \label{fig:client_uml}}
+	\caption{Diagramme de classes simplifié de l'application cliente \label{fig:client_uml}}
 \end{figure}
 
 \paragraph{} 
 
-\paragraph{} Les classes du java-driver sont bleues dans la figure \ref{fig:client_uml}.
+\paragraph{} Les classes du java-driver sont bleues dans la figure~\ref{fig:client_uml}.
 \begin{itemize}
  \item La classe \class{Cluster} crée des objets permettant la connexion à la base de données Cassandra.
- \item La class \class{Session} crée des objets permettant d'envoyer des requêtes au format Cassandra Query Language, CQL, à Cassandra. 
- \item La class \class{KeyspaceMetadata} crée des objets permettant de récuperer les informations principales concernant un keyspace.
- Par exemple, le nom du keyspace, les tables stockées, la classe pour la stratégie de replication utilisée...
- \item La class \class{TableMetadata} crée des objets permettant de récupérer les informations principales concernant une table.
- Par exemple, le nom de la table, les colonnes composant la table...
+ \item La classe \class{Session} crée des objets permettant d'envoyer des requêtes au format Cassandra Query Language (CQL) à Cassandra. 
+ \item La classe \class{KeyspaceMetadata} crée des objets permettant de récupérer les informations principales concernant un keyspace.
+ Par exemple, le nom du keyspace, les tables stockées ou bien la classe pour la stratégie de réplication utilisée.
+ \item La classe \class{TableMetadata} crée des objets permettant de récupérer les informations principales concernant une table.
+ Par exemple, le nom de la table ou les colonnes composant la table.
 \end{itemize}
 
-\paragraph{} Les constantes: nom des commandes, temps avant un timout ... sont configurables dans  \class{simulassandra.client.Config}.
+\paragraph{} Les constantes: nom des commandes, temps avant un timeout... sont configurables dans \class{simulassandra.client.Config}.
 
 \paragraph{}L'application cliente fonctionne grâce à l'objet \class{App} créant un objet \class{ClientApp}.
-Cet objet receptionne les commandes saisies par l'utilisateur dans une console (ou terminal) et exécute les actions correspondant à chaque commande.
+Cet objet réceptionne les commandes saisies par l'utilisateur dans une console (ou terminal) et exécute les actions qui correspondent à chaque commande.
 
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=13cm]{images/client/vie.png}
-	\caption{États de l'application \label{fig:vie}}
+	\caption{États de l'application cliente \label{fig:vie}}
 \end{figure}
 
-\paragraph{} Le schéma \ref{fig:vie} décrit les différents états de l'application.
+\paragraph{} Le schéma~\ref{fig:vie} décrit les différents états de l'application.
 
-\paragraph{Connexion Cassandra} Dans un premier temps, l'utilisateur doit entrer l'adresse à laquelle se situe la base de données Cassandra à laquelle il souhaite se connecter.
+\paragraph{Connexion Cassandra} Dans un premier temps, l'utilisateur doit entrer l'adresse IP à laquelle se situe la base de données Cassandra à laquelle il souhaite se connecter.
 L'utilisateur a trois essais, sinon l'application se ferme. Le nombre d'essais est configurable. L'adresse entrée étant valide, 
 l'objet \class{ClientApp} crée un objet \class{Cluster} initialisant la connexion à la base de données.
 
-\paragraph{Choix du keyspace} Une fois connecté, l'utilisateur est invité à entrer le keyspace dans lequel il souhaite travailler. Si le keyspace entré n'existe pas, l'application
-lui propose de le créer. Il doit alors choisir une stratégie de réplication et un facteur de réplication.
+\paragraph{Choix du keyspace} Une fois connecté, l'utilisateur est invité à entrer le keyspace dans lequel il souhaite travailler. Si le keyspace entré n'existe pas, l'application lui propose de le créer. Il doit alors choisir une stratégie de réplication et un facteur de réplication.
 L'objet \class{ClientApp} crée alors un objet \class{KeySpace} contenant les informations du keyspace et l'objet \class{Session} permettant d'envoyer des requêtes à la base de données.
 
 
 \paragraph{Exécution des commandes} Le keyspace étant choisi, l'utilisateur est libre d'exécuter les commandes proposées par l'application.
 \paragraph{} On distingue deux types de commandes. Les commandes permettant de consulter l'état du logiciel et de la base de données. 
 C'est-à-dire, les données du keyspace courant (celui auquel nous sommes connectés), les tables stockées dans le keyspace...
-\begin{itemize}
- \item \texttt{help} affichant une liste des commandes proposées par l'application accompagnée d'une brêve description de chaque commande.
- \item \texttt{showksdata} affichant les méta-données du keyspace courant, le nom du keyspace, le facteur de réplication et la stratégie de réplication utilisée.
- \item \texttt{showtabledata <table>} affichant les méta-données de la table \texttt{<table>}: le nombre d'enregistrements, le nom des colonnes de la table et leur type.
- \item \texttt{lstable} la liste des tables stockées dans le keyspace courant.
- \item \texttt{quit} pour quitter l'application cliente, on arrive donc sur l'état \textbf{Fin}.
-\end{itemize} 
+\newline
+\shellcmd{help}
+Liste les commandes proposées par l'application accompagnée d'une brève description de chaque commande.
+\shellcmd{showksdata}
+Affiche les méta-données du keyspace courant : le nom du keyspace, le facteur de réplication et la stratégie de réplication utilisée.
+\shellcmd{showtabledata <table>}
+Affiche les méta-données de la table \texttt{<table>} : le nombre d'enregistrements, le nom des colonnes de la table et leur type.
+\shellcmd{lstable}
+Liste les tables stockées dans le keyspace courant.
+\shellcmd{quit}
+Quitte l'application cliente, on arrive donc sur l'état \textit{Fin}.
 
 \paragraph{} Ainsi que les commandes permettant de modifier le contenu de la base de données, d'effectuer des requêtes, de modifier le keyspace courant.
-\begin{itemize}
- \item \texttt{import <file>} exécutant les requête au format CQL contenues dans le fichier \texttt{<file>}.
- \item \texttt{switch <ks>} permettant de changer de keyspace. Passage sur le keyspace \texttt{<ks>} avec création du keyspace s'il n'existe pas.
- On retourne sur l'état \textbf{Choix du Keyspace}
- \item \texttt{queries <qf> <s> <ns> <nq>} exécutant une suite de requête générée alétoirement selon le seed \texttt{<s>} et la classe \texttt{<qf>}.
- Le nombre de simulation est définie par \texttt{<ns>} et le nombre de requêtes par simulation par \texttt{<nq>}. Cette commande est détaillée dans la partie suivante.
- \item \texttt{createdatafile  <file> <nb\_tables> <nb\_rows> <data\_length>} écrivant dans un fichier \texttt{<file>} la suite de requête CQL permettant de créer \texttt{<nb\_tables>} 
- et d'insérer \texttt{<nb\_rows>} enregistrements par table. Les données crées sont de longueur \texttt{<data\_length>}.
-\end{itemize}
+\newline
+\shellcmd{import <file>}
+Exécute les requête au format CQL contenues dans le fichier \texttt{<file>}.
+\shellcmd{switch <ks>}
+Change de keyspace. Passage sur le keyspace \texttt{<ks>} avec création du keyspace s'il n'existe pas. On retourne sur l'état \textit{Choix du Keyspace}.
+\shellcmd{queries <qf> <s> <ns> <nq>}
+Exécute une suite de requêtes générées aléatoirement selon le seed \texttt{<s>} et la classe \texttt{<qf>}. Le nombre de simulation est définie par \texttt{<ns>} et le nombre de requêtes par simulation par \texttt{<nq>}. Cette commande est détaillée dans la partie suivante.
+\shellcmd{createdatafile  <file> <nb\_tables> <nb\_rows> <data\_length>}
+Écrit dans un fichier \texttt{<file>} la suite de requêtes CQL permettant de créer \texttt{<nb\_tables>} et d'insérer \texttt{<nb\_rows>} enregistrements par table. Les données crées sont de longueur \texttt{<data\_length>}.
  
 \paragraph{Ajout de commandes} Il est aisé d'ajouter des commandes à l'application cliente.
 
