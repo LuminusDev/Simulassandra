@@ -222,12 +222,12 @@ Supposons qu'on a au maximum $n$ fois la donnée présente dans le réseau (c'es
 
 \newpage
 \subsection{Pour en savoir plus...}
-Présentations par d'autres auteurs sur le projet :
+Pour nous aider dans le projet, nous avons rechercher des écrits dans plusieurs domaines différents que nous devons aborder. Cette bibliographie initiale est une étude de l'existant. D'autres références sont ensuite disponibles tout au long de ce document, que nous avons trouvé au fil de l'avancement du projet.
 
 \paragraph{Système distribué}
 
 \begin{itemize}
-\item Le livre \cite{Ozsu2011} apporte les principes sur les bases de données distribuée.
+\item Le livre \cite{Ozsu2011} apporte les principes sur les bases de données distribuée. On peut notamment y retrouver des principes sur la réplication ainsi que sur les communications dans le base de données.
 
 \end{itemize}
 
@@ -236,9 +236,9 @@ Présentations par d'autres auteurs sur le projet :
 \begin{itemize}
 \item L'article \cite{BalancedAlloc99} met en exergue des algorithmes d'équilibrage, sources d'inspiration pour les clients dans l'élaboration de leurs algorithmes.
 
-\item Le papier \cite{RandomChoices05}, de là même manière que le précédent, s'intéresse de plus près à des algorithmes d'allocation aléatoire.
+\item Le papier \cite{RandomChoices05}, de là même manière que le précédent, s'intéresse de plus près à des algorithmes d'allocation aléatoire. Les deux articles permettent de comprendre l'intérêt des modifications à apporter pour les stratégies de placement et de réplication dans la base de données distribuées.
 
-\item L'article \cite{LoadBalancingPeertoPeer14} est aussi important car il traite des algorithmes d'équilibrage des charges dans un réseau pair à pair.
+\item L'article \cite{LoadBalancingPeertoPeer14} traite des algorithmes d'équilibrage des charges dans un réseau pair à pair.
 
 \end{itemize}
 
@@ -247,23 +247,21 @@ Présentations par d'autres auteurs sur le projet :
 \begin{itemize}
 \item Le livre \cite{Hewitt2010} renseigne sur la compréhension du fonctionnement de Cassandra, ainsi que les structures particulières de ce système de base de données.
 
-\item Le lien \cite{ApacheCassandra09} permet d'accéder à l'ensemble de la documentation technique et au dépôt des sources de la base de données Cassandra.
+\item Le lien \cite{ApacheCassandra09} permet d'accéder à l'ensemble de la documentation technique et au dépôt des sources de la base de données Cassandra. On peut y retrouver la documentation côté développeur, pour modifier Cassandra suivant des règles prédéfinies. Les informations sur la compilation du projet et la gestion des tests est aussi présente si l'on se dirige vers le wiki.
 
-\item Le papier \cite{FacebookCassandra09} apporte les explications des créateurs de Cassandra.
+\item Le papier \cite{FacebookCassandra09} apporte les explications des créateurs de Cassandra, sur les spécifications de Cassandra par rapport aux autres bases de données du même genre. On y retrouve des informations sur le partitionnement, la réplication et le modèle de données utilisé par Cassandra.
 
 \item Le lien \cite{DSDocCassandra15} possède la documentation la plus complète sur la dernière version de Cassandra, et sur les manières de l'utiliser.
-Les nombreux exemples et les approfondissements sont des points d'appuis importants pour le projet.
+Les nombreux exemples et les approfondissements sont des points d'appuis importants pour le projet. Tous les principes de la base de données sont expliqués de manière globale, sans entrer dans les détails du code source.
 
 \end{itemize}
 
 \paragraph{Visualisation}
 
 \begin{itemize}
-\item Le lien \cite{DSOpsCenter14} est intéressant pour le projet car il apporte un logiciel capable de montrer graphiquement des statistiques sur une base de données Cassandra opérationnelle
-Il peut être utilisé dans le projet, ou apporté des pistes pour la visualisation des données.
+\item Le lien \cite{DSOpsCenter14} apporte un logiciel, OpsCenter, capable de montrer graphiquement des statistiques sur une base de données Cassandra opérationnelle. Il peut être utilisé dans le projet, ou apporté des pistes pour la visualisation des données.
 
-\item L'article \cite{Tulip12} s'intéresse à un logiciel de représentation de graphe développé au Labri.
-La proximité des créateurs peut apporter une solution viable.
+\item L'article \cite{Tulip12} s'intéresse à un logiciel de représentation de graphe développé au Labri. Une visualisation sous la forme d'un graphe des données à afficher est tout à fait envisageable. Cet outil nous permettrait de répondre à ce besoin. De plus, ce logiciel est développé au Labri. Nous avons donc des personnes aptes à nous aider à proximité dans le cas de l'utilisation de ce logiciel.
 \end{itemize} 
 
 
@@ -508,7 +506,7 @@ L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du n
 
 \subsubsection{Affichage des données}
 
-\paragraph{Définition} Un \textit{graphe} est un ensemble de points appelés \textit{sommets}, dont certaines paires sont directement reliées par un (ou plusieurs) lien(s) appelé(s) \textit{arêtes} \cite{graphe}. 
+\paragraph{Définition} Un \textit{graphe} est un ensemble de points appelés \textit{sommets}, dont certaines paires sont directement reliées par un (ou plusieurs) lien(s) appelé(s) \textit{arêtes}. 
 
 \paragraph{Noeuds} L'application doit permettre la représentation de chaque noeud par un sommet.
 
@@ -724,7 +722,7 @@ TODO : Insérer l'architecture
 
 \subsection{Modification de Cassandra}
 
-\paragraph{}Une partie importante du projet consiste à adapter le comportement de la base de données Cassandra afin de répondre aux besoins. La modification du code source de Cassandra demande, outre la création de code, des compétences de lecture et de compréhension de code. En effet, il n'existe pas de documentation officielle concernant le code source de Cassandra. On peut tout de même retrouver des explications sur l'architecture interne dans le wiki officiel hébergé par la fondation Apache \cite{CassArchi13} ainsi que d'autres détails sur la documentation réalisée par Datastax \cite{DatastaxDoc15}.
+\paragraph{}Une partie importante du projet consiste à adapter le comportement de la base de données Cassandra afin de répondre aux besoins. Nous avons décidé de travailler sur la version \textbf{2.1.2}, dernière version stable au début du projet. La modification du code source de Cassandra demande, outre la création de code, des compétences de lecture et de compréhension de code. En effet, il n'existe pas de documentation officielle concernant le code source de Cassandra. On peut tout de même retrouver des explications sur l'architecture interne dans le wiki officiel hébergé par la fondation Apache \cite{CassArchi13} ainsi que d'autres détails sur la documentation réalisée par Datastax \cite{DatastaxDoc15}.
 
 \paragraph{}Dans la mesure du possible, nous avons respecté les conventions de codage de Cassandra \cite{CassCodeStyle14}, elles mêmes découlant des conventions de codage Java créées par Sun.
 
