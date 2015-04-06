@@ -679,7 +679,7 @@ bar height = 0.8
     \hline
 \end{tabular}
  
-\vspace{1cm}
+\newpage
  
 \subsection{Outils utilisés}
 
@@ -704,12 +704,90 @@ bar height = 0.8
 \section{Architecture}
 \label{sec:Architecture}
 
-Les besoins fonctionnels sont répartis selon les 3 gros thèmes suivant :
-
-TODO : Insérer l'architecture
 
 
+\subsection{Application cliente}
 
+\paragraph{} Pour communiquer avec la base de données, nous utilisons un \textit{pilote}, programme informatique permettant à un programme d'intéragir avec un autre programme.
+
+\subsubsection{Présentation du pilote}
+\paragraph{} Le pilote que nous utilisons est Java Driver 2.0 for Apache Cassandra développé par l'entreprise Datastax, distributeur de Cassandra. Le pilote est sous licence Apache.
+
+\paragraph{} L'entreprise Datastax étant très spécialisé dans le développement de logiciels centrés sur Cassandra, son pilote est le plus complet. Il propose
+toutes les fonctionnalités dont nous avons besoin.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{images/client/acteurs.png}
+	\caption{Interactions du client \label{fig:client_acteurs}}
+\end{figure}
+
+\paragraph{} Sur la figure~\ref{fig:client_acteurs}, l'application cliente est représentée par le rectangle bleu nommé client.
+Le client exécute les actions souhaitées par l'utilisateur. Les communications entre l'application cliente et la base de données Cassandra passent par le java-driver.
+Le client peut lire et écrire des fichiers dans l'espace de stockage.
+
+\subsubsection{Architecture de l'application cliente}
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{images/client/diagumlclient.png}
+	\caption{Diagramme de classes simplifié de l'application cliente \label{fig:client_uml}}
+\end{figure}
+
+\paragraph{} 
+
+\paragraph{} Les classes du java-driver sont bleues dans la figure~\ref{fig:client_uml}.
+\begin{itemize}
+ \item La classe \class{Cluster} crée des objets permettant la connexion à la base de données Cassandra.
+ \item La classe \class{Session} crée des objets permettant d'envoyer des requêtes au format Cassandra Query Language (CQL) à Cassandra. 
+ \item La classe \class{KeyspaceMetadata} crée des objets permettant de récupérer les informations principales concernant un keyspace.
+ Par exemple, le nom du keyspace, les tables stockées ou bien la classe pour la stratégie de réplication utilisée.
+ \item La classe \class{TableMetadata} crée des objets permettant de récupérer les informations principales concernant une table.
+ Par exemple, le nom de la table ou les colonnes composant la table.
+\end{itemize}
+
+\paragraph{} A partir de ces quatres classes, nous avons développé l'architecture de l'application cliente.
+\begin{itemize}
+ \item La classe \class{App} contient le \class{main}.
+ \item L'objet \class{ClientApp} est le coeur de l'application. C'est l'objet qui communique et exécute les actions que souhaite effectuer l'utilisateur.
+ \item La classe \class{Table} crée un objet contenant les informations propre à une table donnée.
+ \item La classe \class{KeySpace} crée un objet contenant les informations propre à un keyspace donné.
+ \item L'objet \class{Connection} permet d'exécuter des requêtes sur la base de données.
+ \item Les objets héritant de \class{QueriesFactory} sont des générateurs de requêtes, ils envoient des suites de requêtes à Cassandra.
+ \item Les objets héritant de \class{DataGenerator} sont des générateurs de données, ils permettent de génerer des données pour effectuer les simulations.
+\end{itemize}
+
+
+\subsection{Visualisation des métriques}
+
+\paragraph{} Pour visualiser les métriques, nous utilisons l'application nommée \path{Graphite} écrite en Python.
+
+\paragraph{} Graphite est l'union de trois logiciels:
+\begin{itemize}
+ \item \textbf{carbon}, un logiciel permettant de traiter des données temporelles, comme l'évolution de la charge d'un noeud en fonction du temps.
+ \item \textbf{whisper}, une base de données stockant toutes ces données
+ \item \textbf{graphite webapp}, une application web permettant la visualisation de ces données.
+\end{itemize}
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=12cm]{images/client/graphite.png}
+	\caption{Graphite, union de trois logiciels \label{fig:client_visu}}
+\end{figure}
+
+
+\paragraph{} Les métriques sont directement envoyées à Graphite en créant une connexion entre le metrics de Cassandra et Graphite, voir figure~\ref{fig:client_visu}
+Pour cela, on utilise l'objet \class{GraphiteReporter} dans le module \class{metrics-graphite}.
+
+\paragraph{} Ces données sont ensuite traitées par Carbon puis sauvegardées dans la base de données Whisper.
+Enfin, la web-app de Graphite affiche ces informations sous forme de graphes (courbes, histogrammes...) dans un navigateur web.
+
+\paragraph{} L'utilisation de cette application permet de visualiser un grand nombre de métrics déjà disponible dans la version originale de Cassandra.
+On peut citer par exemple, le volume total de données stockées sur un cluster, le temps de lecture des données, la taille totale du cache...
+En ajoutant un metric pour mesurer la charge d'un noeud, on peut visualiser celle-ci au cours du temps grâce au divers formats de graphiques proposés par Graphite.
+
+
+\newpage 
 \section{Réalisation du projet}
 
 \subsection{Modification de Cassandra}
@@ -897,42 +975,8 @@ On a une donc une répartition des données moins efficace car si on avait une c
 
 \subsubsection{Gestion de Cassandra}
 
-\paragraph{} Pour communiquer avec la base de données, nous utilisons un \textit{pilote}, programme informatique permettant à un programme d'intéragir avec un autre programme.
-Il s'agit de Java Driver 2.0 for Apache Cassandra développé par l'entreprise Datastax, distributeur de Cassandra. Le pilote est sous licence Apache.
-
-\paragraph{} L'entreprise Datastax étant très spécialisé dans le développement de logiciels centrés sur Cassandra, son pilote est le plus complet. Il propose
-toutes les fonctionnalités dont nous avons besoin. C'est pourquoi nous l'avons choisi.
-
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=12cm]{images/client/acteurs.png}
-	\caption{Interactions du client \label{fig:client_acteurs}}
-\end{figure}
-
-\paragraph{} Sur la figure~\ref{fig:client_acteurs}, l'application cliente est représentée par le rectangle bleu nommé client.
-Le client exécute les actions souhaitées par l'utilisateur. Les communications entre l'application cliente et la base de données Cassandra passent par le java-driver.
-Le client peut lire et écrire des fichiers dans l'espace de stockage.
-
 \subsubsection*{Solution implémentée}
 
-
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=12cm]{images/client/diagumlclient.png}
-	\caption{Diagramme de classes simplifié de l'application cliente \label{fig:client_uml}}
-\end{figure}
-
-\paragraph{} 
-
-\paragraph{} Les classes du java-driver sont bleues dans la figure~\ref{fig:client_uml}.
-\begin{itemize}
- \item La classe \class{Cluster} crée des objets permettant la connexion à la base de données Cassandra.
- \item La classe \class{Session} crée des objets permettant d'envoyer des requêtes au format Cassandra Query Language (CQL) à Cassandra. 
- \item La classe \class{KeyspaceMetadata} crée des objets permettant de récupérer les informations principales concernant un keyspace.
- Par exemple, le nom du keyspace, les tables stockées ou bien la classe pour la stratégie de réplication utilisée.
- \item La classe \class{TableMetadata} crée des objets permettant de récupérer les informations principales concernant une table.
- Par exemple, le nom de la table ou les colonnes composant la table.
-\end{itemize}
 
 \paragraph{} Les constantes: nom des commandes, temps avant un timeout... sont configurables dans \class{simulassandra.client.Config}.
 
@@ -981,13 +1025,27 @@ Exécute une suite de requêtes générées aléatoirement selon le seed \texttt
 \shellcmd{createdatafile  <file> <nb\_tables> <nb\_rows> <data\_length>}
 Écrit dans un fichier \texttt{<file>} la suite de requêtes CQL permettant de créer \texttt{<nb\_tables>} et d'insérer \texttt{<nb\_rows>} enregistrements par table. Les données crées sont de longueur \texttt{<data\_length>}.
  
-\paragraph{Ajout de commandes} Il est aisé d'ajouter des commandes à l'application cliente.
+\paragraph{Ajout de commandes} Une commande est une suite de caractères saisie par l'utilisateur pour exécuter une action. Elle est au format :
+\shellcmd{nom\_commande <argument\_1> <argument\_2> ... <argument\_n> }
+Il est aisé d'ajouter des commandes à l'application cliente.
 
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=10cm]{images/client/command.png}
-	\caption{États de l'application \label{fig:commande}}
+	\caption{Traitement d'une commande \label{fig:commande}}
 \end{figure}
+
+\paragraph{} Un objet de type \class{Command} est la représentation d'une commande. 
+Ces attributs sont l'identifiant de \texttt{nom\_comande} et un tableau de chaîne de caractères contenant tous les arguments de la commande.
+
+\paragraph{} La commande tapée par l'utilisateur est d'abord traitée par les méthodes de la classe \class{InputCommandParser}.
+Le but est de transformer la chaîne de caractères en un objet de type \class{Command}. L'objet est ensuite récupéré dans la méthode \class{run} de l'objet \class{ClientApp}
+pour être exécutée par la méthode \texttt{execute} du même objet.
+
+\paragraph{} Pour ajouter une commande, il faut donc ajouter les constantes définissant le nom de la commande, l'identifiant de la commande ainsi que son nombre d'arguments dans la classe \class{Config}.
+Il faut ensuite modifier la méthode \class{whichAction} de \class{InputCommandParser} pour attribuer au nom de la commande le bon identifiant et ajouter le traitement correspondant à la commande
+dans la méthode \class{execute} de \class{ClientApp}.
+
 
 
 
@@ -1001,6 +1059,8 @@ Exécute une suite de requêtes générées aléatoirement selon le seed \texttt
 \subsubsection*{Travail restant à réaliser}
 
 \subsection{Création d'une application de visualisation de données}
+
+\paragraph{} La visualisation des métrics de Cassandra n'étant pas une priorité du client.
 
 \section{Tests et résultats}
 
