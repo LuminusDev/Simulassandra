@@ -1004,7 +1004,28 @@ Exécute une suite de requêtes générées aléatoirement selon le seed \texttt
 
 \section{Tests et résultats}
 
-TODO : Mettre les tests et les expliquer
+\paragraph{}Pour les sections suivantes, les tests se sont déroulés sur un réseau d'Amazon composé de 10 noeuds reliés entre eux par Internet. Il faut relativiser ces résultats, car l'expérience se déroule dans des conditions idéales d'utilisation : les données sont en cache de la base de données distribuée.
+
+\paragraph{}A noter : pour des raisons de coûts de location des machines, il ne nous a pas été possible d'effectuer plus de tests en environnement \textit{réel}, c'est à dire non simulé sur la même machine grâce à l'outil \textit{CCM}.
+
+
+\subsection{Différence de temps d'exécution avec la nouvelle stratégie de placement}
+
+\paragraph{}Pour comparer les performances de notre nouvelle stratégie de placement des données, nous allons effectuer deux tests :
+
+\begin{itemize}
+    \item On compare les temps d'exécution de différents jeux de requêtes sur un facteur de réplication de 1 (sans copie) et un facteur de 2 (avec une copie) (voir figure~\ref{fig:test_RF_PO})
+    \item On réitère l'expérience avec une version de Cassandra non modifiée par nos soins (voir figure~\ref{fig:test_cassandra_non_modif_RF_PO})
+\end{itemize}
+
+\paragraph{}On remarque un gain d'environ 3 secondes sur de grands jeux de requêtes entre un facteur de réplication de 1 et de 2. On peut expliquer ce gain de performance qui est sûrement du au facteur de réplication. 
+
+\subsection{Différence de temps d'exécution pour comparer le travail effectué sur les requêtes}
+
+\paragraph{}Pour comparer les performances de notre traval effectué au niveau du traitement des requêtes, nous allons comparer toujours les mêmes tests (figures~\ref{fig:test_RF_PO} et~\ref{fig:test_cassandra_non_modif_RF_PO}). Pour effectuer notre analyse, nous devons étudier les courbes rouges ensembles et les bleues ensembles, afin de mettre en évidence lors d'un même facteur de réplication, le gain obtenu.
+
+\paragraph{}La différence entre notre version et celle de Cassandra non modifiée est d'environ 1 seconde sur de grands jeux de requêtes. Les résultats sur de petits jeux de requêtes s'expliquent nottamment par un sur-coût lors des communications entre les noeuds et sur la taille des données qui est relativement petite. Les courbes de la figure~\ref{fig:test_taille_RF2} montrent d'ailleurs les différences de temps d'exécution entre une donnée de 10 Ko et de 1 Mo.
+
 
 \section{Annexe - Un simulateur}
 
@@ -1146,6 +1167,26 @@ TODO : C'est la fin.
 	\centering
 		\includegraphics[width=15cm]{images/implementation/stages_diagram_modified.png}
 	\caption{Diagramme de classe simplifié de l'architecture SEDA dans Cassandra après modification \label{fig:stages_diagram_modified}}
+\end{figure}
+
+%%%%%%%%%% TESTS %%%%%%%%%%
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{images/tests/PAF-TailleO-RF2.png}
+	\caption{Comparatif des temps d'exécution de requêtes en fonction de leur nombre et de la taille des objets \label{fig:test_taille_RF2}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+        \includegraphics[width=15cm]{images/tests/PAF-RF-PO.png}
+	\caption{Comparatif des temps d'exécution de requêtes en fonction du facteur de réplication et du nombre de requêtes sur des petits objets \label{fig:test_RF_PO}}
+\end{figure}
+
+\begin{figure}[p]
+	\centering
+		\includegraphics[width=15cm]{images/tests/cassandra_non_modif-RF-PO.png}
+	\caption{Comparatif des temps d'exécution des requêtes en fonction du facteur de réplication et du nombre de requêtes sur des petits objets sur une base de Cassandra non modifiée \label{fig:test_cassandra_non_modif_RF_PO}}
 \end{figure}
 
 \end{document}
