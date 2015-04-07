@@ -1150,14 +1150,23 @@ dans la méthode \class{execute} de \class{ClientApp}.
     \item On réitère l'expérience avec une version de Cassandra non modifiée par nos soins (voir figure~\ref{fig:test_cassandra_non_modif_RF_PO})
 \end{itemize}
 
-\paragraph{}
+\paragraph{}On remarque que le nombre de copie, ici, n'influe pas sur la capacité de traitement des requêtes, que ce soit pour notre stratégie ou l'ancienne. Les requêtes étant uniformes, c'est un résultat auquel on pouvait s'attendre. Dans le cas de requête ciblé sur des objets d'un seul noeud par contre, c'est ici que l'on aurait pu normalement percevoir un gain de performance avec l'utilisation de la réplication (et du système de popularité non implémenté).
 
 \subsection{Différence de temps d'exécution pour comparer le travail effectué sur les requêtes}
 
-\paragraph{}Pour comparer les performances de notre travail effectué au niveau du traitement des requêtes, nous allons comparer toujours les mêmes tests (figures~\ref{fig:test_RF_PO} et~\ref{fig:test_cassandra_non_modif_RF_PO}). Pour effectuer notre analyse, nous devons étudier les courbes rouges ensembles et les bleues ensembles, afin de mettre en évidence lors d'un même facteur de réplication, le gain obtenu.
+\paragraph{}Pour comparer les performances de notre travail effectué au niveau du traitement des requêtes, nous avons comparé les mêmes tests (figures~\ref{fig:test_RF_PO} et~\ref{fig:test_cassandra_non_modif_RF_PO}). Pour effectuer notre analyse, nous devons étudier les courbes rouges ensembles et les bleues ensembles, afin de mettre en évidence lors d'un même facteur de réplication, le gain obtenu.
 
-\paragraph{}La différence entre notre version et celle de Cassandra non modifiée est d'environ 1 seconde sur de grands jeux de requêtes. Les résultats sur de petits jeux de requêtes s'expliquent nottamment par un sur-coût lors des communications entre les noeuds et sur la taille des données qui est relativement petite. Les courbes de la figure~\ref{fig:test_taille_RF2} montrent d'ailleurs les différences de temps d'exécution entre une donnée de 10 Ko et de 1 Mo.
+\paragraph{}On constate des résultats extrêmement similaires en tout point. Cela provient du fait que, d'une part, tous les besoins n'ont pas été implémenté. Nous avons donc un logiciel pas aussi performant que celui attendu par le client dans sa théorie. D'autre part, le test se produit sur des petits objets. Cela implique un temps de traitement rapide pour chaque requête. Les messages de suppressions sont très peu pris en compte, et les requêtes sont gérées en double.
 
+\paragraph{}Cependant, cela n'affecte pas négativement les performances.
+
+\paragraph{}Les courbes de la figure~\ref{fig:test_taille_RF2} montrent d'ailleurs les différences de temps d'exécution entre une donnée de 10 Ko et de 1 Mo. C'est sur ce genre de requête que l'on est amené à se dire que la suppression de requête de lecture peut faire gagner du temps. Malheureusement, lors du cours laps de temps pour faire les tests, des problèmes sont survenus, nous empêchant de réaliser le test de requêtes sur des données de tailles importantes avec une version de Cassandra non modifiée.
+
+\subsection{Analyse}
+
+\paragraph{}Les résultats de ces expériences ne sont qu'un début. L'implémentation n'étant pas totale, il est encore trop tôt pour en tirer des conclusions quant à la performance des algorithmes utilisés. On peut cependant remarquer que les performances n'en sont pas pour autant diminuées. Tout porte donc à croire qu'avec une implémentation complète, les gains seraient visibles immédiatement.
+
+\paragraph{}Il serait intéressant, dans une nouvelle perspective, de pouvoir calculer et visualiser les échanges réseaux causés par la base de données. Car les nouveaux algorithmes augmentent ces échanges, et cela peut engendrer des coûts supplémentaires pour une entreprise qui voudrait utiliser ce système par exemple.
 
 \section{Annexe - Un simulateur}
 
