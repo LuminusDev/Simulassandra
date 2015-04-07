@@ -1259,6 +1259,8 @@ La compilation de la documentation Doxygen s'effectue dans \textit{data} et en t
 \paragraph{}Le schéma de la figure~\ref{fig:archisimulateur} permet de mieux comprendre son fonctionnement. Nous allons le détailler. \newline
 Tout d'abord, nous créons des données. Ensuite, nous créons des requêtes sur des données. On demande ensuite au Cluster de transmettre ces requêtes au noeud souhaité. Quand le noeud aura du temps, il traitera la requête. Si celle-ci est sur une donnée dont il a la gestion, il la traitera. Sinon, il demandera à la stratégie de lui fournir les noeuds responsables, et il transmettra.
 
+\paragraph{}Par manque de temps, l'écriture de tests de façon propre et automatisée n'a pas été effectuée. Cependant, le logiciel a été testé au fur et à mesure de son développement. Il suffirait de créer un fichier contenant un \texttt{main} et lors de l'édition de liens à la compilation, ajouter les fichiers objet aux tests.
+
 \subsection{Inconvénients de cette approche}
 
 \paragraph{}Premièrement, l'architecture telle qu'elle est pensée n'est pas distribuée : elle est centralisée. En effet, l'objet cluster, est un élément central du réseau. Mais dans une première approche, cela suffisait.
