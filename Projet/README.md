@@ -13,6 +13,9 @@ Prérequis
 - CCM (optionnel)
 
 
+Installation
+------------
+
 Récupérer le dépôt de Cassandra et passer à la version 2.1.2 :
 
 	git clone git://git.apache.org/cassandra.git cassandra
@@ -47,3 +50,12 @@ Pour arrêter une instance de Cassandra, il faut arrêter le processus à la mai
 
 	ccm stop
 
+Tests
+------------
+
+Pour lancer les tests ajoutés au projet, copier le dossier `test` et coller le dans le dossier `<chemin_de_cassandra>`.
+Ensuite, à partir du dossier `<chemin_de_cassandra>`, lancer la commande
+
+	ant testsome -Dtest.name=<ClassName>
+
+Où `<ClassName>` correspond au nom d'une classe de test, par exemple MultiHashStrategyTest, pour exécuter tous les tests de cette classe.

@@ -1036,6 +1036,30 @@ On a une donc une répartition des données moins efficace car si on avait une c
 
 \paragraph{}Après la création d'une copie, celle-ci doit être attribuée à un noeud, cela nécessite donc de comprendre comment un noeud assimile de nouveaux objets. De même, lors de la suppression, que se passe-t-il des requêtes présentes dans la file d'attente du noeud ?
 
+\subsubsection{Tests}
+
+\paragraph{}Cassandra utilise le framework JUnit pour gérer ses tests. Il est possible de lancer l'ensemble des tests présents dans Cassandra en une seule commande
+\shellcmd{ant test}
+
+Ou alors de lancer seulement une classe de tests
+\shellcmd{ant test -Dtest.name=<ClassName>}
+
+Ou même de lancer seulement certaines fonctions de tests dans une classe
+\shellcmd{ant testsome -Dtest.name=<ClassName> -Dtest.methods=<comma-separated list of method names>}
+
+Étonnement, ces commandes n'ont pas fonctionné pendant nos tests. Ce n'est qu'en fin de projet que nous avons trouvé un moyen pour contourner les erreurs provoquées par les commandes de tests. Malgré les messages d'erreurs et d'échec des tests affichés dans la console, il faut se rendre dans \url{<chemin\_de\_cassandra>/build/test/junitreport/index.html} et on peut ainsi avoir une vue d'ensemble des tests réalisés. On peut y voir que les tests se sont correctement déroulés même si la console indique le contraire. Il faut par contre lancer les tests avec la dernière commande sans notifier de méthode.
+\shellcmd{ant testsome -Dtest.name=<ClassName>}
+
+\paragraph{}Ce contretemps nous a empêché de réaliser des tests comme nous le souhaitions. Nous avons tout de même eu le temps de réaliser les tests pour la stratégie de réplication que nous avons créé, ces tests étant les plus faciles à mettre en place.
+
+\paragraph{}Une grosse difficulté pour réaliser des tests, outre les problèmes de compilation, est l'architecture de Cassandra. En effet, la présence importante de classes statiques pose des soucis de cloisonnement, ce qui complexifie énormément la réalisation de tests. Cassandra possède d'ailleurs assez peu de tests comparé au nombre de classes qu'il possède, certainement à cause de cet aspect.
+
+\paragraph{}On peut signaler la présence d'un mock pour la base de données entière, avec les classes \class{EmbeddedServer} et \class{SchemaLoader}, permettant ainsi de réaliser certains tests plus facilement.
+
+\paragraph{}Les tests sur les modifications apportées à Cassandra sont donc possibles, au prix d'un effort assez important. Ils n'en restent pas moins cruciaux dans le cadre d'un développement efficace, c'est pourquoi l'une des premières choses dans la continuité de ce projet est la réalisation de tests sur les parties actuellement modifiées.
+
+\paragraph{}Les tests unitaires n'étant pas réalisables pendant notre projet, nous nous sommes tournés vers une autre manière de réaliser nos tests. Nous avons défini un ensemble de requêtes que nous réalisions après chaque modification, et pour lesquels nous connaissions tous les aspects dans le cheminement à l'intérieur de Cassandra et dans les résultats. Ainsi, à partir des logs, il nous était possible de savoir si nos modifications fonctionnaient ou non. Bien qu'assez rudimentaire, cette méthode nous a permis d'avancer efficacement dans la réalisation du projet. Elle n'apporte cependant pas toute la puissance des tests unitaires.
+
 \subsection{Création d'une application cliente}
 
 \paragraph{} L'application cliente permet à l'utilisateur d'intéragir avec la base de données Cassandra.
