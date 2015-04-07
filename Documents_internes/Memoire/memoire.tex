@@ -1043,11 +1043,26 @@ pour être exécutée par la méthode \texttt{execute} du même objet.
 Il faut ensuite modifier la méthode \class{whichAction} de \class{InputCommandParser} pour attribuer au nom de la commande le bon identifiant et ajouter le traitement correspondant à la commande
 dans la méthode \class{execute} de \class{ClientApp}.
 
-
-
-
 \subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{} Un noeud dans le réseau a deux états, \texttt{UP} lorsqu'il est en état d'activité et \texttt{DOWN} lorsqu'il est à l'arrêt.
+Lorsqu'un noeud démarre (ou redémarre), passant de l'état \texttt{DOWN} à l'état \texttt{UP}, Cassandra envoit trop rapidement la notification de ce changement au pîlote.
+Le pilote tente alors de se connecter sans que le noeud puisse encore être en état d'accepter la connexion.
+La console affiche alors un message d'erreur. Ainsi, la connexion est refusée dans un premier temps puis acceptée lors d'une nouvelle tentative.
+
+\paragraph{} Les clients voulaient que l'application cliente puisse importer des fichiers au format CSV, fichier tableur dont les données sont séparées par un caractère de séparation.
+Pour cela, le langage CQL propose la requête \texttt{COPY <table> FROM fichier.csv}. Le contenu du fichier \texttt{<fichier.csv>} est ainsi importé dans la table \texttt{<table>}.
+Malheureusement, le pilote utilisé ne supporte pas cette requête \cite{JavaDriverIssue330}. Nous avons donc ajouté au client un générateur de données aléatoire pour remplir la base de données.
+
 \subsubsection*{Travail restant à réaliser}
+
+\paragraph{} Les fonctionnalités de l'application cliente requises ont été implémentées.
+
+\paragraph{} Le travail restant à réaliser porte sur l'ergonomie de l'application. 
+Par exemple, lorsque l'utilisateur fait une faute de frappe dans sa commande, il doit effacer ce qu'il a tapé après pour pouvoir la corriger.
+Une modification à apporter serait de pouvoir se déplacer dans la commande saisie.
+
+\paragraph{} De même, l'utilisateur ne peut pas interrompre une action en cours d'exécution. Il doit soit attendre la fin de l'action, soit interrompre l'application cliente en tuant le processus.
 
 \subsubsection{Gestion des requêtes}
 
@@ -1059,6 +1074,7 @@ dans la méthode \class{execute} de \class{ClientApp}.
 
 \paragraph{} La visualisation des métrics de Cassandra n'étant pas une priorité du client.
 
+\newpage
 \section{Tests et résultats}
 
 \paragraph{}Pour les sections suivantes, les tests se sont déroulés sur un réseau d'Amazon composé de 10 noeuds reliés entre eux par Internet. Il faut relativiser ces résultats, car l'expérience se déroule dans des conditions idéales d'utilisation : les données sont en cache de la base de données distribuée.
@@ -1083,7 +1099,7 @@ dans la méthode \class{execute} de \class{ClientApp}.
 
 \paragraph{}La différence entre notre version et celle de Cassandra non modifiée est d'environ 1 seconde sur de grands jeux de requêtes. Les résultats sur de petits jeux de requêtes s'expliquent nottamment par un sur-coût lors des communications entre les noeuds et sur la taille des données qui est relativement petite. Les courbes de la figure~\ref{fig:test_taille_RF2} montrent d'ailleurs les différences de temps d'exécution entre une donnée de 10 Ko et de 1 Mo.
 
-
+\newpage
 \section{Annexe - Un simulateur}
 
 \subsection{Introduction}
