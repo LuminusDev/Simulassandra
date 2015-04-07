@@ -1,0 +1,26 @@
+
+	Auteur : Corentin Salingue
+
+	Projet : Simulation d'algorithmes de charge dans un environnement distribué
+
+	************************************************************
+
+	Comment installer le logiciel ?
+
+		- Copier le projet dans votre répertoire
+		- $ cd src ; make $
+
+	************************************************************
+
+	Comment exécuter le logiciel ?
+
+		- $ cd src ; ./main $
+
+	************************************************************
+
+	Quelques informations supplémentaires...
+
+		- Le but du projet est de modifier les instructions du main.c pour obtenir le comportement souhaité à tester.
+		- Vous disposez d'une commande $ make clean $ pour nettoyer le projet.
+		- Vous disposez d'une documentation Doxygen du code. Pour cela $ cd data ; make $
+	
