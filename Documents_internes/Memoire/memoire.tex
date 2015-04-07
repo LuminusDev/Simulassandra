@@ -1127,7 +1127,11 @@ dans la méthode \class{execute} de \class{ClientApp}.
 
 \subsection{Création d'une application de visualisation de données}
 
-\paragraph{} La visualisation des métrics de Cassandra n'étant pas une priorité du client.
+\paragraph{}La visualisation de l'évolution de certains paramètres dans Cassandra en temps réel, ou a postériori d'une expérience, n'était pas une priorité du projet. Le temps nous ayant manqué sur des besoins plus prioritaires, nous n'avons pas pu nous pencher plus sérieusement sur cette partie.
+
+\paragraph{}Toutefois, un travail sur l'architecture à mettre en place a été réalisé et se situe dans la section~\ref{sec:Architecture}. De plus, les données ajoutées dans la phase d'implémentation de Cassandra ont aussi été ajoutées dans les interfaces de \textbf{Metrics}, et sont disponibles en sortie pour un traitement ultérieur.
+
+\paragraph{}Pour ça, deux nouveaux compteurs ont été créé dans la classe \class{SEPMetrics}, il s'agit de \texttt{removedTasks} et de \texttt{effectiveLoad}.
 
 \section{Tests et résultats}
 
