@@ -10,6 +10,8 @@
 \usepackage{pgfgantt}
 \usepackage{url}
 \usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage[hidelinks]{hyperref}
 \bibliographystyle{alpha}
 \usepackage[counterclockwise]{rotating}
@@ -1113,15 +1115,70 @@ pour être exécutée par la méthode \texttt{execute} du même objet.
 Il faut ensuite modifier la méthode \class{whichAction} de \class{InputCommandParser} pour attribuer au nom de la commande le bon identifiant et ajouter le traitement correspondant à la commande
 dans la méthode \class{execute} de \class{ClientApp}.
 
-
-
-
 \subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{} Un noeud dans le réseau a deux états, \texttt{UP} lorsqu'il est en état d'activité et \texttt{DOWN} lorsqu'il est à l'arrêt.
+Lorsqu'un noeud démarre (ou redémarre), passant de l'état \texttt{DOWN} à l'état \texttt{UP}, Cassandra envoit trop rapidement la notification de ce changement au pîlote.
+Le pilote tente alors de se connecter sans que le noeud puisse encore être en état d'accepter la connexion.
+La console affiche alors un message d'erreur. Ainsi, la connexion est refusée dans un premier temps puis acceptée lors d'une nouvelle tentative.
+
+\paragraph{} Les clients voulaient que l'application cliente puisse importer des fichiers au format CSV, fichier tableur dont les données sont séparées par un caractère de séparation.
+Pour cela, le langage CQL propose la requête \texttt{COPY <table> FROM fichier.csv}. Le contenu du fichier \texttt{<fichier.csv>} est ainsi importé dans la table \texttt{<table>}.
+Malheureusement, le pilote utilisé ne supporte pas cette requête \cite{JavaDriverIssue330}. Nous avons donc ajouté au client un générateur de données aléatoire pour remplir la base de données.
+
 \subsubsection*{Travail restant à réaliser}
+
+\paragraph{} Les fonctionnalités de l'application cliente requises ont été implémentées.
+
+\paragraph{} Le travail restant à réaliser porte sur l'ergonomie de l'application. 
+Par exemple, lorsque l'utilisateur fait une faute de frappe dans sa commande, il doit effacer ce qu'il a tapé après pour pouvoir la corriger.
+Une modification à apporter serait de pouvoir se déplacer dans la commande saisie.
+
+\paragraph{} De même, l'utilisateur ne peut pas interrompre une action en cours d'exécution. Il doit soit attendre la fin de l'action, soit interrompre l'application cliente en tuant le processus.
 
 \subsubsection{Gestion des requêtes}
 
 \subsubsection*{Solution implémentée}
+
+\paragraph{} Considérons un keyspace dont les tables sont composées de deux colonnes : \texttt{key} contenant le numéro de ligne et \texttt{data} contenant une donnée quelconque.
+On appelle une simulation, le fait de choisir une table pour exécuter des requêtes dessus. On appelle une ligne, un couple $(a,b)$ avec $a \in \texttt{key}$ et $b \in \texttt{data}$ et $b$ dépendant de $a$.
+
+\paragraph{}Afin de tester efficacement leurs algorithmes, les clients souhaitent pouvoir tester plusieurs types de jeux de requêtes. 
+Des jeux de requêtes simples, où l'on ne selectionne qu'une seule ligne par requête et des jeux de grosses requêtes où l'on selectionne plusieurs lignes par requêtes.
+Des selections de lignes suivant une loi aléatoire uniforme ou distribuée, pour tester le mécanisme de popularité.
+
+\paragraph{} Pour cela, nous avons décider de créer un générateur de requête différent pour chaque type de jeux de requête souhaité.
+On appelle générateur de requête un objet de type héritant de la classe \class{QueriesFactory}.
+
+
+
+
+\begin{algorithm}[H]
+\caption{Jeu de requêtes simples en $q$ simulations et $r$ requêtes.}
+\begin{algorithmic}[1]
+\For{$i\gets 1, q$}
+\State $table\_cible \gets $ le nom d'une table existante au hasard
+\State $nb\_lignes \gets $ le nombre de lignes de la table
+\For{$j\gets 1, r$}
+\State $id \gets $ un numéro de ligne entre 1 et $nb\_lignes$ 
+\State $query \gets$ requête récupérant la donnée correspondant à la ligne $id$ dans $table\_cible$
+\State Exécution de $query$ et récupération du résultat
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
+Pour exécuter un jeu de requête sur Cassandra, il faut utiliser la commande :
+\shellcmd{queries <qf> <s> <ns> <nq>}
+Avec les arguments :
+\begin{itemize}
+ \item \texttt{<qf>} La classe créant l'objet générateur de requête que l'on souhaite utiliser. En donnant comme argument \class{RandomFactory}, l'objet utilisé pour générer des requête sera de type \class{RandomFactory}.
+ \item \texttt{<s>} La seed pour l'initialisation du générateur de nombre aléatoire. Cela permet de répéter le même jeu de requête.
+ \item \texttt{<ns>} Le nombre de simulation, il s'agit
+\end{itemize}
+
+
 \subsubsection*{Problèmes et limites rencontrés}
 \subsubsection*{Travail restant à réaliser}
 
@@ -1130,6 +1187,7 @@ dans la méthode \class{execute} de \class{ClientApp}.
 \paragraph{}La visualisation de l'évolution de certains paramètres dans Cassandra en temps réel, ou a postériori d'une expérience, n'était pas une priorité du projet. Le temps nous ayant manqué sur des besoins plus prioritaires, nous n'avons pas pu nous pencher plus sérieusement sur cette partie.
 
 \paragraph{}Toutefois, un travail sur l'architecture à mettre en place a été réalisé et se situe dans la section~\ref{sec:Architecture}. De plus, les données ajoutées dans la phase d'implémentation de Cassandra ont aussi été ajoutées dans les interfaces de \textbf{Metrics}, et sont disponibles en sortie pour un traitement ultérieur.
+
 
 \paragraph{}Pour ça, deux nouveaux compteurs ont été créé dans la classe \class{SEPMetrics}, il s'agit de \texttt{removedTasks} et de \texttt{effectiveLoad}.
 
@@ -1167,6 +1225,8 @@ dans la méthode \class{execute} de \class{ClientApp}.
 \paragraph{}Les résultats de ces expériences ne sont qu'un début. L'implémentation n'étant pas totale, il est encore trop tôt pour en tirer des conclusions quant à la performance des algorithmes utilisés. On peut cependant remarquer que les performances n'en sont pas pour autant diminuées. Tout porte donc à croire qu'avec une implémentation complète, les gains seraient visibles immédiatement.
 
 \paragraph{}Il serait intéressant, dans une nouvelle perspective, de pouvoir calculer et visualiser les échanges réseaux causés par la base de données. Car les nouveaux algorithmes augmentent ces échanges, et cela peut engendrer des coûts supplémentaires pour une entreprise qui voudrait utiliser ce système par exemple.
+
+\newpage
 
 \section{Annexe - Un simulateur}
 
