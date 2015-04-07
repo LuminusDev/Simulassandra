@@ -497,28 +497,23 @@ Elle pourra par exemple, compter le nombre de données sauvegardées, chercher s
 
 \subsection{Visualisation des données}
 
-\paragraph{} Afin de suivre l'évolution des charges de chaque noeud lors de l'exécution des algorithmes, on enregistre les données locales de chaque noeud à chaque modifications de celles-ci.
+\subsubsection{Sauvegarde des données}
 
-\subsubsection{Enregistrement des données}
+\paragraph{} Afin de suivre l'évolution des charges de chaque noeud lors de l'exécution des algorithmes, on enregistre les données locales de chaque noeud à chaque modification de celles-ci.
 
-\paragraph{Ecriture dans un fichier} Lorsque les données locales d'un noeud sont modifiées, on les enregistre dans un fichier.
-L'écriture est de la forme \texttt{itération de l'algorithme; identifiant du noeud; charge du noeud;}
+\begin{besoins}
+  \besoin{Accéder aux données locales de chaque noeud}{1}
+  \besoin{Sauvegarder les données locale de chaque noeud}{1} La sauvegarde peut avoir lieu dans un fichier, dans une base de données, dans n'importe quel support nous permettant ensuite de pouvoir récupérer les données.
+\end{besoins}
 
 \subsubsection{Affichage des données}
 
-\paragraph{Définition} Un \textit{graphe} est un ensemble de points appelés \textit{sommets}, dont certaines paires sont directement reliées par un (ou plusieurs) lien(s) appelé(s) \textit{arêtes}. 
+\paragraph{} L'affichage des données locales permet à l'utilisateur de suivre le film de l'exécution des jeux de requête.
 
-\paragraph{Noeuds} L'application doit permettre la représentation de chaque noeud par un sommet.
-
-\paragraph{Analyse syntaxique} Lors de l'exécution d'un algorithme, la charge de chaque noeud est enregistrée dans un fichier.
-Un analyseur syntaxique (un programme qui possède des règles et qui agit sur un fichier donné en entrée selon celles-ci) découpe chaque ligne du fichier pour récupérer le moment auquel a été enregistrée l'information (\texttt{itération de l'algorithme}),
-le noeud concerné ( \texttt{ identifiant du noeud} ) et la charge de ce noeud à ce moment ( \texttt{charge du noeud} ).
-
-\paragraph{Charge des noeuds} A chaque sommet est associée une valeur correspondant à la charge de ce noeud.
-Ces données sont récupérées grâce à l'analyseur syntaxique.
-
-\paragraph{Film de l'exécution} Cela consiste à afficher la charge des noeuds dans l'ordre chronologique, c'est à dire dans l'ordre des itérations croissant.
-
+\begin{besoins}
+ \besoin{Lire les données locales sauvegardées}{1} Selon le format dans lequel elles ont été sauvegardées, un analyseur syntaxique pourrait être utile.
+ \besoin{Afficher les données locales}{1} Le format d'affichage importe peu. Il peut s'agir d'un graphique, d'un réseau...
+\end{besoins}
 
 \newpage
 
@@ -545,7 +540,6 @@ Afin de faciliter la compréhension, nous avons défini quelques normes pour que
 
 \subsection{Visualisation des données}
 
-\subsubsection{Actualisation de la vue}
 
 \paragraph{} L'état du réseau doit être visible en temps réel.
 
@@ -599,24 +593,22 @@ bar height = 0.8
 \ganttbar{D3}{2015-03-21}{2015-03-27} \\ %Simulateur
 \ganttbar{DT}{2015-03-28}{2015-03-29} \\ %Tests
 
-\ganttgroup{Application cliente (E)}{2015-03-01}{2015-03-08} \\
-\ganttbar{E1}{2015-03-01}{2015-03-06} \\ %Génération jeu de requêtes
-\ganttbar{E2}{2015-03-01}{2015-03-06} \\ %Importation jeu de requêtes
-\ganttbar{ET}{2015-03-07}{2015-03-08} \\ %Tests
+\ganttgroup{Application cliente (E)}{2015-02-16}{2015-03-10} \\
+\ganttbar{E1}{2015-02-16}{2015-03-05} \\ %Gestion Cassandra
+\ganttbar{E2}{2015-02-27}{2015-03-05} \\ %Générateur de requêtes et d
+\ganttbar{ET}{2015-03-06}{2015-03-10} \\ %Tests
 
-\ganttgroup{Visualisation des données (F)}{2015-03-29}{2015-04-08} \\
-\ganttbar{F1}{2015-03-29}{2015-04-01} \\ %Prise en main tulip
-\ganttbar{F2}{2015-03-29}{2015-04-01} \\ %Enregistrement des données
-\ganttbar{F3}{2015-04-01}{2015-04-04} \\ %Affichage réseau
-\ganttbar{F4}{2015-04-04}{2015-04-06} \\ %AFfichage informations (charges)
+\ganttgroup{Visualisation des données (F)}{2015-03-10}{2015-03-28} \\
+\ganttbar{F1}{2015-03-10}{2015-03-15} \\ %Prise en main Graphite
+\ganttbar{F2}{2015-03-16}{2015-03-21} \\ %Ajout metrics
+\ganttbar{F3}{2015-03-22}{2015-03-28} \\ %Paramétrage
 
-\ganttbar{T}{2015-04-06}{2015-04-07} \\
+\ganttbar{T}{2015-04-01}{2015-04-04} \\
 
 \ganttmilestone{Livrable final}{2015-04-08} 
 
 \end{ganttchart}
 }
-
 
 
 \newpage
@@ -666,16 +658,21 @@ bar height = 0.8
     DT & Tests groupe D & Corentin & Sur Simulateur \tabularnewline
     \hline
     \hline
-    E1 & Prise en main Tulip &  &  \tabularnewline
+    E1 & Gestion de Cassandra & Guillaume &  Développement de l'application et utilisation pilote \tabularnewline
     \hline
-    E2 & Ecriture des données dans un fichier &  &  (+Analyseur syntaxique) \tabularnewline
+    E2 & Générateur de requêtes &  Guillaume & \tabularnewline
     \hline
-    E2 & Représentation réseau &  &  \tabularnewline
-    \hline
-    E3 & Représentation données &  &  \tabularnewline
+    ET & Tests groupe E &  Guillaume &  Vérification, tests et mémoire \tabularnewline
     \hline
     \hline
-    T & Tests finaux &  &  Vérification, tests, mémoire \tabularnewline
+    F1 & Prise en main de Graphite & Guillaume & Installation, tests \tabularnewline
+    \hline
+    F2 & Ajout de metrics & Kévin et Guillaume &  Mesure de la charge d'un noeud \tabularnewline
+    \hline
+    F3 & Paramétrage &  Guillaume &  Paramétrage de la web app \tabularnewline
+    \hline
+    \hline
+    T & Tests finaux & * &  Vérification, tests, mémoire \tabularnewline
     \hline
 \end{tabular}
  
