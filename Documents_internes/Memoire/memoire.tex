@@ -186,12 +186,12 @@ Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messag
 
 \begin{itemize}
     \item La première consiste à ce que chaque noeud possède un vecteur de la taille du nombre d'objets dont il a la gestion. A chaque nouvelle requête, la case de l'objet est incrémentée. Au début de chaque période $T$, les noeuds envoient la popularité aux autres noeuds et décident du nombre de copies à faire.
-    \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}. On choisit un vecteur de la taille du nombre de noeuds du réseau qui contient des structures de la forme \textit{( identifiant de l'objet ; nombre de requête )}. Soit $n$ le nombre de noeuds dans le reseau, l'algorithme permet de connaitre les $n$ objets les plus populaires. \newline
+    \item La seconde méthode est une variante visant à réduire la taille du vecteur d'objets et est défini par le Space-Saving Algorithm \cite{SpaceSaving}. On choisit un vecteur de la taille du nombre de noeuds du réseau qui contient des structures de la forme \textit{( identifiant de l'objet ; nombre de requête )}. Soit $n$ le nombre de noeuds dans le réseau, l'algorithme permet de connaitre les $n$ objets les plus populaires. \newline
           \newline
           Soit une requête sur un objet $o$.\newline
           Si $o$ est présent dans le vecteur, on augmente son nombre de requêtes de 1. \newline
           Si $o$ n'est pas présent dans le vecteur et qu'il reste de la place (la taille du vecteur est inférieure à $n$), on l'ajoute au vecteur avec un nombre de requête de 1. \newline
-          Si $o$ n'est pas présent et que le vecteur est plein, on cherche l'endroit qui contient l'objet le moins populaire du vecteur et on le remplace par $o$. Cependant, on garde la popularité de l'ancien objet et on l'incrèmente de 1. \newline
+          Si $o$ n'est pas présent et que le vecteur est plein, on cherche l'endroit qui contient l'objet le moins populaire du vecteur et on le remplace par $o$. Cependant, on garde la popularité de l'ancien objet et on l'incrémente de 1. \newline
           Il est possible de consulter le pseudo code sur la figure~\ref{fig:codeSpaceSaving}
 \end{itemize}
 
@@ -800,7 +800,7 @@ Nous allons nous intéresser dans notre projet à la classe \class{ColumnFamily}
 
 \subsection{Application cliente}
 
-\paragraph{} Pour communiquer avec la base de données, nous utilisons un \textit{pilote}, programme informatique permettant à un programme d'intéragir avec un autre programme.
+\paragraph{} Pour communiquer avec la base de données, nous utilisons un \textit{pilote}, programme informatique permettant à un programme d'interagir avec un autre programme.
 
 \subsubsection{Présentation du pilote}
 \paragraph{} Le pilote que nous utilisons est Java Driver 2.0 for Apache Cassandra développé par l'entreprise Datastax, distributeur de Cassandra. Le pilote est sous licence Apache.
@@ -1009,7 +1009,7 @@ Il est à noter que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Outre la difficulté à comprendre les mécanismes de Cassandra, plusieurs problèmes se sont posés à nous. En effet, la communication de la clé primaire d'un objet n'est pas possible immédiatement dans le développement de nouvelles stratégies. Il faudrait modifier le comportement de plusieurs autres classes, ce qui nous était difficile durant le temps imparti. Le comportement a légèrement été modifié comme décrit ci-dessus.
 
-\paragraph{}Un autre aspect (mineur dans notre projet) est que cette fonctionnalité entraîne une perte de la capacité de Cassandra à s'adapter à son réseau. En effet, Cassandra est conçu pour se reconfigurer facilement lors d'ajout ou de suppresion de noeuds dans son réseau. Cependant, dans notre projet, nous nous intéressons à un réseau de taille fixe qui n'évoluera pas dans le temps.
+\paragraph{}Un autre aspect (mineur dans notre projet) est que cette fonctionnalité entraîne une perte de la capacité de Cassandra à s'adapter à son réseau. En effet, Cassandra est conçu pour se reconfigurer facilement lors d'ajout ou de suppression de noeuds dans son réseau. Cependant, dans notre projet, nous nous intéressons à un réseau de taille fixe qui n'évoluera pas dans le temps.
 
 \paragraph{}Et enfin, il est important de mesurer les différences entre les deux solutions. Effectivement, si elles se ressemblent sur leur principe, un point important est à noter : une différence forte au niveau des collisions. Une \textit{collision} est lorsqu'une fonction de hachage retourne la même valeur pour deux entrées différentes. \newline
 Prenons par exemple, le cas de deux objets ayant pour clé primaire $c1$ et $c2$ et avec $ H_0 (c1) = k $ et $ H_0 (c2) = k $ (nous avons donc une collision).
@@ -1085,7 +1085,7 @@ Ou même de lancer seulement certaines fonctions de tests dans une classe
 
 \subsection{Création d'une application cliente}
 
-\paragraph{} L'application cliente permet à l'utilisateur d'intéragir avec la base de données Cassandra.
+\paragraph{} L'application cliente permet à l'utilisateur d'interagir avec la base de données Cassandra.
 
 \subsubsection{Gestion de Cassandra}
 
@@ -1188,13 +1188,13 @@ Une modification à apporter serait de pouvoir se déplacer dans la commande sai
 On appelle une simulation, le fait de choisir une table pour exécuter des requêtes dessus. On appelle une ligne, un couple $(a,b)$ avec $a \in \texttt{key}$ et $b \in \texttt{data}$ et $b$ dépendant de $a$.
 
 \paragraph{}Afin de tester efficacement leurs algorithmes, les clients souhaitent pouvoir tester plusieurs types de jeux de requêtes. 
-Des jeux de requêtes simples, où l'on ne selectionne qu'une seule ligne par requête et des jeux de grosses requêtes où l'on selectionne plusieurs lignes par requêtes.
-Des selections de lignes suivant une loi aléatoire uniforme ou distribuée, pour tester le mécanisme de popularité.
+Des jeux de requêtes simples, où l'on ne sélectionne qu'une seule ligne par requête et des jeux de grosses requêtes où l'on sélectionne plusieurs lignes par requêtes.
+Des sélections de lignes suivant une loi aléatoire uniforme ou distribuée, pour tester le mécanisme de popularité.
 
 \paragraph{} Pour cela, nous avons décidé de créer un générateur de requêtes pour chaque type de jeux de requêtes souhaité.
-On appelle générateur de requêtes un objet de type héritant de la classe \class{QueriesFactory}. L'application a été concue de manière à ce qu'il soit facile d'implémenter un nouveau générateur de requêtes.
+On appelle générateur de requêtes un objet de type héritant de la classe \class{QueriesFactory}. L'application a été conçue de manière à ce qu'il soit facile d'implémenter un nouveau générateur de requêtes.
 
-\paragraph{} Créons le générateur de requêtes \class{RandomFactory} dont la probabilité de selectionner une table lors d'une simulation ou une ligne lors d'une requête suit une loi de distribution uniforme.
+\paragraph{} Créons le générateur de requêtes \class{RandomFactory} dont la probabilité de sélectionner une table lors d'une simulation ou une ligne lors d'une requête suit une loi de distribution uniforme.
 
 \begin{figure}[h]
 	\centering
@@ -1219,7 +1219,7 @@ Avec les arguments :
 
 \paragraph{} Pour exécuter un jeu de requêtes généré par \class{RandomFactory}, il faut donc taper la commande :
 \shellcmd{queries RandomFactory <s> <ns> <nq>}
-L'objet \class{RandomFactory} est crée dynamiquement, le constructeur appelé doit contenir quatres arguments ( \class{Connection}, \class{Long}, \class{Long}, \class{Long}).
+L'objet \class{RandomFactory} est crée dynamiquement, le constructeur appelé doit contenir quatre arguments ( \class{Connection}, \class{Long}, \class{Long}, \class{Long}).
 Ainsi, tous les attributs de \class{QueriesFactory} sont initialisés. 
 Si on souhaite initialiser les attributs de \class{RandomFactory} avec une valeur choisie par l'utilisateur, il faut utiliser la méthode \texttt{askForConfiguration}.
 On peut ainsi demander à l'utilisateur quelle valeur il souhaite pour l'attribut \texttt{column\_target} avec le code suivant :
@@ -1229,9 +1229,9 @@ protected void askForConfiguration() {
 	this.target_column = Interactor.basicInput("Target column : ");
 }
 \end{lstlisting}
-\paragraph{} \texttt{Interactor.basicInput("Target column : ")} affichant le message \texttt{Target column :} dans la console et retournant la chaîne de caractère saisie par l'utilisateur.
+\paragraph{} \texttt{Interactor.basicInput("Target column : ")} affichant le message \texttt{Target column :} dans la console et retournant la chaîne de caractères saisie par l'utilisateur.
 
-\paragraph{} Dans un second temps, interessons-nous à la méthode \texttt{queriesfactory}. C'est dans cette méthode que nous implémentons le générateur de requêtes.
+\paragraph{} Dans un second temps, nous nous intéressons à la méthode \texttt{queriesfactory}. C'est dans cette méthode que nous implémentons le générateur de requêtes.
 Pour \class{RandomFactory}, il s'agit d'implémenter l'algorithme suivant :
 
 \begin{algorithm}[H]
@@ -1249,7 +1249,7 @@ Pour \class{RandomFactory}, il s'agit d'implémenter l'algorithme suivant :
 \end{algorithmic}
 \end{algorithm}
 
-\paragraph{} Notre générateur de requêtes est opérationnel, une fois instancié, il ne reste plus qu'à exécuter la méthode \texttt{run}. Le temps d'exécution est chonométré puis affiché dans la console.
+\paragraph{} Notre générateur de requêtes est opérationnel, une fois instancié, il ne reste plus qu'à exécuter la méthode \texttt{run}. Le temps d'exécution est chronométré puis affiché dans la console.
 
 \paragraph{Fichier de log} Pour suivre l'évolution du jeu de requêtes, il est possible d'écrire un fichier de log. Pour enregistrer un message, il faut utiliser la méthode \texttt{addLog}.
 L'écriture se fait à la fin de la génération et de l'exécution du jeu de requêtes pour éviter de fausser le chronomètre.
@@ -1258,10 +1258,10 @@ L'écriture se fait à la fin de la génération et de l'exécution du jeu de re
 \subsubsection*{Problèmes et limites rencontrés}
 
 \paragraph{} Pour générer une requête et sélectionner une ligne existante, on doit pouvoir connaître le nombre de lignes disponibles dans chaque table.
-La base de données n'étant pas relationnelle, dénombrer les lignes peut prendre énormément de temps au point que Cassandra renvoie une erreur de type \texttt{Time out}.
+La base de données n'étant pas relationnelle, dénombrer les lignes peut prendre énormément de temps au point que Cassandra renvoie une erreur de type \texttt{Timeout}.
 
 \paragraph{} Malheureusement pour effectuer une requête dans un keyspace, celui-ci doit être défini correctement, sinon l'exécution d'une requête enverra directement une exception.
-Pour cela, lors de la création d'un objet \class{KeySpace}, la première requête que nous effctuons est compter le nombre de ligne de chaque table.
+Pour cela, lors de la création d'un objet \class{KeySpace}, la première requête que nous effectuons consiste à compter le nombre de ligne de chaque table.
 
 \paragraph{} Si le keyspace est mal défini, lors du dénombrement des lignes, la requête échoue et le contructeur de \class{KeySpace} envoie une \class{UnavailableKeySpaceException}. 
 Mais lorsque le dénombrement échoue car les données sont trop volumineuses, le constructeur envoie la même exception. Nous ne sommes donc pas en mesure de différencier un keyspace mal défini d'un keyspace bien défini mais
@@ -1270,7 +1270,7 @@ ayant une table contenant des données volumineuses.
 \subsubsection*{Travail restant à réaliser}
 
 \paragraph{} Le travail restant à réaliser concerne le problème exposé précédemment. Les pistes à explorer sont un dénombrement différent du nombre de lignes, une liaison entre générateur de données et générateur de requêtes,
-la possibilité de rendre optionnel le decompte du nombre de lignes.
+la possibilité de rendre optionnel le décompte du nombre de lignes.
 
 \subsection{Création d'une application de visualisation de données}
 
@@ -1283,7 +1283,7 @@ la possibilité de rendre optionnel le decompte du nombre de lignes.
 
 \section{Expériences et résultats}
 
-\paragraph{}Pour les sections suivantes, les tests se sont déroulés sur un réseau d'Amazon EC2 composé de 10 noeuds reliés entre eux par Internet, avec des bases de données comportant $10 000$ objets. Tous les tests ont été réalisés deux fois, en lançant le plus gros jeu de requêtes en premier. Cela permet d'amoindrir les impacts du cache dans les requêtes de lecture. Avec $100 000$ requêtes de lecture dans un espace de $10 000$ objets, on s'assure ainsi que la quasi-totalité des objets sont situés dans le cache après ce test.7
+\paragraph{}Pour les sections suivantes, les tests se sont déroulés sur un réseau d'Amazon EC2 composé de 10 noeuds reliés entre eux par Internet, avec des bases de données comportant $10 000$ objets. Tous les tests ont été réalisés deux fois, en lançant le plus gros jeu de requêtes en premier. Cela permet d'amoindrir les impacts du cache dans les requêtes de lecture. Avec $100 000$ requêtes de lecture dans un espace de $10 000$ objets, on s'assure ainsi que la quasi-totalité des objets sont situés dans le cache après ce test.
 
 \paragraph{}les jeux de requêtes sont identiques. Lorsque l'on réalise un test pour $10 000$ requêtes de lecture, nous réalisons exactement les mêmes requêtes lorsque nous refaisons ce test avec de nouveaux paramètres. Le contraire aurait pu faire apparaître des différences de temps non liées aux paramètres mais à la distribution des requêtes sur les noeuds du réseau (un noeud peut être surchargé sur une expérience et pas sur une autre par exemple).
 
@@ -1359,7 +1359,7 @@ Tout d'abord, nous créons des données. Ensuite, nous créons des requêtes sur
 
 \subsection{Améliorations possibles}
 
-\paragraph{}Pour obtenir un bon simulateur, il faudrait commencer par corriger les problèmes ci-dessus. Pour enlever le problème de centralisation, les noeuds devraient connaître une partie de leurs voisins, qu'il faudrait réactualiser de temps en temps. La stratégie de réplication devrait être répliquée sur tous les noeuds. Pour corriger le problème de synchronisation, et devenir asynchrone, on pourrait jouer avec un thread / noeud. Le départ serait donné par un mutex et la fin par un signal par exemple. Cependant, on perd la possiblité d'exécuter pas à pas le calcul.
+\paragraph{}Pour obtenir un bon simulateur, il faudrait commencer par corriger les problèmes ci-dessus. Pour enlever le problème de centralisation, les noeuds devraient connaître une partie de leurs voisins, qu'il faudrait réactualiser de temps en temps. La stratégie de réplication devrait être répliquée sur tous les noeuds. Pour corriger le problème de synchronisation, et devenir asynchrone, on pourrait jouer avec un thread / noeud. Le départ serait donné par un mutex et la fin par un signal par exemple. Cependant, on perd la possibilité d'exécuter pas à pas le calcul.
 
 \paragraph{}D'autres fonctionnalités et besoins pourraient ou devraient être implémentés : 
 
@@ -1369,68 +1369,66 @@ Tout d'abord, nous créons des données. Ensuite, nous créons des requêtes sur
     \item Travailler sur les besoins concernant les requêtes. (modification du traitement au niveau d'un noeud, moins trivial...)
 \end{itemize}
 
-\paragraph{}
-
 \section{Conclusion et Remerciements}
 
 \paragraph{}Ce projet fut très intéressant sur l'aspect distribué de la base de données. Cependant, il est frustrant de n'avoir pu le terminer dans les temps impartis à cause de sa taille. Un client a été fait qui peut se connecter à la base de données et y envoyer des commandes, cependant, il manque la possibilité de visualiser plus de données sur ce qu'il se passe à l'intérieur. Au niveau des requêtes, lorsqu'une requête est traitée, on prévient les noeuds qu'ils peuvent la supprimer de leur liste d'attente, il manque malheureusement les fonctionnalités d'affectation des requêtes en dessous d'une charge donnée. Enfin au niveau des données, la stratégie de placement a été créée, toutefois, la popularité n'a pas été codée.
 
-\paragraph{}Nous tenions à remercier Frédéric Lalanne pour son aide au travers de la \textit{Jungle} de Cassandra, Gillet Noel et Nicolas Hanusse pour leur suivi et leurs conseils sur le projet.
+\paragraph{}Nous tenions à remercier Frédéric Lalanne pour son aide au travers de la \textit{Jungle} de Cassandra, Noel Gillet et Nicolas Hanusse pour leur suivi et leurs conseils sur le projet.
 
 \bibliography{memoire}
 
 
 %%%%%%%%%%%%% BESOINS %%%%%%%%%%%%%%
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
 		\include{images/besoins/distributed_database}
 	\caption{Visualisation d'une base de données distribuée sous forme de cluster possédant trois data center\label{fig:distributed_database}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
 		\include{images/besoins/partitionning}
 	\caption{Exemple de partitionnement des données dans une base de données distribuée\label{fig:partitionning}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
 		\include{images/besoins/multi_hash_partitionning}
 	\caption{Partitionnement des réplicas d'un objet avec une fonction de hachage pour chaque réplica\label{fig:multi_hash_partitionning}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
 		\include{images/besoins/request}
 	\caption{Cheminement d'une requête de lecture dans une base de données distribuée avec la prise en charge de l'affectation (un seul noeud traite la requête)\label{fig:request}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
 		\include{images/besoins/write_request}
 	\caption{Cheminement d'une requête d'écriture dans une base de données distribuée\label{fig:write_request}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
 		\include{images/besoins/token}
 	\caption{Passage d'une répresentation des données pour le client à une représentation pour la base de données\label{fig:token}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
 		\include{images/besoins/reaffectation}
 	\caption{Fonctionnement de l'algorithme de réaffectation des requêtes de lecture SLVO\label{fig:reaffectation}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
         \includegraphics[width=12cm]{images/besoins/code_spaceSaving.jpg}
     \caption{Pseudo-code de l'algorithme SpaceSaving (Source : voir \cite{SpaceSaving2}) \label{fig:codeSpaceSaving}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
         \includegraphics[width=12cm]{images/besoins/replication.png}
     \caption{Répartition des copies sur les noeuds dans une base de données distribuée \label{fig:replication}}
@@ -1486,13 +1484,13 @@ Tout d'abord, nous créons des données. Ensuite, nous créons des requêtes sur
 
 %%%%%%%%%% IMPLEMENTATION %%%%%%%%%%
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
         \includegraphics[width=12cm]{images/implementation/archiSimulateur.png}
     \caption{Architecture des objets du simulateur \label{fig:archisimulateur}}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p]
 	\centering
         \includegraphics[width=12cm]{images/implementation/read_diagram_modified.png}
     \caption{Diagramme de séquence simplifié d'une requête de lecture dans Cassandra après modification \label{fig:read_diagram_modified}}
