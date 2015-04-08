@@ -164,7 +164,7 @@ Le client interagit avec celle-ci en lui envoyant des \textit{requêtes}, messag
 
 \paragraph{} Chaque base de données possède sa propre manière de stocker les données dans un espace de stockage. Pour le projet, la méthode de stockage n'est pas un problème sur lequel nous allons travailler. La seule contrainte imposée pour la base de données est qu'elle stocke les données sous la forme d'objet. C'est à dire qu'un objet est identifiable par son token, une clé d'identification générée le plus souvent par une fonction de hachage.
 
-\paragraph{} Le token est généré par la base de donnée à partir de la \textit{clé primaire} d'une table. Une clé primaire est, comme le token, une donnée permettant d'identifier un objet. Sauf que que la clé primaire est une donnée choisit par le client. Elle peut être un entier, une chaîne de caractères, toutes les représentations possibles d'une donnée au sein de la base de données (voir la figure~\ref{fig:token}).
+\paragraph{} Le token est généré par la base de donnée à partir de la \textit{clé primaire} d'une table. Une clé primaire est, comme le token, une donnée permettant d'identifier un objet. Sauf que la clé primaire est une donnée choisie par le client. Elle peut être un entier, une chaîne de caractères, toutes les représentations possibles d'une donnée au sein de la base de données (voir la figure~\ref{fig:token}).
 
 \subsection{Protocoles de réaffectation des requêtes de lecture}
 
@@ -247,7 +247,7 @@ Supposons qu'on a au maximum $n$ fois la donnée présente dans le réseau (c'es
 
 \newpage
 \subsection{Pour en savoir plus...}
-Pour nous aider dans le projet, nous avons rechercher des écrits dans plusieurs domaines différents que nous devons aborder. Cette bibliographie initiale est une étude de l'existant. D'autres références sont ensuite disponibles tout au long de ce document, que nous avons trouvé au fil de l'avancement du projet.
+Pour nous aider dans le projet, nous avons recherché des écrits dans plusieurs domaines différents que nous devons aborder. Cette bibliographie initiale est une étude de l'existant. D'autres références sont ensuite disponibles tout au long de ce document, que nous avons trouvé au fil de l'avancement du projet.
 
 \paragraph{Système distribué}
 
@@ -261,7 +261,7 @@ Pour nous aider dans le projet, nous avons rechercher des écrits dans plusieurs
 \begin{itemize}
 \item L'article \cite{BalancedAlloc99} met en exergue des algorithmes d'équilibrage, sources d'inspiration pour les clients dans l'élaboration de leurs algorithmes.
 
-\item Le papier \cite{RandomChoices05}, de là même manière que le précédent, s'intéresse de plus près à des algorithmes d'allocation aléatoire. Les deux articles permettent de comprendre l'intérêt des modifications à apporter pour les stratégies de placement et de réplication dans la base de données distribuées.
+\item Le papier \cite{RandomChoices05}, de la même manière que le précédent, s'intéresse de plus près à des algorithmes d'allocation aléatoire. Les deux articles permettent de comprendre l'intérêt des modifications à apporter pour les stratégies de placement et de réplication dans la base de données distribuée.
 
 \item L'article \cite{LoadBalancingPeertoPeer14} traite des algorithmes d'équilibrage des charges dans un réseau pair à pair.
 
@@ -272,7 +272,7 @@ Pour nous aider dans le projet, nous avons rechercher des écrits dans plusieurs
 \begin{itemize}
 \item Le livre \cite{Hewitt2010} renseigne sur la compréhension du fonctionnement de Cassandra, ainsi que les structures particulières de ce système de base de données.
 
-\item Le lien \cite{ApacheCassandra09} permet d'accéder à l'ensemble de la documentation technique et au dépôt des sources de la base de données Cassandra. On peut y retrouver la documentation côté développeur, pour modifier Cassandra suivant des règles prédéfinies. Les informations sur la compilation du projet et la gestion des tests est aussi présente si l'on se dirige vers le wiki.
+\item Le lien \cite{ApacheCassandra09} permet d'accéder à l'ensemble de la documentation technique et au dépôt des sources de la base de données Cassandra. On peut y retrouver la documentation côté développeur, pour modifier Cassandra suivant des règles prédéfinies. Les informations sur la compilation du projet et la gestion des tests sont aussi présentes si l'on se dirige vers le wiki.
 
 \item Le papier \cite{FacebookCassandra09} apporte les explications des créateurs de Cassandra, sur les spécifications de Cassandra par rapport aux autres bases de données du même genre. On y retrouve des informations sur le partitionnement, la réplication et le modèle de données utilisé par Cassandra.
 
@@ -286,7 +286,7 @@ Les nombreux exemples et les approfondissements sont des points d'appuis importa
 \begin{itemize}
 \item Le lien \cite{DSOpsCenter14} apporte un logiciel, OpsCenter, capable de montrer graphiquement des statistiques sur une base de données Cassandra opérationnelle. Il peut être utilisé dans le projet, ou apporté des pistes pour la visualisation des données.
 
-\item L'article \cite{Tulip12} s'intéresse à un logiciel de représentation de graphe développé au Labri. Une visualisation sous la forme d'un graphe des données à afficher est tout à fait envisageable. Cet outil nous permettrait de répondre à ce besoin. De plus, ce logiciel est développé au Labri. Nous avons donc des personnes aptes à nous aider à proximité dans le cas de l'utilisation de ce logiciel.
+\item L'article \cite{Tulip12} s'intéresse à un logiciel de représentation de graphe développé au Labri. Une visualisation sous la forme d'un graphe des données à afficher est tout à fait envisageable. Cet outil nous permettrait de répondre à ce besoin. De plus, ce logiciel est développé au LaBRI. Nous avons donc des personnes aptes à nous aider à proximité dans le cas de l'utilisation de ce logiciel.
 \end{itemize} 
 
 
@@ -731,7 +731,7 @@ bar incomplete/.append style={fill=red!10}
 
 \subsection{Architecture de Cassandra}
 
-\paragraph{} Cassandra est une base de données distribuées, écrite en langage Java. Dans sa version 2.1.2, elle est composée de 963 fichiers, répartis dans 62 dossiers, pour un total de 126 502 lignes de codes et 36 287 lignes de commentaires.
+\paragraph{} Cassandra est une base de données distribuée, écrite en langage Java. Dans sa version 2.1.2, elle est composée de 963 fichiers, répartis dans 62 dossiers, pour un total de 126 502 lignes de codes et 36 287 lignes de commentaires.
 
 \paragraph{} Cassandra est un projet riche et complet. Nous ne nous intéresserons qu'aux parties de son architecture sur lesquelles nous allons travailler.
 
@@ -779,7 +779,7 @@ Nous allons nous intéresser dans notre projet à la classe \class{ColumnFamily}
 
 \paragraph{}Les requêtes de lecture suivent un chemin comme décrit dans la figure~\ref{fig:read_diagram}, avec deux possibilités au niveau de la classe \class{AbstractReadExecutor} pour gérer le traitement de la requête. On récupère tous les noeuds qui possèdent une copie de l'objet que l'on cherche. Si le noeud actuel possède une copie, alors on ne passe par le système de messagerie et on demande directement au stage de lecture de réaliser une tâche (un Runnable qui s'appelle \class{LoadReadRunnable}, une classe statique interne du \class{StorageProxy}. Sinon, on envoie une requête de lecture aux autres noeuds responsables d'une copie de l'objet requêté.
 
-\paragraph{}Le diagramme de séquence est simplifié afin de ne me montrer que ce qui nous intéresse. Ce qui est important à retenir est que la requête suit un trajet différent suivant si elle doit être traitée en interne ou externe (un autre noeud). De plus, la récupération des données est asynchrone. Le \class{StorageProxy} attend les réponses avec la méthode \texttt{get} de \class{AbstractreadExecutor}. Il n'attend pas toutes les réponses, mais seulement un certain nombre dépendant du niveau de consistance, paramétrable.
+\paragraph{}Le diagramme de séquence est simplifié afin de ne montrer que ce qui nous intéresse. Ce qui est important à retenir est que la requête suit un trajet différent suivant si elle doit être traitée en interne ou externe (un autre noeud). De plus, la récupération des données est asynchrone. Le \class{StorageProxy} attend les réponses avec la méthode \texttt{get} de \class{AbstractreadExecutor}. Il n'attend pas toutes les réponses, mais seulement un certain nombre dépendant du niveau de consistance, paramétrable.
 
 \subsubsection{Réplication des données}
 
@@ -789,13 +789,13 @@ Nous allons nous intéresser dans notre projet à la classe \class{ColumnFamily}
 
 \subsubsection{Statistiques}
 
-\paragraph{} Cassandra possède un système permettant d'exposer des mesures internes, grâce à la libraire \textbf{Metrics} \cite{Metrics2010}.
+\paragraph{} Cassandra possède un système permettant d'exposer des mesures internes, grâce à la librairie \textbf{Metrics} \cite{Metrics2010}.
 
-\paragraph{} Les classes s'occupant de collecter les mesures se situent dans le package \path{org.apache.cassandra.metrics}. Chaque classe de Metrics est chargé de collecter des statistiques sur certaines classes de Cassandra, comme par exemple sur la classe \class{Keyspace} vue précédemment dont les données sont collectées par la classe \class{KeyspaceMetrics}.
+\paragraph{} Les classes s'occupant de collecter les mesures se situent dans le package \path{org.apache.cassandra.metrics}. Chaque classe de Metrics est chargée de collecter des statistiques sur certaines classes de Cassandra, comme par exemple sur la classe \class{Keyspace} vue précédemment dont les données sont collectées par la classe \class{KeyspaceMetrics}.
 
 \paragraph{} L'intérêt dans le cas de notre projet est de pouvoir exposer les mesures initiales de Cassandra, mais aussi d'ajouter des mesures sur les implémentations que nous faisons. Il nous est possible d'ajouter une nouvelle classe de Metrics pour répondre à ce besoin, ou modifier les classes existantes.
 
-\paragraph{} Une classe de Metrics est liée à une classe que l'on souhaite de manière bidirectionnelle. C'est à dire que la classe que l'on souhaite observée possède en attribut une instance de la classe de Metrics, à laquelle elle passe en paramètre sa propre référence. La référence n'est pas stockée par la classe de Metrics mais seulement utilisée dans des \textit{closures}.
+\paragraph{} Une classe de Metrics est liée à une classe que l'on souhaite de manière bidirectionnelle. C'est à dire que la classe que l'on souhaite observer possède en attribut une instance de la classe de Metrics, à laquelle elle passe en paramètre sa propre référence. La référence n'est pas stockée par la classe de Metrics mais seulement utilisée dans des \textit{closures}.
 
 
 \subsection{Application cliente}
@@ -805,13 +805,13 @@ Nous allons nous intéresser dans notre projet à la classe \class{ColumnFamily}
 \subsubsection{Présentation du pilote}
 \paragraph{} Le pilote que nous utilisons est Java Driver 2.0 for Apache Cassandra développé par l'entreprise Datastax, distributeur de Cassandra. Le pilote est sous licence Apache.
 
-\paragraph{} L'entreprise Datastax étant très spécialisé dans le développement de logiciels centrés sur Cassandra, son pilote est le plus complet. Il propose
+\paragraph{} L'entreprise Datastax étant très spécialisée dans le développement de logiciels centrés sur Cassandra, son pilote est le plus complet. Il propose
 toutes les fonctionnalités dont nous avons besoin.
 
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=12cm]{images/client/acteurs.png}
-	\caption{Interactions du client \label{fig:client_acteurs}}
+	\caption{Intéractions du client \label{fig:client_acteurs}}
 \end{figure}
 
 \paragraph{} Sur la figure~\ref{fig:client_acteurs}, l'application cliente est représentée par le rectangle bleu nommé client.
@@ -842,11 +842,11 @@ Le client peut lire et écrire des fichiers dans l'espace de stockage.
 \begin{itemize}
  \item La classe \class{App} contient le \class{main}.
  \item L'objet \class{ClientApp} est le coeur de l'application. C'est l'objet qui communique et exécute les actions que souhaite effectuer l'utilisateur.
- \item La classe \class{Table} crée un objet contenant les informations propre à une table donnée.
- \item La classe \class{KeySpace} crée un objet contenant les informations propre à un keyspace donné.
+ \item La classe \class{Table} crée un objet contenant les informations propres à une table donnée.
+ \item La classe \class{KeySpace} crée un objet contenant les informations propres à un keyspace donné.
  \item L'objet \class{Connection} permet d'exécuter des requêtes sur la base de données.
  \item Les objets héritant de \class{QueriesFactory} sont des générateurs de requêtes, ils envoient des suites de requêtes à Cassandra.
- \item Les objets héritant de \class{DataGenerator} sont des générateurs de données, ils permettent de génerer des données pour effectuer les simulations.
+ \item Les objets héritant de \class{DataGenerator} sont des générateurs de données, ils permettent de générer des données pour effectuer les simulations.
 \end{itemize}
 
 
@@ -874,9 +874,9 @@ Pour cela, on utilise l'objet \class{GraphiteReporter} dans le module \class{met
 \paragraph{} Ces données sont ensuite traitées par Carbon puis sauvegardées dans la base de données Whisper.
 Enfin, la web-app de Graphite affiche ces informations sous forme de graphes (courbes, histogrammes...) dans un navigateur web.
 
-\paragraph{} L'utilisation de cette application permet de visualiser un grand nombre de métrics déjà disponible dans la version originale de Cassandra.
+\paragraph{} L'utilisation de cette application permet de visualiser un grand nombre de métrics déjà disponibles dans la version originale de Cassandra.
 On peut citer par exemple, le volume total de données stockées sur un cluster, le temps de lecture des données, la taille totale du cache...
-En ajoutant un metric pour mesurer la charge d'un noeud, on peut visualiser celle-ci au cours du temps grâce au divers formats de graphiques proposés par Graphite.
+En ajoutant un metric pour mesurer la charge d'un noeud, on peut visualiser celle-ci au cours du temps grâce aux divers formats de graphiques proposés par Graphite.
 
 
 \newpage 
@@ -888,7 +888,7 @@ En ajoutant un metric pour mesurer la charge d'un noeud, on peut visualiser cell
 
 \paragraph{}Dans la mesure du possible, nous avons respecté les conventions de codage de Cassandra \cite{CassCodeStyle14}, elles mêmes découlant des conventions de codage Java créées par Sun.
 
-\paragraph{}La majeur partie du projet, pour la modification de Cassandra, a consisté en sa compréhension, car pour modifier un comportement, il faut d'abord connaître celui qui existe. C'est pourquoi l'architecture du projet s'est construite en même temps que son implémentation (l'architecture représentant bien 4 ou 5 fois plus de temps que l'implémentation). Pour trouver les points d'intérêt dans le code (cheminement d'une requête de lecture par exemple), l'utilisation des \textit{logs} est primordiale. Couplé à un environnement de travail (IDE) permettant l'usage du \textit{"Go To Definition"} (permet de retrouver instantanément, à partir d'un endroit où une fonction est utilisée, l'endroit où elle est définie), nous avons alors pu retracer efficacement différentes parties de Cassandra sur lesquels nous avons travaillé. Les diagrammes de classes et de séquences de l'architecture ont été créé à partir de cette méthode (mais ils sont fortement simplifiés pour faciliter leur compréhension).
+\paragraph{}La majeur partie du projet, pour la modification de Cassandra, a consisté en sa compréhension, car pour modifier un comportement, il faut d'abord connaître celui qui existe. C'est pourquoi l'architecture du projet s'est construite en même temps que son implémentation (l'architecture représentant bien 4 ou 5 fois plus de temps que l'implémentation). Pour trouver les points d'intérêt dans le code (cheminement d'une requête de lecture par exemple), l'utilisation des \textit{logs} est primordiale. Couplé à un environnement de travail (IDE) permettant l'usage du \textit{"Go To Definition"} (permet de retrouver instantanément, à partir d'un endroit où une fonction est utilisée, l'endroit où elle est définie), nous avons alors pu retracer efficacement différentes parties de Cassandra sur lesquels nous avons travaillé. Les diagrammes de classes et de séquences de l'architecture ont été créés à partir de cette méthode (mais ils sont fortement simplifiés pour faciliter leur compréhension).
 
 \subsubsection{Outils utilisés}
 
@@ -912,7 +912,7 @@ On peut alors lancer le cluster, qui va se charger des créer les instances de C
 Lorsqu'on a fini de réaliser nos tests, on peut ensuite arrêter les instances de Cassandra tournant en fond de tâche.
 \shellcmd{py ccm stop}
 
-Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire la commande de lancement sans repasser par les étapes précédentes. Le cluster ainsi que les données qu'il possède ne sont pas supprimé. Mais si on veut le faire, alors il suffit d'une commande.
+Il est à noter que si l'on veut relancer le même cluster, il suffit de refaire la commande de lancement sans repasser par les étapes précédentes. Le cluster ainsi que les données qu'il possède ne sont pas supprimés. Mais si on veut le faire, alors il suffit d'une commande.
 \shellcmd{py ccm remove}
 
 \subsubsection*{Class Visualizer}
@@ -927,11 +927,11 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Dans notre cas, nous voulons comme comportement envoyer une requête de lecture à \textbf{tous} les noeuds possédant une copie, quelque soit le niveau de consistance, et en leur demandant de renvoyer la \textbf{donnée complète}, donc sans \textit{digest}. On répond ensuite à la requête dès qu'\textbf{un} noeud à répondu.
 
-\paragraph{}Pour implémenter ce comportement, nous avons modifier la classe \class{AbstractReadExecutor} pour qu'elle nous renvoie une instance qui n'utilise pas de \textit{digest}, instance de la classe \class{NoDigestReadExecutor} que nous avons créé (voir figure~\ref{fig:read_diagram_modified}). De plus, elle envoie une requête à tous les noeuds, peu importe le niveau de consistance. Pour créer des \class{NoDigestReadExecutor}, il a fallu empêcher la création des autres classes (ce sont toutes des classes privées statiques contenues dans \class{AbstractReadExecutor}), créées à partir de la méthode \texttt{getReadExecutor}. Seule notre nouvelle classe peut maintenant être instanciée.
+\paragraph{}Pour implémenter ce comportement, nous avons modifié la classe \class{AbstractReadExecutor} pour qu'elle nous renvoie une instance qui n'utilise pas de \textit{digest}, instance de la classe \class{NoDigestReadExecutor} que nous avons créé (voir figure~\ref{fig:read_diagram_modified}). De plus, elle envoie une requête à tous les noeuds, peu importe le niveau de consistance. Pour créer des \class{NoDigestReadExecutor}, il a fallu empêcher la création des autres classes (ce sont toutes des classes privées statiques contenues dans \class{AbstractReadExecutor}), créées à partir de la méthode \texttt{getReadExecutor}. Seule notre nouvelle classe peut maintenant être instanciée.
 
 \paragraph{}Un autre point important concerne la suppression d'une requête de lecture. Par défaut, c'est un comportement qui n'existe pas dans Cassandra, et qui n'a certainement pas été imaginé possible au vu de l'implémentation. La première chose que nous avons réalisé est d'envoyer des requêtes pouvant être supprimées dans les files d'attentes, avec des méthodes différentes de celles pouvant être supprimées. Si l'on reprend la figure~\ref{fig:read_diagram_modified}, on peut remarquer un changement dans les messages envoyés au stage de lecture. On a réutilisé les fonctions précédentes mais en ajoutant "Removable" à la fin de leur nom pour les différentier.
 
-\paragraph{}Pour comprendre comment supprimer une requête de la file d'attente, il faut comprendre ce qu'il y a dans une file d'attente. Si l'on regarde l'architecture d'un stage (voir figure~\ref{fig:stages_diagram}), on s'aperçoit qu'une requête dans la file d'attente sera représenté par une instance de \class{FutureTask}. Or, ce que l'on souhaite supprimer correspond à une instance de \class{ReadCommand} (la classe gérant la requête de lecture). Il a donc fallu trouver un système pour comparer ces deux classes. La première chose a été d'ajouter une classe \class{RemovableFutureTask} pour gérer les requêtes pouvant être supprimées de la file d'attente (voir figure~\ref{fig:stages_diagram_modified}). Cette classe possède la particularité de laisser la vérification de l'égalité de la classe à son attribut \textit{runnable} (qui correspond au \textit{callable} de \class{FutureTask} avant sa transformation). Ainsi, si l'on cherche à supprimer une requête de la file d'attente en envoyant une instance de \class{ReadCommand}, on compare cette instance au objet de la file d'attente, qui eux-même passeront par leur attribut \textit{runnable}, et ainsi de suite jusqu'à retrouver l'objet de \class{ReadCommand} original (voir figure~\ref{fig:remove_request_diagram}).
+\paragraph{}Pour comprendre comment supprimer une requête de la file d'attente, il faut comprendre ce qu'il y a dans une file d'attente. Si l'on regarde l'architecture d'un stage (voir figure~\ref{fig:stages_diagram}), on s'aperçoit qu'une requête dans la file d'attente sera représentée par une instance de \class{FutureTask}. Or, ce que l'on souhaite supprimer correspond à une instance de \class{ReadCommand} (la classe gérant la requête de lecture). Il a donc fallu trouver un système pour comparer ces deux classes. La première chose a été d'ajouter une classe \class{RemovableFutureTask} pour gérer les requêtes pouvant être supprimées de la file d'attente (voir figure~\ref{fig:stages_diagram_modified}). Cette classe possède la particularité de laisser la vérification de l'égalité de la classe à son attribut \textit{runnable} (qui correspond au \textit{callable} de \class{FutureTask} avant sa transformation). Ainsi, si l'on cherche à supprimer une requête de la file d'attente en envoyant une instance de \class{ReadCommand}, on compare cette instance au objet de la file d'attente, qui eux-même passeront par leur attribut \textit{runnable}, et ainsi de suite jusqu'à retrouver l'objet de \class{ReadCommand} original (voir figure~\ref{fig:remove_request_diagram}).
 
 \begin{figure}[!h]
 	\centering
@@ -941,7 +941,7 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}Les instances de \class{ReadCommand} sont identifiées et comparées grâce à leur attribut "timestamp" et "key".
 
-\paragraph{}Maintenant qu'il est possible de supprimer une requête de lecture d'une file d'attente, il faut s'intéresser à l'envoi/réception d'un message de suppression, ainsi qu'à son traitement. Nous avons donc créer un nouveau stage pour gérer ces messages : le stage \textbf{READ\_REMOVE}. Il est mono-threadé, contrairement au stage de lecture qui est multi-threadé (32 threads par défaut).
+\paragraph{}Maintenant qu'il est possible de supprimer une requête de lecture d'une file d'attente, il faut s'intéresser à l'envoi/réception d'un message de suppression, ainsi qu'à son traitement. Nous avons donc créé un nouveau stage pour gérer ces messages : le stage \textbf{READ\_REMOVE}. Il est mono-threadé, contrairement au stage de lecture qui est multi-threadé (32 threads par défaut).
 
 \paragraph{}Les messages qu'il traite sont les verbes \textbf{READ\_REMOVE} dont le traitement se fait dans la classe \class{ReadRemoveVerbHandler}. La création d'un message se fait à partir de \class{ReadCommand} avec la méthode \texttt{createRemoveMessage}, qu'il suffit alors d'envoyer aux autres noeuds par le biais du \class{MessagingService}. Cette tâche est donnée à la classe \class{AsbtractReadExecutor} et sa méthode \texttt{makeRemoveRequests}.
 
@@ -965,23 +965,21 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \subsubsection*{Solution implémentée}
 
-\paragraph{}Charge des files d'attente des requêtes de lecture (avec gestion de la décrémentation lorsqu'une requête est traitée) grâce à un compteur. Communication de la charge à tous les autres noeuds du réseau (Gossiper, ApplicationState, LoadReadBroadcaster, versionedValue).
-
 \paragraph{}Dans le projet, nous devons implémenter un système permettant, pour chaque noeud, de s'affecter toutes les requêtes de lecture de sa file d'attente. Cette décision se prend suivant un protocole de réaffectation, qui doit être modifiable facilement.
 
 \paragraph{}Pour prendre cette décision, il est nécessaire d'avoir comme information la \textit{charge} de chaque noeud du réseau pour la file d'attente des requêtes de lecture. Cela implique d'avoir cette donnée localement, de pouvoir la modifier, et de pouvoir la transmettre aux autres noeuds.
 
 \paragraph{}Cette donnée se situe dans la classe \class{SEPExecutor} sous l'attribut \texttt{effectiveLoad}. Chaque fin de traitement de requête de lecture entraîne la décrémentation du compteur (si la valeur actuelle du compteur est supérieure à 0). Le point important est d'utiliser un type permettant de gérer la concurrence (environnement multi-threadé). C'est pourquoi nous utilisons le type \class{AtomicLong} spécialement prévu pour cet effet.
 
-\paragraph{}Maintenant que nous possédons un compteur du nombre de tâches affectées, il est facile de retrouver le nombre de tâches non affectées (un compteur de tâches en attentes existe déjà). Il faut alors communiquer cette donnée. Pour ça, nous avons ajouté cette information à celle déjà présente dans les communications Gossip (voir la section~\ref{sec:Architecture}) entre les noeuds.
+\paragraph{}Maintenant que nous possédons un compteur du nombre de tâches affectées, il est facile de retrouver le nombre de tâches non affectées (un compteur de tâches en attentes existe déjà). Il faut alors communiquer cette donnée. Pour ça, nous avons ajouté cette information à celles déjà présentes dans les communications Gossip (voir la section~\ref{sec:Architecture}) entre les noeuds.
 
-\paragraph{}Cet ajout se déroule en plusieurs étapes. Tout d'abord, nous avons ajouté la donnée \textbf{READ\_LOAD} dans \class{ApplicationState}, permettant de dire ce qu'on transmet entre les noeuds. Le \class{Gossiper} transmettra l'information contenu dans \textbf{READ\_LOAD}.
+\paragraph{}Cet ajout se déroule en plusieurs étapes. Tout d'abord, nous avons ajouté la donnée \textbf{READ\_LOAD} dans \class{ApplicationState}, permettant de dire ce qu'on transmet entre les noeuds. Le \class{Gossiper} transmettra l'information contenue dans \textbf{READ\_LOAD}.
 
 \paragraph{}Ensuite, nous avons créé une classe qui gère la relation entre le \class{Gossiper} et le reste de l'application : \class{LoadReadBroadcaster}. Son rôle est, à intervalle régulier, de mettre à jour l'information de \textbf{READ\_LOAD} à partir de l'information du \class{SEPExecutor} du stage de lecture. C'est aussi à partir de lui que l'on peut récupérer les informations de la charge de tous les autres noeuds du réseau à partir de sa méthode \texttt{getLoadInfo}.
 
 \subsubsection*{Problèmes et limites rencontrés}
 
-\paragraph{}La solution actuelle se base sur un compteur pour déterminer les requêtes qui ont été affectées dans la file d'attente. Cependant, l'aspect multi-threadé peut, plus tard, poser des problèmes. En effet, il se peut que le compteur ne soit pas parfaitement en adéquation avec les requêtes que nous nous sommes assignées, et pour lesquels nous avons envoyé des requêtes de suppression aux autres noeuds. On enverrai alors des requêtes de suppression lors du traitement de la requête de lecture alors qu'on avait déjà envoyé ces requêtes auparavant lors de l'affectation.
+\paragraph{}La solution actuelle se base sur un compteur pour déterminer les requêtes qui ont été affectées dans la file d'attente. Cependant, l'aspect multi-threadé peut, plus tard, poser des problèmes. En effet, il se peut que le compteur ne soit pas parfaitement en adéquation avec les requêtes que nous nous sommes assignées, et pour lesquels nous avons envoyé des requêtes de suppression aux autres noeuds. On enverrait alors des requêtes de suppression lors du traitement de la requête de lecture alors qu'on avait déjà envoyé ces requêtes auparavant lors de l'affectation.
 
 \paragraph{}Le risque est alors d'envoyer des messages inutiles dans le réseau. Le contraire n'est pas possible si on modifie la charge avant de parcourir la file d'attente pour envoyer les messages de suppressions (cela aurait été plus problématique car il n'y aurait pas eu de réponse à la requête du client du coup).
 
@@ -989,9 +987,9 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \subsubsection*{Travail restant à réaliser}
 
-\paragraph{}Nous n'avons pas réalisé tous les objectifs dans cette partie par manque de temps. Il reste de nombreux points à aborder pour achever ce travail, mais ils ont été tout de même réfléchi.
+\paragraph{}Nous n'avons pas réalisé tous les objectifs dans cette partie par manque de temps. Il reste de nombreux points à aborder pour achever ce travail, mais ils ont été tout de même réfléchis.
 
-\paragraph{}Il faut encore exécuter le protocole de réaffectation, qui doit être  lancé dès que l'on traite une requête de lecture ou de suppression. Ce protocole doit vérifier les conditions d'exécution qui lui sont propres (SLVO ou AverageDegree ne possèdent pas les mêmes conditions), et si elles passent, doit modifier la charge et parcourir la file d'attente pour envoyer un message de suppression à tous les autres noeuds possédant ces mêmes requêtes.
+\paragraph{}Il faut encore exécuter le protocole de réaffectation, qui doit être lancé dès que l'on traite une requête de lecture ou de suppression. Ce protocole doit vérifier les conditions d'exécution qui lui sont propres (SLVO ou AverageDegree ne possèdent pas les mêmes conditions), et si elles passent, doit modifier la charge et parcourir la file d'attente pour envoyer un message de suppression à tous les autres noeuds possédant ces mêmes requêtes.
 
 \paragraph{}Une requête affectée ne doit pas entrainer de message de suppression lors de son traitement car ils ont été réalisés plus tôt par le système de réaffectation. L'idée serait de marquer les requêtes (un booléen par exemple) pour indiquer si elles sont affectées ou non.
 
@@ -1005,7 +1003,7 @@ Il est à noté que si l'on veut relancer le même cluster, il suffit de refaire
 
 \paragraph{}La méthode implémentée consiste à utiliser la fonction $ H_0 (c) $ pour le placement initial. Le premier réplica est placé grâce à $ H_1 (H_0 (c)) $, le second grâce à $ H_2 (H_0 (c)) $ et ainsi de suite.
 
-\paragraph{}La création de cette implémentation a nécessité la création d'une nouvelle stratégie de réplication nommée \class{MultiHashStrategy}. Elle peut être utilisée comme n'importe quelle stratégie de réplication, c'est à dire qu'il suffit d'indiquer son nom lors de la création d'une keyspace. Il est a noté que cette stratégie ne fonctionne correctement qu'avec la méthode de répartition en \textbf{Murmur3}, car cette stratégie utilise des fonctions de hachages Murmur3. Si on utilise une autre méthode de répartition, la distribution des copies ne sera plus uniforme.
+\paragraph{}La création de cette implémentation a nécessité la création d'une nouvelle stratégie de réplication nommée \class{MultiHashStrategy}. Elle peut être utilisée comme n'importe quelle stratégie de réplication, c'est à dire qu'il suffit d'indiquer son nom lors de la création d'une keyspace. Il est à noter que cette stratégie ne fonctionne correctement qu'avec la méthode de répartition en \textbf{Murmur3}, car cette stratégie utilise des fonctions de hachages Murmur3. Si on utilise une autre méthode de répartition, la distribution des copies ne sera plus uniforme.
 
 \subsubsection*{Problèmes et limites rencontrés}
 
@@ -1031,7 +1029,7 @@ Prenons par exemple, le cas de deux objets ayant pour clé primaire $c1$ et $c2$
 
 \end{itemize}
 
-On a une donc une répartition des données moins efficace car si on avait une collision, on souhaitait que les réplicas ne soit pas sur les mêmes noeuds pour ces données. Toutefois, le risque de collision reste assez faible car la fonction de hachage Murmur3 donne des résultats codés sur 64 bits (le type \textit{Long} en Java), soit $2^{64}-1$ solutions possibles.
+On a une donc une répartition des données moins efficace car si on avait une collision, on souhaitait que les réplicas ne soient pas sur les mêmes noeuds pour ces données. Toutefois, le risque de collision reste assez faible car la fonction de hachage Murmur3 donne des résultats codés sur 64 bits (le type \textit{Long} en Java), soit $2^{64}-1$ solutions possibles.
 
 \subsubsection*{Travail restant à réaliser}
 
@@ -1049,7 +1047,7 @@ On a une donc une répartition des données moins efficace car si on avait une c
 
 \subsubsection*{Travail restant à réaliser}
 
-\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requêtes totale reçues (déjà existant dans Cassandra). Chaque noeud ajoutera $n$ compteurs (s'il possède la gestion de $n$ données ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes de chaque objet.
+\paragraph{}Il faut premièrement ajouter au niveau du traitement des requêtes, un compteur du nombre de requêtes total reçues (déjà existant dans Cassandra). Chaque noeud ajoutera $n$ compteurs (s'il possède la gestion de $n$ données ou $n$ noeuds selon l'algorithme utilisé) pour compter les requêtes de chaque objet.
 
 \paragraph{}Puis, un mécanisme à part, qui à chaque période de temps prédéfini par l'utilisateur, enverrait le nombre total de requêtes reçues à ses voisins. La réflexion n'est pas claire ici car on a besoin de créer une synchronisation entre tous les noeuds pour le calcul du nombre.
 
@@ -1061,14 +1059,37 @@ On a une donc une répartition des données moins efficace car si on avait une c
 
 \paragraph{}Après la création d'une copie, celle-ci doit être attribuée à un noeud, cela nécessite donc de comprendre comment un noeud assimile de nouveaux objets. De même, lors de la suppression, que se passe-t-il des requêtes présentes dans la file d'attente du noeud ?
 
+\subsubsection{Tests}
+
+\paragraph{}Cassandra utilise le framework JUnit pour gérer ses tests. Il est possible de lancer l'ensemble des tests présents dans Cassandra en une seule commande
+\shellcmd{ant test}
+
+Ou alors de lancer seulement une classe de tests
+\shellcmd{ant test -Dtest.name=<ClassName>}
+
+Ou même de lancer seulement certaines fonctions de tests dans une classe
+\shellcmd{ant testsome -Dtest.name=<ClassName> -Dtest.methods=<comma-separated list of method names>}
+
+Étonnement, ces commandes n'ont pas fonctionné pendant nos tests. Ce n'est qu'en fin de projet que nous avons trouvé un moyen pour contourner les erreurs provoquées par les commandes de tests. Malgré les messages d'erreurs et d'échec des tests affichés dans la console, il faut se rendre dans \url{<chemin\_de\_cassandra>/build/test/junitreport/index.html} et on peut ainsi avoir une vue d'ensemble des tests réalisés. On peut y voir que les tests se sont correctement déroulés même si la console indique le contraire. Il faut par contre lancer les tests avec la dernière commande sans notifier de méthode.
+\shellcmd{ant testsome -Dtest.name=<ClassName>}
+
+\paragraph{}Ce contretemps nous a empêché de réaliser des tests comme nous le souhaitions. Nous avons tout de même eu le temps de réaliser les tests pour la stratégie de réplication que nous avons créé, ces tests étant les plus faciles à mettre en place.
+
+\paragraph{}Une grosse difficulté pour réaliser des tests, outre les problèmes de compilation, est l'architecture de Cassandra. En effet, la présence importante de classes statiques pose des soucis de cloisonnement, ce qui complexifie énormément la réalisation de tests. Cassandra possède d'ailleurs assez peu de tests comparé au nombre de classes qu'il possède, certainement à cause de cet aspect.
+
+\paragraph{}On peut signaler la présence d'un mock pour la base de données entière, avec les classes \class{EmbeddedServer} et \class{SchemaLoader}, permettant ainsi de réaliser certains tests plus facilement.
+
+\paragraph{}Les tests sur les modifications apportées à Cassandra sont donc possibles, au prix d'un effort assez important. Ils n'en restent pas moins cruciaux dans le cadre d'un développement efficace, c'est pourquoi l'une des premières choses dans la continuité de ce projet est la réalisation de tests sur les parties actuellement modifiées.
+
+\paragraph{}Les tests unitaires n'étant pas réalisables pendant notre projet, nous nous sommes tournés vers une autre manière de réaliser nos tests. Nous avons défini un ensemble de requêtes que nous réalisions après chaque modification, et pour lesquels nous connaissions tous les aspects dans le cheminement à l'intérieur de Cassandra et dans les résultats. Ainsi, à partir des logs, il nous était possible de savoir si nos modifications fonctionnaient ou non. Bien qu'assez rudimentaire, cette méthode nous a permis d'avancer efficacement dans la réalisation du projet. Elle n'apporte cependant pas toute la puissance des tests unitaires.
+
 \subsection{Création d'une application cliente}
 
-\paragraph{} L'application cliente permet à l'utilisateur d'interagir avec la base de données Cassandra.
+\paragraph{} L'application cliente permet à l'utilisateur d'intéragir avec la base de données Cassandra.
 
 \subsubsection{Gestion de Cassandra}
 
 \subsubsection*{Solution implémentée}
-
 
 \paragraph{} Les constantes: nom des commandes, temps avant un timeout... sont configurables dans \class{simulassandra.client.Config}.
 
@@ -1109,15 +1130,15 @@ Quitte l'application cliente, on arrive donc sur l'état \textit{Fin}.
 \paragraph{} Ainsi que les commandes permettant de modifier le contenu de la base de données, d'effectuer des requêtes, de modifier le keyspace courant.
 \newline
 \shellcmd{import <file>}
-Exécute les requête au format CQL contenues dans le fichier \texttt{<file>}.
+Exécute les requêtes au format CQL contenues dans le fichier \texttt{<file>}.
 \shellcmd{switch <ks>}
 Change de keyspace. Passage sur le keyspace \texttt{<ks>} avec création du keyspace s'il n'existe pas. On retourne sur l'état \textit{Choix du Keyspace}.
 \shellcmd{queries <qf> <s> <ns> <nq>}
-Exécute une suite de requêtes générées aléatoirement selon le seed \texttt{<s>} et la classe \texttt{<qf>}. Le nombre de simulation est définie par \texttt{<ns>} et le nombre de requêtes par simulation par \texttt{<nq>}. Cette commande est détaillée dans la partie suivante.
+Exécute une suite de requêtes générées aléatoirement selon le seed \texttt{<s>} et la classe \texttt{<qf>}. Le nombre de simulations est définie par \texttt{<ns>} et le nombre de requêtes par simulation par \texttt{<nq>}. Cette commande est détaillée dans la partie suivante.
 \shellcmd{createdatafile  <file> <nb\_tables> <nb\_rows> <data\_length>}
-Écrit dans un fichier \texttt{<file>} la suite de requêtes CQL permettant de créer \texttt{<nb\_tables>} et d'insérer \texttt{<nb\_rows>} enregistrements par table. Les données crées sont de longueur \texttt{<data\_length>}.
+Écrit dans un fichier \texttt{<file>} la suite de requêtes CQL permettant de créer \texttt{<nb\_tables>} et d'insérer \texttt{<nb\_rows>} enregistrements par table. Les données créées sont de longueur \texttt{<data\_length>}.
  
-\paragraph{Ajout de commandes} Une commande est une suite de caractères saisie par l'utilisateur pour exécuter une action. Elle est au format :
+\paragraph{Ajout de commandes} Une commande est une suite de caractères saisis par l'utilisateur pour exécuter une action. Elle est au format :
 \shellcmd{nom\_commande <argument\_1> <argument\_2> ... <argument\_n> }
 Il est aisé d'ajouter des commandes à l'application cliente.
 
@@ -1128,11 +1149,11 @@ Il est aisé d'ajouter des commandes à l'application cliente.
 \end{figure}
 
 \paragraph{} Un objet de type \class{Command} est la représentation d'une commande. 
-Ces attributs sont l'identifiant de \texttt{nom\_comande} et un tableau de chaîne de caractères contenant tous les arguments de la commande.
+Ses attributs sont l'identifiant de \texttt{nom\_comande} et un tableau de chaîne de caractères contenant tous les arguments de la commande.
 
 \paragraph{} La commande tapée par l'utilisateur est d'abord traitée par les méthodes de la classe \class{InputCommandParser}.
 Le but est de transformer la chaîne de caractères en un objet de type \class{Command}. L'objet est ensuite récupéré dans la méthode \class{run} de l'objet \class{ClientApp}
-pour être exécutée par la méthode \texttt{execute} du même objet.
+pour être exécuté par la méthode \texttt{execute} du même objet.
 
 \paragraph{} Pour ajouter une commande, il faut donc ajouter les constantes définissant le nom de la commande, l'identifiant de la commande ainsi que son nombre d'arguments dans la classe \class{Config}.
 Il faut ensuite modifier la méthode \class{whichAction} de \class{InputCommandParser} pour attribuer au nom de la commande le bon identifiant et ajouter le traitement correspondant à la commande
@@ -1141,13 +1162,13 @@ dans la méthode \class{execute} de \class{ClientApp}.
 \subsubsection*{Problèmes et limites rencontrés}
 
 \paragraph{} Un noeud dans le réseau a deux états, \texttt{UP} lorsqu'il est en état d'activité et \texttt{DOWN} lorsqu'il est à l'arrêt.
-Lorsqu'un noeud démarre (ou redémarre), passant de l'état \texttt{DOWN} à l'état \texttt{UP}, Cassandra envoit trop rapidement la notification de ce changement au pîlote.
+Lorsqu'un noeud démarre (ou redémarre), passant de l'état \texttt{DOWN} à l'état \texttt{UP}, Cassandra envoit trop rapidement la notification de ce changement au pilote.
 Le pilote tente alors de se connecter sans que le noeud puisse encore être en état d'accepter la connexion.
 La console affiche alors un message d'erreur. Ainsi, la connexion est refusée dans un premier temps puis acceptée lors d'une nouvelle tentative.
 
 \paragraph{} Les clients voulaient que l'application cliente puisse importer des fichiers au format CSV, fichier tableur dont les données sont séparées par un caractère de séparation.
 Pour cela, le langage CQL propose la requête \texttt{COPY <table> FROM fichier.csv}. Le contenu du fichier \texttt{<fichier.csv>} est ainsi importé dans la table \texttt{<table>}.
-Malheureusement, le pilote utilisé ne supporte pas cette requête \cite{JavaDriverIssue330}. Nous avons donc ajouté au client un générateur de données aléatoire pour remplir la base de données.
+Malheureusement, le pilote utilisé ne supporte pas cette requête \cite{JavaDriverIssue330}. Nous avons donc ajouté au client un générateur de données aléatoires pour remplir la base de données.
 
 \subsubsection*{Travail restant à réaliser}
 
@@ -1258,7 +1279,7 @@ la possibilité de rendre optionnel le decompte du nombre de ligne.
 \paragraph{}Toutefois, un travail sur l'architecture à mettre en place a été réalisé et se situe dans la section~\ref{sec:Architecture}. De plus, les données ajoutées dans la phase d'implémentation de Cassandra ont aussi été ajoutées dans les interfaces de \textbf{Metrics}, et sont disponibles en sortie pour un traitement ultérieur.
 
 
-\paragraph{}Pour ça, deux nouveaux compteurs ont été créé dans la classe \class{SEPMetrics}, il s'agit de \texttt{removedTasks} et de \texttt{effectiveLoad}.
+\paragraph{}Pour ça, deux nouveaux compteurs ont été créés dans la classe \class{SEPMetrics}, il s'agit de \texttt{removedTasks} et de \texttt{effectiveLoad}.
 
 \section{Expériences et résultats}
 
@@ -1270,22 +1291,33 @@ la possibilité de rendre optionnel le decompte du nombre de ligne.
 
 \subsection{Différence de temps d'exécution avec la nouvelle stratégie de placement}
 
-\paragraph{}Pour comparer les performances de notre nouvelle stratégie de placement des données, nous avons effectuer deux tests :
+\paragraph{}Pour comparer les performances de notre nouvelle stratégie de placement des données, nous avons effectué deux tests :
 
 \begin{itemize}
     \item On compare les temps d'exécution de différents jeux de requêtes sur un facteur de réplication de 1 (sans copie) et un facteur de 2 (avec une copie) (voir figure~\ref{fig:test_RF_PO})
     \item On réitère l'expérience avec une version de Cassandra non modifiée par nos soins (voir figure~\ref{fig:test_cassandra_non_modif_RF_PO})
 \end{itemize}
 
-\paragraph{}
+\paragraph{}On remarque que le nombre de copies, ici, n'influe pas sur la capacité de traitement des requêtes, que ce soit pour notre stratégie ou l'ancienne. Les requêtes étant uniformes, c'est un résultat auquel on pouvait s'attendre. Dans le cas de requête ciblé sur des objets d'un seul noeud par contre, c'est ici que l'on aurait pu normalement percevoir un gain de performance avec l'utilisation de la réplication (et du système de popularité non implémenté).
 
 \subsection{Différence de temps d'exécution pour comparer le travail effectué sur les requêtes}
 
-\paragraph{}Pour comparer les performances de notre travail effectué au niveau du traitement des requêtes, nous allons comparer toujours les mêmes tests (figures~\ref{fig:test_RF_PO} et~\ref{fig:test_cassandra_non_modif_RF_PO}). Pour effectuer notre analyse, nous devons étudier les courbes rouges ensembles et les bleues ensembles, afin de mettre en évidence lors d'un même facteur de réplication, le gain obtenu.
+\paragraph{}Pour comparer les performances de notre travail effectué au niveau du traitement des requêtes, nous avons comparé les mêmes tests (figures~\ref{fig:test_RF_PO} et~\ref{fig:test_cassandra_non_modif_RF_PO}). Pour effectuer notre analyse, nous devons étudier les courbes rouges ensembles et les bleues ensembles, afin de mettre en évidence lors d'un même facteur de réplication, le gain obtenu.
 
-\paragraph{}La différence entre notre version et celle de Cassandra non modifiée est d'environ 1 seconde sur de grands jeux de requêtes. Les résultats sur de petits jeux de requêtes s'expliquent nottamment par un sur-coût lors des communications entre les noeuds et sur la taille des données qui est relativement petite. Les courbes de la figure~\ref{fig:test_taille_RF2} montrent d'ailleurs les différences de temps d'exécution entre une donnée de 10 Ko et de 1 Mo.
+\paragraph{}On constate des résultats extrêmement similaires en tout point. Cela provient du fait que, d'une part, tous les besoins n'ont pas été implémenté. Nous avons donc un logiciel pas aussi performant que celui attendu par le client dans sa théorie. D'autre part, le test se produit sur des petits objets. Cela implique un temps de traitement rapide pour chaque requête. Les messages de suppression sont très peu pris en compte, et les requêtes sont gérées en double.
+
+\paragraph{}Cependant, cela n'affecte pas négativement les performances.
+
+\paragraph{}Les courbes de la figure~\ref{fig:test_taille_RF2} montrent d'ailleurs les différences de temps d'exécution entre une donnée de 10 Ko et de 1 Mo. C'est sur ce genre de requêtes que l'on est amené à se dire que la suppression de requêtes de lecture peut faire gagner du temps. Malheureusement, lors du cours laps de temps pour faire les tests, des problèmes sont survenus, nous empêchant de réaliser le test de requêtes sur des données de tailles importantes avec une version de Cassandra non modifiée.
+
+\subsection{Analyse}
+
+\paragraph{}Les résultats de ces expériences ne sont qu'un début. L'implémentation n'étant pas totale, il est encore trop tôt pour en tirer des conclusions quant à la performance des algorithmes utilisés. On peut cependant remarquer que les performances n'en sont pas pour autant diminuées. Tout porte donc à croire qu'avec une implémentation complète, les gains seraient visibles immédiatement.
+
+\paragraph{}Il serait intéressant, dans une nouvelle perspective, de pouvoir calculer et visualiser les échanges réseaux causés par la base de données. Car les nouveaux algorithmes augmentent ces échanges, et cela peut engendrer des coûts supplémentaires pour une entreprise qui voudrait utiliser ce système par exemple.
 
 \newpage
+
 \section{Annexe - Un simulateur}
 
 \subsection{Introduction}
@@ -1317,6 +1349,8 @@ La compilation de la documentation Doxygen s'effectue dans \textit{data} et en t
 \paragraph{}Le schéma de la figure~\ref{fig:archisimulateur} permet de mieux comprendre son fonctionnement. Nous allons le détailler. \newline
 Tout d'abord, nous créons des données. Ensuite, nous créons des requêtes sur des données. On demande ensuite au Cluster de transmettre ces requêtes au noeud souhaité. Quand le noeud aura du temps, il traitera la requête. Si celle-ci est sur une donnée dont il a la gestion, il la traitera. Sinon, il demandera à la stratégie de lui fournir les noeuds responsables, et il transmettra.
 
+\paragraph{}Par manque de temps, l'écriture de tests de façon propre et automatisée n'a pas été effectuée. Cependant, le logiciel a été testé au fur et à mesure de son développement. Il suffirait de créer un fichier contenant un \texttt{main} et lors de l'édition de liens à la compilation, ajouter les fichiers objet aux tests.
+
 \subsection{Inconvénients de cette approche}
 
 \paragraph{}Premièrement, l'architecture telle qu'elle est pensée n'est pas distribuée : elle est centralisée. En effet, l'objet cluster, est un élément central du réseau. Mais dans une première approche, cela suffisait.
@@ -1339,7 +1373,9 @@ Tout d'abord, nous créons des données. Ensuite, nous créons des requêtes sur
 
 \section{Conclusion et Remerciements}
 
-TODO : C'est la fin.
+\paragraph{}Ce projet fut très intéressant sur l'aspect distribué de la base de données. Cependant, il est frustrant de n'avoir pu le terminer dans les temps impartis à cause de sa taille. Un client a été fait qui peut se connecter à la base de données et y envoyer des commandes, cependant, il manque la possibilité de visualiser plus de données sur ce qu'il se passe à l'intérieur. Au niveau des requêtes, lorsqu'une requête est traitée, on prévient les noeuds qu'ils peuvent la supprimer de leur liste d'attente, il manque malheureusement les fonctionnalités d'affectation des requêtes en dessous d'une charge donnée. Enfin au niveau des données, la stratégie de placement a été créée, toutefois, la popularité n'a pas été codée.
+
+\paragraph{}Nous tenions à remercier Frédéric Lalanne pour son aide au travers de la \textit{Jungle} de Cassandra, Gillet Noel et Nicolas Hanusse pour leur suivi et leurs conseils sur le projet.
 
 \bibliography{memoire}
 
@@ -1403,12 +1439,6 @@ TODO : C'est la fin.
 \clearpage
 
 %%%%%%%%%%% ARCHITECTURE %%%%%%%%%%%
-
-\begin{figure}[p]
-	\centering
-		\includegraphics[width=15cm]{images/architecture/stages_diagram.png}
-	\caption{Diagramme de classe simplifié de l'architecture SEDA dans Cassandra \label{fig:stages_diagram}}
-\end{figure}
 
 \begin{figure}[p]
 	\centering
