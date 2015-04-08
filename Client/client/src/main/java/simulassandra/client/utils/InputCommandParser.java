@@ -23,6 +23,7 @@ public class InputCommandParser {
 	public static String inputCleaner(String cmd){
 		cmd = cmd.replaceAll(" {2,}", " ");
 		cmd = cmd.replaceAll("^ {1,}", "");
+		cmd = cmd.replaceAll(" {1,}$", "");
 		return cmd;
 	}
 	

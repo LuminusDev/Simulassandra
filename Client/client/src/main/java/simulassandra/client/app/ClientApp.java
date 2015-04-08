@@ -28,6 +28,13 @@ public class ClientApp {
 	private Cluster cluster;
     private Connection connection;
     
+    /**
+     * Constructeur pour tests
+     */
+    public ClientApp(){
+    	
+    }
+    
 	/**
 	 * Constructeur initialisant la connexion à Cassandra.
 	 * 
@@ -144,40 +151,40 @@ public class ClientApp {
 	 * @throws UnavailableKeyspaceException 
 	 * @throws IOException 
 	 */
-	private Boolean execute(Command cmd) throws ArgumentException, 
+	public Boolean execute(Command command) throws ArgumentException, 
 												KeyspaceException, 
 												UnavailableKeyspaceException, 
 												IOException{
-		switch(cmd.getAction()){
+		switch(command.getAction()){
 			case Config.ACT_QUIT:
 				return Boolean.TRUE;
 			case Config.ACT_HELP:
 				Interactor.showCommands();
 				return Boolean.FALSE;
 			case Config.ACT_IMPORT:
-				this.connection.executeFromFileQueries(cmd.getArg(0));
+				this.connection.executeFromFileQueries(command.getArg(0));
 				return Boolean.FALSE;
 			case Config.ACT_SWITCH_KEYSPACE:
-				initKeyspace(cmd.getArg(0));
+				initKeyspace(command.getArg(0));
 				Interactor.displayKeyspace(this.connection.getKeyspace().getName());
 				return Boolean.FALSE;
 			case Config.ACT_QUERIESFACTORY:
-				execQueriesFactory(cmd.getArg(0), Long.parseLong(cmd.getArg(1)), Integer.parseInt(cmd.getArg(2)), Integer.parseInt(cmd.getArg(3)));
+				execQueriesFactory(command.getArg(0), Long.parseLong(command.getArg(1)), Integer.parseInt(command.getArg(2)), Integer.parseInt(command.getArg(3)));
 				return Boolean.FALSE;
 			case Config.ACT_SHOW_KEYSPACE:
 				Interactor.displayMessage(this.connection.getKeyspace().getMetadata());
 				return Boolean.FALSE;
 			case Config.ACT_SHOW_TABLE:
-				Interactor.displayMessage(this.connection.getKeyspace().getTableMetadata(cmd.getArg(0)));
+				Interactor.displayMessage(this.connection.getKeyspace().getTableMetadata(command.getArg(0)));
 				return Boolean.FALSE;
 			case Config.ACT_LIST_TABLE:
 				Interactor.displayMessage(this.connection.getKeyspace().getTablesList());
 				return Boolean.FALSE;
 			case Config.ACT_CREATE_DATA_FILE:
-				Integer nb_tables = Integer.parseInt(cmd.getArg(1));
-				Integer nb_rows = Integer.parseInt(cmd.getArg(2));
-				Integer data_size = Integer.parseInt(cmd.getArg(3));
-				DataGenerator generator = new SimpleDataGenerator(this.connection.getKeyspace(), cmd.getArg(0), nb_tables, nb_rows, data_size);
+				Integer nb_tables = Integer.parseInt(command.getArg(1));
+				Integer nb_rows = Integer.parseInt(command.getArg(2));
+				Integer data_size = Integer.parseInt(command.getArg(3));
+				DataGenerator generator = new SimpleDataGenerator(this.connection.getKeyspace(), command.getArg(0), nb_tables, nb_rows, data_size);
 				if(generator.write()){
 					Interactor.displayMessage("Data writed.");
 				}
@@ -201,7 +208,7 @@ public class ClientApp {
 	 * 
 	 * @return Boolean.FALSE si une erreur est survenue. Boolean.TRUE sinon
 	 */
-	public Boolean run(){
+	public void run(){
 		Boolean end = Boolean.FALSE;
 		while(!end){
 			try {
@@ -209,10 +216,8 @@ public class ClientApp {
 				end = this.execute(command);
 			} catch (Exception e) {
 				Interactor.displayException(e);
-				return Boolean.FALSE;
 			}
 		}
-		return Boolean.TRUE;
 	}
 	
 	/**

@@ -12,6 +12,29 @@
 \usepackage{enumitem}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
 \usepackage[hidelinks]{hyperref}
 \bibliographystyle{alpha}
 \usepackage[counterclockwise]{rotating}
@@ -1147,11 +1170,48 @@ On appelle une simulation, le fait de choisir une table pour exécuter des requ�
 Des jeux de requêtes simples, où l'on ne selectionne qu'une seule ligne par requête et des jeux de grosses requêtes où l'on selectionne plusieurs lignes par requêtes.
 Des selections de lignes suivant une loi aléatoire uniforme ou distribuée, pour tester le mécanisme de popularité.
 
-\paragraph{} Pour cela, nous avons décider de créer un générateur de requête différent pour chaque type de jeux de requête souhaité.
-On appelle générateur de requête un objet de type héritant de la classe \class{QueriesFactory}.
+\paragraph{} Pour cela, nous avons décidé de créer un générateur de requête pour chaque type de jeux de requête souhaité.
+On appelle générateur de requête un objet de type héritant de la classe \class{QueriesFactory}. L'application a été concue de manière à ce qu'il soit facile d'implémenter un nouveau générateur de requêtes.
+
+\paragraph{} Créons le générateur de requête \class{RandomFactory} dont la probabilité de selectionner une table lors d'une simulation ou une ligne lors d'une requête suit une loi de distribution uniforme.
+
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=10cm]{images/client/requete.png}
+	\caption{Générateur de requête \class{RandomFactory} \label{fig:uml_generequete}}
+\end{figure}
+
+\paragraph{} Sur la figure~\ref{fig:uml_generequete}, nous remarquons que la classe \class{QueriesFactory} possède deux méthodes abstraites, \texttt{askForConfiguration} et \texttt{queriesFactory}.
+L'attribut \texttt{column\_target} est le nom, dans la base de données, de la colonne \texttt{key}.
+Dans un premier temps, concentrons nous sur \texttt{askForConfiguration}.
 
 
+\paragraph{}
+Pour exécuter un jeu de requête sur Cassandra, il faut utiliser la commande :
+\shellcmd{queries <qf> <s> <ns> <nq>}
+Avec les arguments :
+\begin{itemize}
+ \item \texttt{<qf>} La classe créant l'objet générateur de requête que l'on souhaite utiliser. En donnant comme argument \class{RandomFactory}, l'objet utilisé pour générer des requête sera de type \class{RandomFactory}.
+ \item \texttt{<s>} La seed pour l'initialisation du générateur de nombre aléatoire. Cela permet de répéter le même jeu de requête.
+ \item \texttt{<ns>} Le nombre de simulation, il s'agit
+\end{itemize}
 
+\paragraph{} Pour exécuter un jeu de requête généré par \class{RandomFactory}, il faut donc taper la commande :
+\shellcmd{queries RandomFactory <s> <ns> <nq>}
+L'objet \class{RandomFactory} est crée dynamiquement, le constructeur appelé doit contenir quatres arguments ( \class{Connection}, \class{Long}, \class{Long}, \class{Long}).
+Ainsi, tous les attributs de \class{QueriesFactory} sont initialisés. 
+Si on souhaite initialiser les attributs de \class{RandomFactory} avec une valeur choisie par l'utilisateur, il faut utiliser la méthode \texttt{askForConfiguration}.
+On peut ainsi demander à l'utilisateur quelle valeur il souhaite pour l'attribut \texttt{column\_target} avec le code suivant :
+
+\begin{lstlisting}
+protected void askForConfiguration() {
+	this.target_column = Interactor.basicInput("Target column : ");
+}
+\end{lstlisting}
+\paragraph{} \texttt{Interactor.basicInput("Target column : ")} affichant le message \texttt{Target column :} dans la console et retournant la chaîne de caractère saisie par l'utilisateur.
+
+\paragraph{} Dans un second temps, interessons-nous à la méthode \texttt{queriesfactory}. C'est dans cette méthode que nous implémentons le générateur de requêtes.
+Pour \class{RandomFactory}, il s'agit d'implémenter l'algorithme suivant :
 
 \begin{algorithm}[H]
 \caption{Jeu de requêtes simples en $q$ simulations et $r$ requêtes.}
@@ -1168,19 +1228,28 @@ On appelle générateur de requête un objet de type héritant de la classe \cla
 \end{algorithmic}
 \end{algorithm}
 
+\paragraph{} Notre générateur de requêtes est opérationnel, une fois instancié, il ne reste plus qu'à exécuter la méthode \texttt{run}. Le temps d'exécution est chonométré puis affiché dans la console.
 
-Pour exécuter un jeu de requête sur Cassandra, il faut utiliser la commande :
-\shellcmd{queries <qf> <s> <ns> <nq>}
-Avec les arguments :
-\begin{itemize}
- \item \texttt{<qf>} La classe créant l'objet générateur de requête que l'on souhaite utiliser. En donnant comme argument \class{RandomFactory}, l'objet utilisé pour générer des requête sera de type \class{RandomFactory}.
- \item \texttt{<s>} La seed pour l'initialisation du générateur de nombre aléatoire. Cela permet de répéter le même jeu de requête.
- \item \texttt{<ns>} Le nombre de simulation, il s'agit
-\end{itemize}
+\paragraph{Fichier de log} Pour suivre l'évolution du jeu de requête, il est possible d'écrire un fichier de log. Pour enregistrer un message, il faut utiliser la méthode \texttt{addLog}.
+L'écriture se fait à la fin de la génération et de l'exécution du jeu de requêtes pour éviter de fausser le chronomètre.
 
 
 \subsubsection*{Problèmes et limites rencontrés}
+
+\paragraph{} Pour générer une requête et sélectionner une ligne existante, on doit pouvoir connaître le nombre de lignes disponibles dans chaque table.
+La base de données n'étant pas relationnelle, dénombrer les lignes peut prendre énormément de temps au point que Cassandra renvoie une erreur de type \texttt{Time out}.
+
+\paragraph{} Malheureusement pour effectuer une requête dans un keyspace, celui-ci doit être défini correctement, sinon l'exécution d'une requête enverra direcetement une exception.
+Pour cela, lors de la création d'un objet \class{KeySpace}, la première requête que nous effctuons est compter le nombre de ligne de chaque table.
+
+\paragraph{} Si le keyspace est mal défini, lors du dénombrement des lignes, la requête échoue et le contructeur de \class{KeySpace} envoie une \class{UnavailableKeySpaceException}. 
+Mais lorsque le dénombrement échoue car les données sont trop volumineuses, le constructeur envoie la même exception. Nous ne sommes donc pas en mesure de différencier un keyspace mal défini d'un keyspace bien défini mais
+ayant une table contenant des données volumineuses.
+
 \subsubsection*{Travail restant à réaliser}
+
+\paragraph{} Le travail restant à réaliser concerne le problème exposé précédemment. Les pistes à explorer sont un dénombrement différent du nombre de ligne, une liaison entre générateur de données et générateur de requêtes,
+la possibilité de rendre optionnel le decompte du nombre de ligne.
 
 \subsection{Création d'une application de visualisation de données}
 

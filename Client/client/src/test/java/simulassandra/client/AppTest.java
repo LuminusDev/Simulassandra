@@ -1,12 +1,18 @@
 package simulassandra.client;
 
+import java.io.IOException;
+
+import simulassandra.client.app.ClientApp;
+import simulassandra.client.app.Command;
+import simulassandra.client.exceptions.ArgumentException;
+import simulassandra.client.exceptions.KeyspaceException;
+import simulassandra.client.exceptions.UnavailableKeyspaceException;
+import simulassandra.client.utils.InputCommandParser;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-/**
- * Unit test for simple App.
- */
+
 public class AppTest 
     extends TestCase
 {
@@ -27,12 +33,17 @@ public class AppTest
     {
         return new TestSuite( AppTest.class );
     }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
+    
+    public void testAppEnd()
     {
-        assertTrue( true );
+        ClientApp app = new ClientApp();
+        try {
+			boolean r = app.execute(new Command("quit"));
+			assertTrue(r);
+		} catch (ArgumentException | KeyspaceException
+				| UnavailableKeyspaceException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

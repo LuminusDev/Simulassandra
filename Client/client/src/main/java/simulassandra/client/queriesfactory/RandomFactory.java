@@ -11,14 +11,14 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
  * Générateur de requêtes suivant une loi de distribution uniforme
  * @author Guillaume Marques <guillaume.marques33@gmail.com>
  */
-public class PseudoAleatoryFactory extends QueriesFactory {
+public class RandomFactory extends QueriesFactory {
 	private String target_column;
 	
-	public PseudoAleatoryFactory(Connection c, Integer nb_simulations, Integer nb_queries){
+	public RandomFactory(Connection c, Integer nb_simulations, Integer nb_queries){
 		super(c, nb_simulations, nb_queries);
 	}
 	
-	public PseudoAleatoryFactory(Connection c, Long seed, Integer nb_simulations, Integer nb_queries){
+	public RandomFactory(Connection c, Long seed, Integer nb_simulations, Integer nb_queries){
 		super(c,seed, nb_simulations, nb_queries);
 	}
 	
@@ -45,7 +45,6 @@ public class PseudoAleatoryFactory extends QueriesFactory {
 				}
 			}
 		}
-		
 		return Boolean.TRUE;
 	}
 }
