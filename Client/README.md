@@ -2,7 +2,7 @@ Prérequis
 ------------
 
 - Java SDK (>=1.7)
-- Maven
+- Maven 2
 - Git ( >= 1.7)
 
 Installation
