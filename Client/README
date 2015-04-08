@@ -1,0 +1,8 @@
+Pour compiler le client, placez vous dans le répertoire contenant le pom.xml (Client/client) 
+puis exécuter le commande :
+mvn package
+
+PoL'exécutable est alors crée dans le dossier target (Client/client/target).
+
+Pour le lancer, exécuter la commande
+java -jar target/<nom de l'executable>.jar
