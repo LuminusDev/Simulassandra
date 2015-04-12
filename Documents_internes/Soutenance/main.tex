@@ -60,6 +60,8 @@
 \usepackage[francais]{babel} % support French language
 \usepackage{hyperref} % support PDF bookmarks
 \usepackage{url}
+\usepackage{bbding}
+\usepackage{colortbl}
 %\usepackage{caption}
 %\usepackage{media9}
 %\addmediapath{./videos/}
@@ -313,7 +315,48 @@ Stages présents dans Cassandra :
 \end{itemize}
 \end{frame}
 
+\section{Travail effectué}
+
+
+\begin{frame}{Travail effectué sur Cassandra}
+
+\begin{block}{Requêtes}
+   \CheckmarkBold A chaque requête de lecture traitée, un message est envoyé pour notifier aux autres noeuds de ne pas effectuer la requête
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Travail effectué sur Cassandra}
+
+\begin{block}{Réplication et placement}
+   \CheckmarkBold Le placement des données et de leurs réplicas selon différentes fonctions de hackage
+\end{block}
+\end{frame}
+
 \section{Points techniques}
+
+
+\begin{frame}{Points techniques : Réplication}
+\centering
+    \begin{tabular}{| c | c | c | c |}
+       \hline
+       \rowcolor{UPMCEngagementBlueB} \multicolumn{2}{|c|}{Solution initiale}  & \multicolumn{2}{c|}{Solution implémentée} \tabularnewline
+       \hline
+       \rowcolor{UPMCEngagementBlueA} Donnée \no 1 & Donnée \no 2 & Donnée \no 1 & Donnée \no 2 \tabularnewline
+       \hline
+       $ H_0 (c1) $ & $ H_0 (c2) $ & $ H_0 (c1) $ & $ H_0 (c2) $  \tabularnewline
+       \hline
+       \rowcolor{UPMCEngagementBlueA} 1er Réplica & 1er réplica & 1er réplica & 1er réplica \tabularnewline
+       \hline
+       $ H_1 (c1) $ & $ H_1 (c2) $ & $ H_1 (H_0 (c1)) $ & $ H_1 (H_0 (c2)) $  \tabularnewline
+       \hline
+       \rowcolor{UPMCEngagementBlueA} 2nd Réplica & 2nd réplica & 2nd réplica & 2nd réplica \tabularnewline
+       \hline
+       $ H_2 (c1) $ & $ H_2 (c2) $ & $ H_2 (H_0 (c1)) $ & $ H_2 (H_0 (c2)) $  \tabularnewline
+       \hline
+    \end{tabular}
+\end{frame}
+
 
 \begin{frame}{Points techniques}
 
@@ -333,22 +376,16 @@ Stages présents dans Cassandra :
 \end{frame}
 
 
-\section{Simulateur}
-
-\begin{frame}{Simulateur}
-
-\begin{alertblock}{Alert}
-    Expliquer pourquoi simulateur + archi + fonctionnement
-\end{alertblock}
-\end{frame}
-
 \section{Améliorations}
 
-\begin{frame}{Améliorations}
+\begin{frame}{Améliorations possibles sur Cassandra}
 
-\begin{alertblock}{Alert}
-    En guise de conclusion, qu'est ce qu'il reste à faire ou à améliorer
-\end{alertblock}
+\begin{block}{Requêtes}
+      \CheckmarkBold Terminer le travail sur SVLO et AverageDegree
+\end{block}
+\begin{block}{Affectation}
+   \CheckmarkBold Terminer le travail sur la popularité des objets
+\end{block}
 \end{frame}
 
 
