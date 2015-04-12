@@ -145,7 +145,7 @@ colorlinks=false}
 \date{15 avril 2015}
 \logo{
     \hspace{9cm}
-    \includegraphics[scale=0.13]{ubordeaux}
+    \includegraphics[scale=0.1]{ubordeaux}
 }
 
 
@@ -195,34 +195,76 @@ colorlinks=false}
 % or:
 \begin{frame}
 \titlepage
-(additional stuff here)
 \end{frame}
 
 
 \section{Introduction}
 
-\begin{frame}{Introduction}
+\begin{frame}{Explication du sujet}
+\begin{block}{Environnement distribué}
+\begin{itemize}
+	\item Base de données répartie sur plusieurs machines physiques
+	\item Réplication multi-maîtres
+\end{itemize}
+\end{block}
+\begin{block}{Algorithmes d'équilibrage de charge}
+\begin{itemize}
+	\item Créés par le client
+	\item Basés sur la réplication des données
+\end{itemize}
+\end{block}
+\begin{block}{Simulation}
+\begin{itemize}
+	\item Comparaison de l'efficacité des différents algorithmes
+	\item Objectif du projet $\neq$ mise en production
+\end{itemize}
+\end{block}
+\end{frame}
 
-\begin{alertblock}{Alert}
-    Parler de ce qu'on doit faire sans s'attacher à Cassandra (Besoins fonctionnels ?)
-\end{alertblock}
+\begin{frame}{Explication du sujet}
+\begin{textblock*}{\paperwidth}(55pt,50pt)
+    \includegraphics[scale=0.5]{read_request_interrogation}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Axes de développement}
+\begin{itemize}
+	\item Base de données (\textit{Cassandra})
+	\begin{itemize}
+		\item Gestion des requêtes
+		\item Gestion de la réplication
+	\end{itemize}
+	\item Application cliente (\textit{Driver Java Cassandra})
+	\item Visualisation (\textit{Graphite})
+\end{itemize}
 \end{frame}
 
 
 \section{Cassandra}
 
-\begin{frame}{Cassandra}
-
-\begin{alertblock}{Alert}
-    Se positionner par rapport à Cassandra et pourquoi
-\end{alertblock}
+\begin{frame}{Base de données Cassandra}
+Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant un projet de la \textbf{Fondation Apache}), elle possède comme caractéristique d'être :
+\begin{itemize}
+	\item NoSQL, orientée colonnes
+	\item Open-source (licence Apache 2)
+	\item Écrite en Java
+	\item Décentralisée
+\end{itemize}
 \end{frame}
 
+\begin{frame}{Le choix de Cassandra}
+\begin{itemize}
+	\item Open-source
+	\item Développement actif
+	\item Proche du projet à réaliser
+	\item Connaissances dans l'équipe
+\end{itemize}
+\textbf{Solutions alternatives} : HBase, CouchBase, CouchDB, from scratch...
+\end{frame}
 
 \section{Fonctionnement}
 
 \begin{frame}{Fonctionnement}
-
 \begin{alertblock}{Alert}
     Expliquer comment fonctionnent le client et cassandra avec des schemas, capture d'écran et tout...
 \end{alertblock}
@@ -231,30 +273,52 @@ colorlinks=false}
 
 \section{Architecture}
 
-\begin{frame}{Architecture}
-
+\begin{frame}{Architecture du client}
 \begin{alertblock}{Alert}
-    Architecture du client et de cassandra
+    Architecture du client
 \end{alertblock}
 \end{frame}
 
-
-\section{Simulateur}
-
-\begin{frame}{Simulateur}
-
-\begin{alertblock}{Alert}
-    Expliquer pourquoi simulateur + archi + fonctionnement
-\end{alertblock}
+\begin{frame}{Architecture de Cassandra}
+\begin{block}{Staged event-driven architecture (SEDA)}
+\begin{itemize}
+    \item \textbf{Stage} $\rightarrow$ emplacement pour réaliser des tâches
+    \begin{itemize}
+	    \item \textbf{File d'attente} $\rightarrow$ messages de tâches à traiter
+	    \item \textbf{Threads} $\rightarrow$ exécuteurs de tâches
+    \end{itemize}
+\end{itemize}
+\end{block}
+\centering
+	\includegraphics[scale=0.42]{stages}
 \end{frame}
 
+\begin{frame}{Architecture de Cassandra}
+\begin{block}{Staged event-driven architecture (SEDA)}
+\begin{itemize}
+    \item \textbf{Stage} $\rightarrow$ emplacement pour réaliser des tâches
+    \begin{itemize}
+	    \item \textbf{File d'attente} $\rightarrow$ messages de tâches à traiter
+	    \item \textbf{Threads} $\rightarrow$ exécuteurs de tâches
+    \end{itemize}
+\end{itemize}
+\end{block}
+Stages présents dans Cassandra :
+\begin{itemize}
+	\item READ
+	\item \textbf{READ\_REMOVE}
+	\item MUTATION
+	\item GOSSIP
+	\item ...
+\end{itemize}
+\end{frame}
 
 \section{Points techniques}
 
 \begin{frame}{Points techniques}
 
 \begin{alertblock}{Alert}
-    Si on veut rentrer dans des détails d'implémentation...
+    Point technique sur le client (distribution ?), car peu de choses intéressantes avec Cassandra
 \end{alertblock}
 \end{frame}
 
@@ -268,6 +332,15 @@ colorlinks=false}
 \end{alertblock}
 \end{frame}
 
+
+\section{Simulateur}
+
+\begin{frame}{Simulateur}
+
+\begin{alertblock}{Alert}
+    Expliquer pourquoi simulateur + archi + fonctionnement
+\end{alertblock}
+\end{frame}
 
 \section{Améliorations}
 
