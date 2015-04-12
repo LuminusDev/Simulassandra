@@ -277,8 +277,32 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 	\CheckmarkBold A chaque requête de lecture traitée, un message est envoyé pour notifier aux autres noeuds de ne pas effectuer la requête
 \end{block}
 \begin{block}{Gestion de la réplication}
-   \CheckmarkBold Le placement des données et de leurs copies selon différentes fonctions de hachage
+   \CheckmarkBold Le placement des données et de leurs copies selon différentes fonctions de hachage. \\
+   \XSolidBold La gestion de popularité des objets.
 \end{block}
+\end{frame}
+
+%Pour expliquer la diapo précédente, présentation de stratégie simple (celle qui choisit les N noeuds suivants + celle qu'on doit implémenter
+\begin{frame}{Stratégie de réplication simple}
+
+\begin{textblock*}{\paperwidth}(55pt,45pt)
+    \includegraphics[scale=0.4]{replication}
+\end{textblock*}
+\end{frame}
+
+%Présentation des formules + dire ce que ça apporte (répartition de charge)
+\begin{frame}{Gestion de la popularité}
+\begin{block}{Paramètres}
+    $r$ = Nombre de requêtes total effectuées durant l'intervalle de temps $T$; \newline
+    $n$ = Nombre de noeuds dans le réseau; \newline
+    $p$ = Popularité d'un objet; \newline
+    $k$ = Nombre de copies de l'objet.
+\end{block}
+
+\begin{itemize}
+    \item Augmenter le nombre de copies si $ 2 \times \frac{r}{n} \geq \frac{p}{k} $ vraie.
+    \item Diminuer le nombre de copies si $ \frac{r}{2n} \leq \frac{p}{k} $ vraie.
+\end{itemize}
 \end{frame}
 
 
@@ -326,7 +350,7 @@ Stages présents dans Cassandra :
 
 \section{Points techniques}
 
-
+% Présentation différences entre stratégie initialement souhaitée et celle implémentée, les conséquences et ce qu'il faut relativiser.
 \begin{frame}{Points techniques : Réplication}
 \centering
     \begin{tabular}{| c | c | c | c |}
@@ -356,14 +380,47 @@ Stages présents dans Cassandra :
 \end{alertblock}
 \end{frame}
 
-
+% Présentation des 3 courbes, explications des résultats obtenus + une diapo récapitulant les acronymes.
 \section{Tests}
 
 \begin{frame}{Tests}
 
-\begin{alertblock}{Alert}
-    Présentation des tests
-\end{alertblock}
+\begin{block}{Environnement}
+    \begin{itemize}
+        \item Les tests de mesures de performances se déroulent dans un réseau d'Amazon EC2 de 10 noeuds.
+        \item La base de données est composée de 10 000 objets de taille unique.
+    \end{itemize}
+\end{block}
+\begin{block}{Dénomination}
+    \begin{itemize}
+        \item RF = nombre de copies + donnée originale
+        \item petits objets = un texte généré aléatoirement de 10 Ko
+        \item gros objets = un texte généré aléatoirement de 1 Mo
+    \end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Sur Cassandra modifiée}
+
+\begin{textblock*}{\paperwidth}(55pt,50pt)
+    \includegraphics[scale=0.5]{PAF-RF-PO}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Sur Cassandra non modifiée}
+
+\begin{textblock*}{\paperwidth}(55pt,50pt)
+    \includegraphics[scale=0.5]{cassandra_non_modif-RF-PO}
+\end{textblock*}
+\end{frame}
+
+
+\begin{frame}{Sur Cassandra modifiée}
+
+\begin{textblock*}{\paperwidth}(55pt,50pt)
+    \includegraphics[scale=0.5]{PAF-TailleO-RF2}
+\end{textblock*}
 \end{frame}
 
 
