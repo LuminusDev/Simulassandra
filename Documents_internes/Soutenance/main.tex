@@ -272,6 +272,15 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 \end{alertblock}
 \end{frame}
 
+\begin{frame}{Fonctionnement de Cassandra}
+\begin{block}{Gestion des requêtes}
+	\CheckmarkBold A chaque requête de lecture traitée, un message est envoyé pour notifier aux autres noeuds de ne pas effectuer la requête
+\end{block}
+\begin{block}{Gestion de la réplication}
+   \CheckmarkBold Le placement des données et de leurs copies selon différentes fonctions de hachage
+\end{block}
+\end{frame}
+
 
 \section{Architecture}
 
@@ -315,24 +324,6 @@ Stages présents dans Cassandra :
 \end{itemize}
 \end{frame}
 
-\section{Travail effectué}
-
-
-\begin{frame}{Travail effectué sur Cassandra}
-
-\begin{block}{Requêtes}
-   \CheckmarkBold A chaque requête de lecture traitée, un message est envoyé pour notifier aux autres noeuds de ne pas effectuer la requête
-\end{block}
-\end{frame}
-
-
-\begin{frame}{Travail effectué sur Cassandra}
-
-\begin{block}{Réplication et placement}
-   \CheckmarkBold Le placement des données et de leurs réplicas selon différentes fonctions de hackage
-\end{block}
-\end{frame}
-
 \section{Points techniques}
 
 
@@ -346,11 +337,11 @@ Stages présents dans Cassandra :
        \hline
        $ H_0 (c1) $ & $ H_0 (c2) $ & $ H_0 (c1) $ & $ H_0 (c2) $  \tabularnewline
        \hline
-       \rowcolor{UPMCEngagementBlueA} 1er Réplica & 1er réplica & 1er réplica & 1er réplica \tabularnewline
+       \rowcolor{UPMCEngagementBlueA} 1er réplica & 1er réplica & 1er réplica & 1er réplica \tabularnewline
        \hline
        $ H_1 (c1) $ & $ H_1 (c2) $ & $ H_1 (H_0 (c1)) $ & $ H_1 (H_0 (c2)) $  \tabularnewline
        \hline
-       \rowcolor{UPMCEngagementBlueA} 2nd Réplica & 2nd réplica & 2nd réplica & 2nd réplica \tabularnewline
+       \rowcolor{UPMCEngagementBlueA} 2nd réplica & 2nd réplica & 2nd réplica & 2nd réplica \tabularnewline
        \hline
        $ H_2 (c1) $ & $ H_2 (c2) $ & $ H_2 (H_0 (c1)) $ & $ H_2 (H_0 (c2)) $  \tabularnewline
        \hline
@@ -380,11 +371,15 @@ Stages présents dans Cassandra :
 
 \begin{frame}{Améliorations possibles sur Cassandra}
 
-\begin{block}{Requêtes}
-      \CheckmarkBold Terminer le travail sur SVLO et AverageDegree
+\begin{block}{Gestion des requêtes}
+\begin{itemize}
+	\item Algorithmes de réaffectation SVLO et AverageDegree
+\end{itemize}
 \end{block}
-\begin{block}{Affectation}
-   \CheckmarkBold Terminer le travail sur la popularité des objets
+\begin{block}{Gestion de la réplication}
+\begin{itemize}
+	\item Popularité des objets
+\end{itemize}
 \end{block}
 \end{frame}
 
