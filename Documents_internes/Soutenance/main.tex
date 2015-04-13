@@ -65,6 +65,7 @@
 %\usepackage{caption}
 %\usepackage{media9}
 %\addmediapath{./videos/}
+\usepackage{xmpmulti}
 
 
 
@@ -228,9 +229,17 @@ colorlinks=false}
 \end{block}
 \end{frame}
 
-\begin{frame}{Explication du sujet}
-\begin{textblock*}{\paperwidth}(55pt,50pt)
-    \includegraphics[scale=0.5]{read_request_interrogation}
+\begin{frame}{Fonctionnement du projet}
+\framesubtitle{Requête d'écriture}
+\begin{textblock*}{\paperwidth}(75pt,55pt)
+	\multiinclude[<+>][format=png,graphics={scale=0.42}]{fonctionnement/write/request}
+\end{textblock*}
+\end{frame}
+
+\begin{frame}{Fonctionnement du projet}
+\framesubtitle{Requête de lecture}
+\begin{textblock*}{\paperwidth}(75pt,55pt)
+	\multiinclude[<+>][format=png,graphics={scale=0.42}]{fonctionnement/read/request}
 \end{textblock*}
 \end{frame}
 
@@ -284,9 +293,9 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 \begin{column}[c]{5cm}
 \begin{block}{De base}
 \begin{itemize}
-	\item Requêtes de lecture pour certains noeuds
-	\item Renvoie donnée entière pour une, \textit{digest} pour les autres
-	\item Suppression impossible
+	\item Envoi des requêtes de lecture pour certains noeuds
+	\item Renvoi donnée complète pour une requête, \textit{digest} pour les autres
+	\item Suppression de requête de lecture \color{FailedRed}{\textbf{impossible}}
 \end{itemize}
 \end{block}
 \end{column}
@@ -294,19 +303,13 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 \begin{column}[c]{5cm}
 \begin{block}{Modifié}
 \begin{itemize}
-	\item[\success] Requêtes de lecture pour tous les noeuds
-	\item[\success] Renvoie donnée entière pour tous
-	\item[\success] Suppression possible
+	\item[\success] Envoi des requêtes de lecture pour \textbf{tous} les noeuds
+	\item[\success] Renvoi donnée complète pour \textbf{toutes} les requêtes
+	\item[\success] Suppression de requête de lecture \color{SuccessGreen}{\textbf{possible}}
 \end{itemize}
 \end{block}
 \end{column}
 \end{columns}
-\end{frame}
-
-\begin{frame}{Fonctionnement de Cassandra}
-\begin{textblock*}{\paperwidth}(75pt,40pt)
-    \includegraphics[scale=0.43]{request}
-\end{textblock*}
 \end{frame}
 
 \begin{frame}{Fonctionnement de Cassandra}
@@ -315,7 +318,7 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 \begin{column}[c]{5cm}
 \begin{block}{De base}
 \begin{itemize}
-	\item Système inexistant
+	\item Système \color{FailedRed}{\textbf{inexistant}}
 \end{itemize}
 \end{block}
 \end{column}
@@ -378,7 +381,6 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 
 
 \section{Architecture}
-
 
 \begin{frame}{Architecture de Cassandra}
 \begin{block}{Staged event-driven architecture (SEDA)}
