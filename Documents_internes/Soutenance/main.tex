@@ -104,6 +104,9 @@
 \definecolor{UPMCCorporateMarron}   {RGB}{145,120,91}
 \definecolor{UPMCInnovationCoolGray}{RGB}{97,99,101}
 
+\definecolor{SuccessGreen}{RGB}{182,191,0}
+\definecolor{FailedRed}   {RGB}{231,76,60}
+
 \colorlet{BgTransition}{UPMCInnovationCoolGray}
 
 
@@ -138,7 +141,6 @@ pdfnonfullscreenpagemode=UseThumbs, % show thumbnails on exiting full-screen mod
 colorlinks=false}
 
 
-
 % *** META ***
 %
 \title[Projet de Programmation]{Simulation d'algorithmes \\d'équilibrage de charge dans un \\environnement distribué}
@@ -154,6 +156,9 @@ colorlinks=false}
 
 % *** SPECIAL COMMANDS ***
 %
+\newcommand{\success}{\color{SuccessGreen}\CheckmarkBold}
+\newcommand{\fail}{\color{FailedRed}\XSolidBold}
+
 \newcommand{\SlideTransition}[2][]{
   % Change background color
   \mode<all> {
@@ -245,6 +250,9 @@ colorlinks=false}
 \section{Cassandra}
 
 \begin{frame}{Base de données Cassandra}
+\begin{textblock*}{\paperwidth}(-10pt,20pt)
+    \raggedleft \includegraphics[scale=0.2]{cassandra_logo}
+\end{textblock*}
 Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant un projet de la \textbf{Fondation Apache}), elle possède comme caractéristique d'être :
 \begin{itemize}
 	\item NoSQL, orientée colonnes
@@ -254,7 +262,11 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 \end{itemize}
 \end{frame}
 
+
 \begin{frame}{Le choix de Cassandra}
+\begin{textblock*}{\paperwidth}(-10pt,20pt)
+    \raggedleft \includegraphics[scale=0.2]{cassandra_logo}
+\end{textblock*}
 \begin{itemize}
 	\item Open-source
 	\item Développement actif
@@ -266,32 +278,91 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 
 \section{Fonctionnement}
 
-\begin{frame}{Fonctionnement}
-\begin{alertblock}{Alert}
-    Expliquer comment fonctionnent le client et cassandra avec des schemas, capture d'écran et tout...
-\end{alertblock}
+\begin{frame}{Fonctionnement de Cassandra}
+\textbf{Gestion des requêtes : affectation}
+\begin{columns}
+\begin{column}[c]{5cm}
+\begin{block}{De base}
+\begin{itemize}
+	\item Requêtes de lecture pour certains noeuds
+	\item Renvoie donnée entière pour une, \textit{digest} pour les autres
+	\item Suppression impossible
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}[c]{5cm}
+\begin{block}{Modifié}
+\begin{itemize}
+	\item[\success] Requêtes de lecture pour tous les noeuds
+	\item[\success] Renvoie donnée entière pour tous
+	\item[\success] Suppression possible
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Fonctionnement de Cassandra}
-\begin{block}{Gestion des requêtes}
-	\CheckmarkBold A chaque requête de lecture traitée, un message est envoyé pour notifier aux autres noeuds de ne pas effectuer la requête
-\end{block}
-\begin{block}{Gestion de la réplication}
-   \CheckmarkBold Le placement des données et de leurs copies selon différentes fonctions de hachage. \\
-   \XSolidBold La gestion de popularité des objets.
-\end{block}
-\end{frame}
-
-%Pour expliquer la diapo précédente, présentation de stratégie simple (celle qui choisit les N noeuds suivants + celle qu'on doit implémenter
-\begin{frame}{Stratégie de réplication simple}
-
-\begin{textblock*}{\paperwidth}(55pt,45pt)
-    \includegraphics[scale=0.4]{replication}
+\begin{textblock*}{\paperwidth}(75pt,40pt)
+    \includegraphics[scale=0.43]{request}
 \end{textblock*}
 \end{frame}
 
+\begin{frame}{Fonctionnement de Cassandra}
+\textbf{Gestion des requêtes : réaffectation}
+\begin{columns}
+\begin{column}[c]{5cm}
+\begin{block}{De base}
+\begin{itemize}
+	\item Système inexistant
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}[c]{5cm}
+\begin{block}{Modifié}
+\begin{itemize}
+	\item[\success] Compteur de requêtes assignées
+	\item[\fail] Algorithmes d'assignation
+	\item[\fail] Assignation
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Fonctionnement de Cassandra}
+\textbf{Gestion de la réplication}
+\begin{columns}
+\begin{column}[c]{5cm}
+\begin{block}{De base}
+\begin{itemize}
+	\item Placement des copies d'un objet sur les noeuds suivant dans l'ordre du cercle
+\end{itemize}
+\end{block}
+\end{column}
+
+\begin{column}[c]{5cm}
+\begin{block}{Modifié}
+\begin{itemize}
+	\item[\success] Placement des copies suivant différentes fonctions de hachages
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+%Pour expliquer la diapo précédente, présentation de stratégie simple (celle qui choisit les N noeuds suivants + celle qu'on doit implémenter
+\begin{frame}{Fonctionnement de Cassandra}
+\textbf{Stratégie de réplication de base}
+\centering
+    \includegraphics[scale=0.4]{replication}
+\end{frame}
+
 %Présentation des formules + dire ce que ça apporte (répartition de charge)
-\begin{frame}{Gestion de la popularité}
+\begin{frame}{Fonctionnement de Cassandra}
+\textbf{Gestion de la popularité} \fail
 \begin{block}{Paramètres}
     $r$ = Nombre de requêtes total effectuées durant l'intervalle de temps $T$; \newline
     $n$ = Nombre de noeuds dans le réseau; \newline
@@ -303,6 +374,68 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
     \item Augmenter le nombre de copies si $ 2 \times \frac{r}{n} \geq \frac{p}{k} $ vraie.
     \item Diminuer le nombre de copies si $ \frac{r}{2n} \leq \frac{p}{k} $ vraie.
 \end{itemize}
+\end{frame}
+
+
+\section{Architecture}
+
+
+\begin{frame}{Architecture de Cassandra}
+\begin{block}{Staged event-driven architecture (SEDA)}
+\begin{itemize}
+    \item \textbf{Stage} $\rightarrow$ emplacement pour réaliser des tâches
+    \begin{itemize}
+	    \item \textbf{File d'attente} $\rightarrow$ messages de tâches à traiter
+	    \item \textbf{Threads} $\rightarrow$ exécuteurs de tâches
+    \end{itemize}
+\end{itemize}
+\end{block}
+\centering
+	\includegraphics[scale=0.42]{stages}
+\end{frame}
+
+\begin{frame}{Architecture de Cassandra}
+\begin{block}{Staged event-driven architecture (SEDA)}
+\begin{itemize}
+    \item \textbf{Stage} $\rightarrow$ emplacement pour réaliser des tâches
+    \begin{itemize}
+	    \item \textbf{File d'attente} $\rightarrow$ messages de tâches à traiter
+	    \item \textbf{Threads} $\rightarrow$ exécuteurs de tâches
+    \end{itemize}
+\end{itemize}
+\end{block}
+Stages présents dans Cassandra :
+\begin{itemize}
+	\item READ
+	\item \textbf{READ\_REMOVE}
+	\item MUTATION
+	\item GOSSIP
+	\item ...
+\end{itemize}
+\end{frame}
+
+\section{Points techniques}
+
+% Présentation différences entre stratégie initialement souhaitée et celle implémentée, les conséquences et ce qu'il faut relativiser.
+\begin{frame}{Point technique : Réplication}
+\centering
+    \begin{tabular}{| c | c | c | c |}
+       \hline
+       \rowcolor{UPMCEngagementBlueB} \multicolumn{2}{|c|}{Solution initiale}  & \multicolumn{2}{c|}{Solution implémentée} \tabularnewline
+       \hline
+       \rowcolor{UPMCEngagementBlueA} Donnée \no 1 & Donnée \no 2 & Donnée \no 1 & Donnée \no 2 \tabularnewline
+       \hline
+       $ H_0 (c1) $ & $ H_0 (c2) $ & $ H_0 (c1) $ & $ H_0 (c2) $  \tabularnewline
+       \hline
+       \rowcolor{UPMCEngagementBlueA} 1er réplica & 1er réplica & 1er réplica & 1er réplica \tabularnewline
+       \hline
+       $ H_1 (c1) $ & $ H_1 (c2) $ & $ H_1 (H_0 (c1)) $ & $ H_1 (H_0 (c2)) $  \tabularnewline
+       \hline
+       \rowcolor{UPMCEngagementBlueA} 2nd réplica & 2nd réplica & 2nd réplica & 2nd réplica \tabularnewline
+       \hline
+       $ H_2 (c1) $ & $ H_2 (c2) $ & $ H_2 (H_0 (c1)) $ & $ H_2 (H_0 (c2)) $  \tabularnewline
+       \hline
+    \end{tabular}
 \end{frame}
 
 \section{Application cliente}
@@ -372,75 +505,6 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
  
 \end{frame}
 
-\section{Architecture}
-
-
-\begin{frame}{Architecture de Cassandra}
-\begin{block}{Staged event-driven architecture (SEDA)}
-\begin{itemize}
-    \item \textbf{Stage} $\rightarrow$ emplacement pour réaliser des tâches
-    \begin{itemize}
-	    \item \textbf{File d'attente} $\rightarrow$ messages de tâches à traiter
-	    \item \textbf{Threads} $\rightarrow$ exécuteurs de tâches
-    \end{itemize}
-\end{itemize}
-\end{block}
-\centering
-	\includegraphics[scale=0.42]{stages}
-\end{frame}
-
-\begin{frame}{Architecture de Cassandra}
-\begin{block}{Staged event-driven architecture (SEDA)}
-\begin{itemize}
-    \item \textbf{Stage} $\rightarrow$ emplacement pour réaliser des tâches
-    \begin{itemize}
-	    \item \textbf{File d'attente} $\rightarrow$ messages de tâches à traiter
-	    \item \textbf{Threads} $\rightarrow$ exécuteurs de tâches
-    \end{itemize}
-\end{itemize}
-\end{block}
-Stages présents dans Cassandra :
-\begin{itemize}
-	\item READ
-	\item \textbf{READ\_REMOVE}
-	\item MUTATION
-	\item GOSSIP
-	\item ...
-\end{itemize}
-\end{frame}
-
-\section{Points techniques}
-
-% Présentation différences entre stratégie initialement souhaitée et celle implémentée, les conséquences et ce qu'il faut relativiser.
-\begin{frame}{Points techniques : Réplication}
-\centering
-    \begin{tabular}{| c | c | c | c |}
-       \hline
-       \rowcolor{UPMCEngagementBlueB} \multicolumn{2}{|c|}{Solution initiale}  & \multicolumn{2}{c|}{Solution implémentée} \tabularnewline
-       \hline
-       \rowcolor{UPMCEngagementBlueA} Donnée \no 1 & Donnée \no 2 & Donnée \no 1 & Donnée \no 2 \tabularnewline
-       \hline
-       $ H_0 (c1) $ & $ H_0 (c2) $ & $ H_0 (c1) $ & $ H_0 (c2) $  \tabularnewline
-       \hline
-       \rowcolor{UPMCEngagementBlueA} 1er réplica & 1er réplica & 1er réplica & 1er réplica \tabularnewline
-       \hline
-       $ H_1 (c1) $ & $ H_1 (c2) $ & $ H_1 (H_0 (c1)) $ & $ H_1 (H_0 (c2)) $  \tabularnewline
-       \hline
-       \rowcolor{UPMCEngagementBlueA} 2nd réplica & 2nd réplica & 2nd réplica & 2nd réplica \tabularnewline
-       \hline
-       $ H_2 (c1) $ & $ H_2 (c2) $ & $ H_2 (H_0 (c1)) $ & $ H_2 (H_0 (c2)) $  \tabularnewline
-       \hline
-    \end{tabular}
-\end{frame}
-
-
-\begin{frame}{Points techniques}
-
-\begin{alertblock}{Alert}
-    Point technique sur le client (distribution ?), car peu de choses intéressantes avec Cassandra
-\end{alertblock}
-\end{frame}
-
 % Présentation des 3 courbes, explications des résultats obtenus + une diapo récapitulant les acronymes.
 \section{Tests}
 
@@ -461,117 +525,56 @@ Stages présents dans Cassandra :
 \end{block}
 \end{frame}
 
-
-\begin{frame}{Sur Cassandra modifiée}
-
-\begin{textblock*}{\paperwidth}(55pt,50pt)
-    \includegraphics[scale=0.5]{PAF-RF-PO}
-\end{textblock*}
+\begin{frame}{Tests}
+\framesubtitle{Sur Cassandra modifiée}
+\centering
+    \includegraphics[scale=0.6]{PAF-RF-PO}
 \end{frame}
 
-\begin{frame}{Sur Cassandra non modifiée}
-
-\begin{textblock*}{\paperwidth}(55pt,50pt)
-    \includegraphics[scale=0.5]{cassandra_non_modif-RF-PO}
-\end{textblock*}
+\begin{frame}{Tests}
+\framesubtitle{Sur Cassandra non modifiée}
+\centering
+    \includegraphics[scale=0.6]{cassandra_non_modif-RF-PO}
 \end{frame}
 
 
-\begin{frame}{Sur Cassandra modifiée}
-
-\begin{textblock*}{\paperwidth}(55pt,50pt)
-    \includegraphics[scale=0.5]{PAF-TailleO-RF2}
-\end{textblock*}
+\begin{frame}{Tests}
+\framesubtitle{Sur Cassandra modifiée}
+\centering
+    \includegraphics[scale=0.6]{PAF-TailleO-RF2}
 \end{frame}
 
 
 \section{Améliorations}
 
-\begin{frame}{Améliorations possibles sur Cassandra}
+\begin{frame}{Perspectives}
 
-\begin{block}{Gestion des requêtes}
+\begin{block}{Cassandra}
 \begin{itemize}
-	\item Algorithmes de réaffectation SVLO et AverageDegree
+	\item Gestion des requêtes
+	\begin{itemize}
+		\item Algorithmes de réaffectation SVLO et AverageDegree
+	\end{itemize}
+	\item Gestion de la popularité
+	\item Tests unitaires poussés
 \end{itemize}
 \end{block}
-\begin{block}{Gestion de la réplication}
+\begin{block}{Application client}
 \begin{itemize}
-	\item Popularité des objets
+	\item 
+\end{itemize}
+\end{block}
+\begin{block}{Visualisation}
+\begin{itemize}
+	\item Véritable logiciel de vue de performance
+	\item Performance du réseau
 \end{itemize}
 \end{block}
 \end{frame}
-
-
-
-
-\section{Blocks}
-
-\begin{frame}{Blocks}
-
-\begin{block}{Standard}
-This is a standard block.
-\end{block}
-
-\begin{exampleblock}{Example}
-This is an example.
-\end{exampleblock}
-
-\begin{alertblock}{Alert}
-This is important.
-\end{alertblock}
-\end{frame}
-
-
-\section{Example}
-
-\begin{frame}{Example}
-
-\begin{block}{Complex networks}
-\begin{itemize}
-\item Sociology : social networks, call networks
-\item Informatics : Internet, Web, peer-to-peer networks
-\item Biology, linguistics, etc.
-\end{itemize}
-\end{block}
-
-\vspace{1.6cm}
-
-\begin{textblock*}{\paperwidth}(0pt,6cm)
-    \raggedleft \includegraphics[width=0.5\textwidth]{static-graph1}
-\end{textblock*}
-\end{frame}
-
-
-\begin{frame}{Example}
-\begin{columns}
-\begin{column}[c]{3.3cm}
-\begin{block}{Evolving network}
-Nodes and links appearing over time.
-\end{block}
-\end{column}
-
-\begin{column}[c]{7cm}
-\includegraphics[scale=0.4]{dynamic-graph-draft} 
-%\linebreak
-%{\tiny This is a caption.}
-\end{column}
-\end{columns}
-\end{frame}
-
-
 
 \mode<all>{ 
-\SlideTransition{Questions?} 
+\SlideTransition{Questions ?}
 }
-
-
-
-\mode<all>{ 
-\SlideTransition[Title \linebreak
-\href{mailto:first.lastname@lip6.fr}{<first.lastname@lip6.fr>}
-]{Thank You!} 
-}
-
 
 % that's all folks
 \end{document}
