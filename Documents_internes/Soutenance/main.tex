@@ -527,7 +527,7 @@ Stages présents dans Cassandra :
 \framesubtitle{Sur Cassandra}
 \begin{block}{Environnement}
     \begin{itemize}
-        \item Les tests de mesures de performances se déroulent dans un réseau d'Amazon EC2 de 10 noeuds.
+        \item Les tests de mesures de performances se déroulent dans un réseau d'Amazon EC2 de 10 noeuds (machines dans le cloud) louées par le client.
         \item La base de données est composée de 10 000 objets de taille unique.
     \end{itemize}
 \end{block}
@@ -543,20 +543,31 @@ Stages présents dans Cassandra :
 \begin{frame}{Tests}
 \framesubtitle{Sur Cassandra modifiée}
 \centering
-    \includegraphics[scale=0.6]{PAF-RF-PO}
+    \includegraphics[scale=0.6]{PAF-RF-PO} \\
+    \textbf{Gain : 2.4\% avec 100 000 requêtes = pas exhaustif}
 \end{frame}
 
 \begin{frame}{Tests}
 \framesubtitle{Sur Cassandra non modifiée}
 \centering
-    \includegraphics[scale=0.6]{cassandra_non_modif-RF-PO}
+    \includegraphics[scale=0.6]{cassandra_non_modif-RF-PO} \\
+    \textbf{Gain : 0.77\% avec 100 000 requêtes = pas exhaustif}
+\end{frame}
+
+
+\begin{frame}{Tests}
+\framesubtitle{Cassandra modifiée vs Cassandra non modifiée}
+\centering
+    \includegraphics[scale=0.6]{PAF-CNMCM-RF2PO} \\
+    \textbf{Gain : 0.73\% avec 100 000 requêtes = Trop petits objets ?}
 \end{frame}
 
 
 \begin{frame}{Tests}
 \framesubtitle{Sur Cassandra modifiée}
 \centering
-    \includegraphics[scale=0.6]{PAF-TailleO-RF2}
+    \includegraphics[scale=0.6]{PAF-TailleO-RF2} \\
+    \textbf{Écart : 187\% avec 50 000 requêtes = Refaire les tests sur de gros objets}
 \end{frame}
 
 
