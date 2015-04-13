@@ -334,21 +334,23 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 
 
 \begin{frame}{Fonctionnement du client}
-  \begin{block}{Initialisation}
-    \begin{itemize}
-    \item Connexion à la base de données
-    \item Choix du keyspace
-    \end{itemize}
-  \end{block}
+\begin{block}{Initialisation}
+  \begin{itemize}
+   \item Connexion à la base de données
+   \item Choix du keyspace
+  \end{itemize}
+\end{block}
 
-  \begin{block}{Console}
-  L'utilisateur saisie la commande qu'il souhaite exécuter, notamment :
-    \begin{itemize}
-    \item Changement de cluster
-    \item Création de jeu de données
-    \item Exécution d'un générateur de requêtes
-    \end{itemize}
-  \end{block}
+\begin{block}{Console}
+L'utilisateur saisie la commande qu'il souhaite exécuter, notamment :
+\begin{itemize}
+ \item Changement de cluster
+ \item Création de jeu de données
+ \item Exécution d'un générateur de requêtes
+\end{itemize}
+
+\end{block}
+
 \end{frame}
 
 \begin{frame}{Fonctionnement du client}
@@ -356,14 +358,10 @@ Originellement créée et développée par \textbf{Facebook} en 2008 (maintenant
 \end{frame}
 
 \begin{frame}{Générateur de requêtes}
-\centering
-    \includegraphics[scale=0.25]{architecture_req}
-
-
   \begin{block}{Personnalisable}
    \begin{itemize}
-    \item Possibilité d'ajouter des générateurs de requêtes
-    \item Choix du générateur \newline \texttt{queries NomGenerateur <seed> <nb\_simulations> <nb\_requetes>}
+    \item Possibilité d'ajouter de nouveau générateurs de requêtes
+    \item Choix du générateur \texttt{queries NomGenerateur <seed> <nb_simulations> <nb_requetes>}
    \end{itemize}
   \end{block}
 \end{frame}
