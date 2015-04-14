@@ -250,6 +250,38 @@ colorlinks=false}
 \end{textblock*}
 \end{frame}
 
+
+\begin{frame}{Fonctionnement du projet}
+ \framesubtitle{Application cliente}
+ \centering
+   \includegraphics[scale=0.40]{acteurs}
+  
+  \begin{itemize}
+   \item Communication avec Cassandra
+   \item Evaluer les performances des stratégies de réplication
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Fonctionnement du projet}
+\framesubtitle{Application cliente}
+  \begin{block}{Initialisation}
+    \begin{itemize}
+    \item Connexion à la base de données
+    \item Choix du keyspace
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Console}
+  L'utilisateur saisie la commande qu'il souhaite exécuter, notamment :
+    \begin{itemize}
+    \item Changement de keyspace
+    \item Création de jeu de données
+    \item Exécution d'un générateur de requêtes
+    \end{itemize}
+  \end{block}
+\end{frame}
+
 \begin{frame}{Axes de développement}
 \begin{itemize}
 	\item Base de données (\textit{Cassandra})
@@ -475,23 +507,6 @@ Stages présents dans Cassandra :
 \end{frame}
 
 
-\begin{frame}{Fonctionnement du client}
-  \begin{block}{Initialisation}
-    \begin{itemize}
-    \item Connexion à la base de données
-    \item Choix du keyspace
-    \end{itemize}
-  \end{block}
-
-  \begin{block}{Console}
-  L'utilisateur saisie la commande qu'il souhaite exécuter, notamment :
-    \begin{itemize}
-    \item Changement de cluster
-    \item Création de jeu de données
-    \item Exécution d'un générateur de requêtes
-    \end{itemize}
-  \end{block}
-\end{frame}
 
 \begin{frame}{Fonctionnement du client}
 \centering
